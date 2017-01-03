@@ -15,31 +15,35 @@ router.get('/', checkNotLogin, function(req, res, next) {
 // POST /signup 用户注册
 router.post('/', checkNotLogin, function(req, res, next) {
   var name = req.fields.name;
-  var gender = req.fields.gender;
+  var identity = req.fields.gender;
   var bio = req.fields.bio;
   var avatar = req.files.avatar.path.split(path.sep).pop();
   var password = req.fields.password;
   var repassword = req.fields.repassword;
+  var fname = avatar.split('.');
 
   // 校验参数
   try {
-    if (!(name.length >= 1 && name.length <= 10)) {
-      throw new Error('名字请限制在 1-10 个字符');
+    if (!(name.length >= 6 && name.length <= 16)) {
+      throw new Error('用户名请限制在 6-16 个字符内');
     }
-    if (['m', 'f', 'x'].indexOf(gender) === -1) {
-      throw new Error('性别只能是 m、f 或 x');
+    if (['student', 'teacher'].indexOf(identity) === -1) {
+      throw new Error('职业只能为学生或教师');
     }
-    if (!(bio.length >= 1 && bio.length <= 30)) {
-      throw new Error('个人简介请限制在 1-30 个字符');
+    if (!(bio.length >= 1 && bio.length <= 200)) {
+      throw new Error('个人简介请限制在 1-200 个字符内');
     }
     if (!req.files.avatar.name) {
       throw new Error('缺少头像');
     }
-    if (password.length < 6) {
-      throw new Error('密码至少 6 个字符');
+    if (!(password.length >= 6 && password.length <= 16)) {
+      throw new Error('密码请限制在 6-16 个字符内');
     }
     if (password !== repassword) {
       throw new Error('两次输入密码不一致');
+    }
+    if(['gif', 'jpeg', 'jpg', 'png'].indexOf(fname[fname.length - 1]) === -1) {
+      throw new Error('上传头像格式只能为gif、jpg或png');
     }
   } catch (e) {
     // 注册失败，异步删除上传的头像
@@ -55,7 +59,7 @@ router.post('/', checkNotLogin, function(req, res, next) {
   var user = {
     name: name,
     password: password,
-    gender: gender,
+    identity: identity,
     bio: bio,
     avatar: avatar
   };
