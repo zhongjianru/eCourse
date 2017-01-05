@@ -39,13 +39,13 @@ app.use(require('express-formidable')({
   keepExtensions: true// 保留后缀
 }));
 
-// 设置模板全局常量
-app.locals.blog = {
+// 设置模板渲染全局常量
+app.locals.eCourse = {
   title: pkg.name,
   description: pkg.description
 };
 
-// 添加模板必需的三个变量
+// 添加模板渲染所需变量 user, success 和 error
 app.use(function (req, res, next) {
   res.locals.user = req.session.user;
   res.locals.success = req.flash('success').toString();
