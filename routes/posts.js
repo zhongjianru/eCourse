@@ -21,7 +21,12 @@ router.get('/', function(req, res, next) {
 
 // GET /posts/create 发表文章页
 router.get('/create', checkLogin, function(req, res, next) {
-  res.render('create');
+  if(req.session.user.identity == 'teacher') {
+    res.render('create');
+  }
+  else {
+    res.render('404');
+  }
 });
 
 // POST /posts 发表一篇文章
