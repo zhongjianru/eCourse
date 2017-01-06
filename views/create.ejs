@@ -13,11 +13,25 @@
   <div class="eight wide column">
     <form class="ui form segment" method="post" action="/posts">
       <div class="field required">
-        <label>标题</label>
+        <label>课程类型</label>
+        <select name="type" required>
+          <option value="文学" selected="selected">文学</option>
+          <option value="历史学">历史学</option>
+          <option value="法学">法学</option>
+          <option value="经济学">经济学</option>
+          <option value="管理学">管理学</option>
+          <option value="教育学">教育学</option>
+          <option value="理学">理学</option>
+          <option value="艺术学">艺术学</option>
+          <option value="工学">工学</option>
+        </select>
+        </div>
+      <div class="field required">
+        <label>课程名称</label>
         <input type="text" name="title">
       </div>
       <div class="field required">
-        <label>内容</label>
+        <label>课程简介</label>
         <textarea name="content" rows="15"></textarea>
       </div>
       <input type="submit" class="ui button" value="发布">

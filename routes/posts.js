@@ -34,14 +34,21 @@ router.post('/', checkLogin, function(req, res, next) {
   var author = req.session.user._id;
   var title = req.fields.title;
   var content = req.fields.content;
+  var type = req.fields.type;
 
   // 校验参数
   try {
     if (!title.length) {
-      throw new Error('请填写标题');
+      throw new Error('请填写课程名称');
+    }
+    if (!(title.length >= 1 && title.length <= 50)) {
+      throw new Error('课程名称字数限制为1-50');
     }
     if (!content.length) {
-      throw new Error('请填写内容');
+      throw new Error('请填写课程简介');
+    }
+    if (!(content.length >= 1 && content.length <= 200)) {
+      throw new Error('课程简介字数限制为1-200');
     }
   } catch (e) {
     req.flash('error', e.message);
@@ -52,6 +59,7 @@ router.post('/', checkLogin, function(req, res, next) {
     author: author,
     title: title,
     content: content,
+    type: type,
     pv: 0
   };
 
@@ -116,8 +124,9 @@ router.post('/:postId/edit', checkLogin, function(req, res, next) {
   var author = req.session.user._id;
   var title = req.fields.title;
   var content = req.fields.content;
+  var type = req.fields.type;
 
-  PostModel.updatePostById(postId, author, { title: title, content: content })
+  PostModel.updatePostById(postId, author, { title: title, content: content, type: type })
     .then(function () {
       req.flash('success', '编辑文章成功');
       // 编辑成功后跳转到上一页
