@@ -8,7 +8,7 @@ var checkLogin = require('../middlewares/check').checkLogin;
 // GET /posts 所有用户或者特定用户的文章页
 //   eg: GET /posts?author=xxx
 router.get('/', function(req, res, next) {
-  var author = req.query.author;
+  var author = req.query.author;// 获取url中的查询参数author
 
   PostModel.getPosts(author)
     .then(function (posts) {
