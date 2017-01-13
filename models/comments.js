@@ -22,12 +22,12 @@ module.exports = {
     return Comment.remove({ author: author, _id: commentId }).exec();
   },
 
-  // 通过文章 id 删除该文章下所有留言
+  // 通过课程 id 删除该课程下所有留言
   delCommentsByPostId: function delCommentsByPostId(postId) {
     return Comment.remove({ postId: postId }).exec();
   },
 
-  // 通过文章 id 获取该文章下所有留言，按留言创建时间升序
+  // 通过课程 id 获取该课程下所有留言，按留言创建时间升序
   getComments: function getComments(postId) {
     return Comment
       .find({ postId: postId })
@@ -38,7 +38,7 @@ module.exports = {
       .exec();
   },
 
-  // 通过文章 id 获取该文章下留言数
+  // 通过课程 id 获取该课程下留言数
   getCommentsCount: function getCommentsCount(postId) {
     return Comment.count({ postId: postId }).exec();
   }

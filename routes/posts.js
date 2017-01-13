@@ -3,9 +3,10 @@ var router = express.Router();
 
 var PostModel = require('../models/posts');
 var CommentModel = require('../models/comments');
+var AttenderModel = require('../models/attenders');
 var checkLogin = require('../middlewares/check').checkLogin;
 
-// GET /posts 所有用户或者特定用户的文章页
+// GET /posts 所有用户或者特定用户的课程页
 //   eg: GET /posts?author=xxx
 router.get('/', function(req, res, next) {
   var author = req.query.author;// 获取url中的查询参数author
@@ -19,7 +20,7 @@ router.get('/', function(req, res, next) {
     .catch(next);
 });
 
-// GET /posts/create 发表文章页
+// GET /posts/create 发表课程页
 router.get('/create', checkLogin, function(req, res, next) {
   if(req.session.user.identity == 'teacher') {
     res.render('create');
@@ -29,7 +30,7 @@ router.get('/create', checkLogin, function(req, res, next) {
   }
 });
 
-// POST /posts 发表一篇文章
+// POST /posts 发表课程
 router.post('/', checkLogin, function(req, res, next) {
   var author = req.session.user._id;
   var title = req.fields.title;
@@ -60,7 +61,8 @@ router.post('/', checkLogin, function(req, res, next) {
     title: title,
     content: content,
     type: type,
-    pv: 0
+    pv: 0,
+    atd: 0
   };
 
   PostModel.create(post)
@@ -178,6 +180,38 @@ router.get('/:postId/comment/:commentId/remove', checkLogin, function(req, res, 
     .then(function () {
       req.flash('success', '删除留言成功');
       // 删除成功后跳转到上一页
+      res.redirect('back');
+    })
+    .catch(next);
+});
+
+// POST /posts/:postId/attender 添加课程参与人
+router.post('/:postId/attender', checkLogin, function(req, res, next) {
+  var postId = req.postId;
+  var attender = req.session.user._id;
+  var attender = {
+    postId: postId,
+    attender: attender
+  };
+
+  AttenderModel.create(attender)
+    .then(function () {
+      req.flash('success', '加入课程成功');
+      // 参加课程成功后跳转到上一页
+      res.redirect('back');
+    })
+    .catch(next);
+});
+
+// GET /posts/:postId/attender/:attenderId/remove 删除课程参与人
+router.get('/:postId/attender/:attenderId/remove', checkLogin, function (req, res, next) {
+  var attenderId = req.params.attenderId;
+  var attender = req.session.user._id;
+
+  AttenderModel.delAttendById(attenderId, attender)
+    .then(function () {
+      req.flash('success', '退出课程成功');
+      // 退出成功后跳转上一页
       res.redirect('back');
     })
     .catch(next);
