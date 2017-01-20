@@ -70,37 +70,40 @@ router.post('/', checkLogin, function(req, res, next) {
       // 此 post 是插入 mongodb 后的值，包含 _id
       post = result.ops[0];
       req.flash('success', '发表成功');
-      // 发表成功后跳转到该文章页
+      // 发表成功后跳转到该课程页
       res.redirect(`/posts/${post._id}`);
     })
     .catch(next);
 });
 
-// GET /posts/:postId 单独一篇的文章页
+// GET /posts/:postId 单独一篇的课程页
 router.get('/:postId', function(req, res, next) {
   var postId = req.params.postId;
   
   Promise.all([
-    PostModel.getPostById(postId),// 获取文章信息
-    CommentModel.getComments(postId),// 获取该文章所有留言
+    PostModel.getPostById(postId),// 获取课程 id
+    CommentModel.getComments(postId),// 获取该课程所有留言
+    AttenderModel.getAttenders(postId),
     PostModel.incPv(postId)// pv 加 1
   ])
   .then(function (result) {
     var post = result[0];
     var comments = result[1];
+    var attenders = result[2];
     if (!post) {
-      throw new Error('该文章不存在');
+      throw new Error('该课程不存在');
     }
 
     res.render('post', {
       post: post,
-      comments: comments
+      comments: comments,
+      attenders: attenders
     });
   })
   .catch(next);
 });
 
-// GET /posts/:postId/edit 更新文章页
+// GET /posts/:postId/edit 更新课程页
 router.get('/:postId/edit', checkLogin, function(req, res, next) {
   var postId = req.params.postId;
   var author = req.session.user._id;
@@ -108,7 +111,7 @@ router.get('/:postId/edit', checkLogin, function(req, res, next) {
   PostModel.getRawPostById(postId)
     .then(function (post) {
       if (!post) {
-        throw new Error('该文章不存在');
+        throw new Error('该课程不存在');
       }
       if (author.toString() !== post.author._id.toString()) {
         throw new Error('权限不足');
@@ -120,7 +123,7 @@ router.get('/:postId/edit', checkLogin, function(req, res, next) {
     .catch(next);
 });
 
-// POST /posts/:postId/edit 更新一篇文章
+// POST /posts/:postId/edit 更新课程
 router.post('/:postId/edit', checkLogin, function(req, res, next) {
   var postId = req.params.postId;
   var author = req.session.user._id;
@@ -130,21 +133,21 @@ router.post('/:postId/edit', checkLogin, function(req, res, next) {
 
   PostModel.updatePostById(postId, author, { title: title, content: content, type: type })
     .then(function () {
-      req.flash('success', '编辑文章成功');
+      req.flash('success', '编辑课程成功');
       // 编辑成功后跳转到上一页
       res.redirect(`/posts/${postId}`);
     })
     .catch(next);
 });
 
-// GET /posts/:postId/remove 删除一篇文章
+// GET /posts/:postId/remove 删除一个课程
 router.get('/:postId/remove', checkLogin, function(req, res, next) {
   var postId = req.params.postId;
   var author = req.session.user._id;
 
   PostModel.delPostById(postId, author)
     .then(function () {
-      req.flash('success', '删除文章成功');
+      req.flash('success', '删除课程成功');
       // 删除成功后跳转到主页
       res.redirect('/posts');
     })
@@ -185,16 +188,16 @@ router.get('/:postId/comment/:commentId/remove', checkLogin, function(req, res, 
     .catch(next);
 });
 
-// POST /posts/:postId/attender 添加课程参与人
-router.post('/:postId/attender', checkLogin, function(req, res, next) {
+// POST /posts/:postId/attend 添加课程参与人
+router.post('/:postId/attend', checkLogin, function(req, res, next) {
   var postId = req.postId;
   var attender = req.session.user._id;
-  var attender = {
+  var attend = {
     postId: postId,
     attender: attender
   };
 
-  AttenderModel.create(attender)
+  AttenderModel.create(attend)
     .then(function () {
       req.flash('success', '加入课程成功');
       // 参加课程成功后跳转到上一页
@@ -203,8 +206,9 @@ router.post('/:postId/attender', checkLogin, function(req, res, next) {
     .catch(next);
 });
 
-// GET /posts/:postId/attender/:attenderId/remove 删除课程参与人
-router.get('/:postId/attender/:attenderId/remove', checkLogin, function (req, res, next) {
+// GET /posts/:postId/attend
+// /:attenderId/remove 删除课程参与人
+router.get('/:postId/attend/:attenderId/remove', checkLogin, function (req, res, next) {
   var attenderId = req.params.attenderId;
   var attender = req.session.user._id;
 

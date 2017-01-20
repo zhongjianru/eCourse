@@ -23,8 +23,8 @@ module.exports = {
       .find({ postId: postId })
       .populate({ path: 'attender', model: 'User' })
       .sort({ _id: 1 })
-      .addCreateAt()
-      .addAttendersCount()
+      //.addCreateAt()
+      //.addAttendersCount()
       .exec();
   },
   // 通过课程 id 获取该课程参与者人数
