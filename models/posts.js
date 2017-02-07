@@ -103,7 +103,7 @@ module.exports = {
       .exec();
   },
 
-  // 通过课程 id 获取原生课程（编辑课程）
+  // 通过课程 id 获取原来课程内容（编辑课程）
   getRawPostById: function getRawPostById(postId) {
     return Post
       .findOne({ _id: postId })

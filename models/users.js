@@ -12,5 +12,13 @@ module.exports = {
       .findOne({ name: name })
       .addCreatedAt()
       .exec();
+  },
+
+  // 通过用户id获取用户信息
+  getUserById: function getUserById(userId) {
+    return User
+      .findOne({ _id: userId })
+      .addCreatedAt()
+      .exec();
   }
 };

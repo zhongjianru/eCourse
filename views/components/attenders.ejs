@@ -15,10 +15,14 @@
         </h3>
 
         <% attenders.forEach(function (attender) { %>
-        <div class="comment">
-            <span class="avatar">
-              <img src="/img/<%= attender.attender.avatar %>">
-            </span>
+        <div class="four wide column">
+          <a class="avatar"
+             target="_blank"
+             href="/posts?author=<%= post.author._id %>"
+             data-title="<%= post.author.name %> | <%= ({teacher: '教师', student: '学生'})[post.author.identity] %>"
+             data-content="<%= post.author.bio %>">
+            <img class="avatar" src="/img/<%= post.author.avatar %>">
+          </a>
         </div>
         <% }) %>
 
