@@ -1,29 +1,53 @@
 var express = require('express');
 var router = express.Router();
 
+var UserModel = require('../models/users');
 var PostModel = require('../models/posts');
 var CommentModel = require('../models/comments');
 var AttenderModel = require('../models/attenders');
 var checkLogin = require('../middlewares/check').checkLogin;
 
-// GET /posts 所有用户或者特定用户的课程页
+// GET /posts 所有课程页或者特定用户的个人主页
 // eg: GET /posts?author=xxx
 router.get('/', function(req, res, next) {
-  var author = req.query.author;// 获取url中的查询参数author
-
-  PostModel.getPosts(author)
-    .then(function (posts) {
-      res.render('posts', {
-        posts: posts
+  //所有课程页
+  if(!req.query.author) {
+    //获取所有课程
+    PostModel.getPosts(null)
+      .then(function (posts) {
+        res.render('posts', {
+          posts: posts,
+          subtitle: 'scnu online'
+        });
+      })
+      .catch(next);
+  }
+  //个人主页
+  else {
+    var author = req.query.author;// 获取url中的查询参数author
+    Promise.all([
+        UserModel.getUserById(author)
+      ])
+      .then(function (result) {
+        var user = result[0];
+        PostModel.getPosts(author)
+          .then(function (posts) {
+            res.render('profile', {
+              posts: posts,
+              subtitle: user.name + ' - 个人主页',
+              name: user.name,
+              identity: user.identity
+            });
+          })
+          .catch(next);
       });
-    })
-    .catch(next);
+  }
 });
 
 // GET /posts/create 发表课程页
 router.get('/create', checkLogin, function(req, res, next) {
-  if(req.session.user.identity == 'teacher') {
-    res.render('create');
+  if(req.session.user.identity === 'teacher') {
+    res.render('create', { subtitle: '发表课程' });
   }
   else {
     res.render('404');
@@ -97,7 +121,8 @@ router.get('/:postId', function(req, res, next) {
     res.render('post', {
       post: post,
       comments: comments,
-      attenders: attenders
+      attenders: attenders,
+      subtitle: post.title + ' - 课程页'
     });
   })
   .catch(next);
@@ -117,7 +142,8 @@ router.get('/:postId/edit', checkLogin, function(req, res, next) {
         throw new Error('权限不足');
       }
       res.render('edit', {
-        post: post
+        post: post,
+        subtitle: post.title + ' - 修改课程'
       });
     })
     .catch(next);
@@ -190,7 +216,16 @@ router.get('/:postId/comment/:commentId/remove', checkLogin, function(req, res, 
 
 // POST /posts/:postId/attend 添加课程参与人
 router.post('/:postId/attend', checkLogin, function(req, res, next) {
-  var postId = req.postId;
+  try {
+    if (req.session.user.identity === 'teacher') {
+      throw new Error('教师不能加入课程');
+    }
+  } catch (e) {
+    req.flash('error', e.message);
+    return res.redirect('back');
+  }
+
+  var postId = req.params.postId;
   var attender = req.session.user._id;
   var attend = {
     postId: postId,
@@ -200,7 +235,7 @@ router.post('/:postId/attend', checkLogin, function(req, res, next) {
   AttenderModel.create(attend)
     .then(function () {
       req.flash('success', '加入课程成功');
-      // 参加课程成功后跳转到上一页
+      // 加入课程成功后跳转到上一页
       res.redirect('back');
     })
     .catch(next);
