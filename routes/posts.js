@@ -30,16 +30,31 @@ router.get('/', function(req, res, next) {
       ])
       .then(function (result) {
         var user = result[0];
-        PostModel.getPosts(author)
-          .then(function (posts) {
-            res.render('profile', {
-              posts: posts,
-              subtitle: user.name + ' - 个人主页',
-              name: user.name,
-              identity: user.identity
-            });
-          })
-          .catch(next);
+
+        // 教师显示发布的课程，学生显示加入的课程
+        if(user.identity === 'teacher') {
+          PostModel.getPosts(author)
+            .then(function (posts) {
+              res.render('profile', {
+                posts: posts,
+                subtitle: user.name + ' - 个人主页',
+                user: user
+              });
+            })
+            .catch(next);
+        }
+        else {
+          AttenderModel.getPostsByUserId(author)
+          //PostModel.getPosts(author)
+            .then(function (posts) {
+              res.render('profile', {
+                posts: posts,
+                subtitle: user.name + ' - 个人主页',
+                user: user
+              });
+            })
+            .catch(next);
+        }
       });
   }
 });
@@ -226,13 +241,15 @@ router.post('/:postId/attend', checkLogin, function(req, res, next) {
   }
 
   var postId = req.params.postId;
-  var attender = req.session.user._id;
-  var attend = {
+  var userId = req.session.user._id;
+  var userName = req.session.user.name;
+  var attender = {
     postId: postId,
-    attender: attender
+    userId: userId,
+    userName: userName
   };
 
-  AttenderModel.create(attend)
+  AttenderModel.create(attender)
     .then(function () {
       req.flash('success', '加入课程成功');
       // 加入课程成功后跳转到上一页

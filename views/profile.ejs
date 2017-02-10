@@ -1,10 +1,10 @@
 <%- include('header') %>
 
-<% if (identity === 'teacher') { %>
-<h1 class="ui segment"><%= name %>发布的课程</h1>
+<% if (user.identity === 'teacher') { %>
+<h1 class="ui segment"><%= user.name %>发布的课程</h1>
 
 <% } else { %>
-<h1 class="ui segment"><%= name %>参与的课程</h1>
+<h1 class="ui segment"><%= user.name %>参与的课程</h1>
 <% } %>
 
 <% posts.forEach(function (post) { %>
