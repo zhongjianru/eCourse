@@ -18,10 +18,10 @@
         <div class="four wide column">
           <a class="avatar"
              target="_blank"
-             href="/posts?author=<%= post.author._id %>"
-             data-title="<%= post.author.name %> | <%= ({teacher: '教师', student: '学生'})[post.author.identity] %>"
-             data-content="<%= post.author.bio %>">
-            <img class="avatar" src="/img/<%= post.author.avatar %>">
+             href="/posts?author=<%= attender.userId._id %>"
+             data-title="<%= attender.userName %> | <%= ({teacher: '教师', student: '学生'})[attender.userId.identity] %>"
+             data-content="<%= attender.userId.bio %>">
+            <img class="avatar" src="/img/<%= attender.userId.avatar %>">
           </a>
         </div>
         <% }) %>

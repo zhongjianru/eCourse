@@ -21,7 +21,7 @@ module.exports = {
   getAttenders: function getAttenders(postId) {
     return Attender
       .find({ postId: postId })
-      .populate({ path: 'attender', model: 'User' })
+      .populate({ path: 'userId', model: 'User' })
       .sort({ _id: 1 })
       .addCreatedAt()
       .exec();
@@ -30,9 +30,12 @@ module.exports = {
   getPostsByUserId: function getPostsByUserId(userId) {
     return Attender
       .find({ userId: userId })
-      .populate({ path: 'attender', model: 'User' })
+      .populate({ path: 'postId', model: 'Post' })
+      .populate({ path: 'userId', model: 'User' })
       .sort({ _id: 1 })
       .addCreatedAt()
+      //.addAttendersCount()
+      //.addCommentsCount()
       .exec();
   },
   // 通过课程 id 获取该课程参与者人数

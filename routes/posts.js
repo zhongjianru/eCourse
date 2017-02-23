@@ -29,7 +29,7 @@ router.get('/', function(req, res, next) {
         UserModel.getUserById(author)
       ])
       .then(function (result) {
-        var user = result[0];
+        var user = result[0];// 查询参数author作为userId在user库中的信息
 
         // 教师显示发布的课程，学生显示加入的课程
         if(user.identity === 'teacher') {
@@ -45,7 +45,6 @@ router.get('/', function(req, res, next) {
         }
         else {
           AttenderModel.getPostsByUserId(author)
-          //PostModel.getPosts(author)
             .then(function (posts) {
               res.render('profile', {
                 posts: posts,
