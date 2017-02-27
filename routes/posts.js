@@ -24,31 +24,34 @@ router.get('/', function(req, res, next) {
   }
   //个人主页
   else {
-    var author = req.query.author;// 获取url中的查询参数author
+    var user = req.session.user;
+    var authorid = req.query.author;// 获取url中的查询参数author
     Promise.all([
-        UserModel.getUserById(author)
+        UserModel.getUserById(authorid)
       ])
       .then(function (result) {
-        var user = result[0];// 查询参数author作为userId在user库中的信息
+        var author = result[0];// 查询参数 author 作为 userId 在 user 库中的信息
 
         // 教师显示发布的课程，学生显示加入的课程
-        if(user.identity === 'teacher') {
-          PostModel.getPosts(author)
+        if(author.identity === 'teacher') {
+          PostModel.getPosts(authorid)
             .then(function (posts) {
               res.render('profile', {
                 posts: posts,
-                subtitle: user.name + ' - 个人主页',
+                subtitle: author.name + ' - 个人主页',
+                author: author,
                 user: user
               });
             })
             .catch(next);
         }
         else {
-          AttenderModel.getPostsByUserId(author)
+          AttenderModel.getPostsByUserId(authorid)
             .then(function (posts) {
               res.render('profile', {
                 posts: posts,
-                subtitle: user.name + ' - 个人主页',
+                subtitle: author.name + ' - 个人主页',
+                author: author,
                 user: user
               });
             })
@@ -100,6 +103,7 @@ router.post('/', checkLogin, function(req, res, next) {
     content: content,
     type: type,
     pv: 0,
+    cmt: 0,
     atd: 0
   };
 
@@ -207,6 +211,7 @@ router.post('/:postId/comment', checkLogin, function(req, res, next) {
 
   CommentModel.create(comment)
     .then(function () {
+      PostModel.incCmt(postId);
       req.flash('success', '留言成功');
       // 留言成功后跳转到上一页
       res.redirect('back');
@@ -216,11 +221,13 @@ router.post('/:postId/comment', checkLogin, function(req, res, next) {
 
 // GET /posts/:postId/comment/:commentId/remove 删除一条留言
 router.get('/:postId/comment/:commentId/remove', checkLogin, function(req, res, next) {
+  var postId = req.params.postId;
   var commentId = req.params.commentId;
   var author = req.session.user._id;
 
   CommentModel.delCommentById(commentId, author)
     .then(function () {
+      PostModel.decCmt(postId);
       req.flash('success', '删除留言成功');
       // 删除成功后跳转到上一页
       res.redirect('back');
@@ -250,6 +257,7 @@ router.post('/:postId/attend', checkLogin, function(req, res, next) {
 
   AttenderModel.create(attender)
     .then(function () {
+      PostModel.incAtd(postId);
       req.flash('success', '加入课程成功');
       // 加入课程成功后跳转到上一页
       res.redirect('back');
@@ -260,11 +268,13 @@ router.post('/:postId/attend', checkLogin, function(req, res, next) {
 // GET /posts/:postId/attend
 // /:attenderId/remove 删除课程参与人
 router.get('/:postId/attend/:attenderId/remove', checkLogin, function (req, res, next) {
+  var postId = req.params.postId;
   var attenderId = req.params.attenderId;
   var attender = req.session.user._id;
 
   AttenderModel.delAttendById(attenderId, attender)
     .then(function () {
+      PostModel.decAtd(postId);
       req.flash('success', '退出课程成功');
       // 退出成功后跳转上一页
       res.redirect('back');

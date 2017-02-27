@@ -1,17 +1,17 @@
 <%- include('header') %>
 
-<% if (user.identity === 'teacher') { %>
+<% if (author.identity === 'teacher') { %>
 <div class="ui grid">
   <div class="three wide column"></div>
   <div class="nine wide column">
     <div class="ui segment">
-      <h1><%= user.name %>发布的课程</h1>
+      <h1><%= author.name %>发布的课程</h1>
     </div>
   </div>
 </div>
 
 <% posts.forEach(function (post) { %>
-<%- include('components/post-content', { post: post }) %>
+<%- include('components/profile-teacher', { post: post }) %>
 <% }) %>
 
 <% } else { %>
@@ -19,13 +19,13 @@
   <div class="three wide column"></div>
   <div class="nine wide column">
     <div class="ui segment">
-      <h1><%= user.name %>参与的课程</h1>
+      <h1><%= author.name %>参与的课程</h1>
     </div>
   </div>
 </div>
 
 <% posts.forEach(function (post) { %>
-<%- include('components/profile-content', { post: post }) %>
+<%- include('components/profile-student', { post: post }) %>
 <% }) %>
 <% } %>
 

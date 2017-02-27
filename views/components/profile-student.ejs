@@ -18,8 +18,8 @@
           <span class="tag"><%= post.postId.created_at %></span>
           <span class="tag right">
             <span>浏览(<%= post.postId.pv %>)</span>
-            <span>留言(<%= post.commentsCount %>)</span>
-            <span>参与人数(<%= post.attendersCount %>)</span>
+            <span>留言(<%= post.postId.cmt %>)</span>
+            <span>参与人数(<%= post.postId.atd %>)</span>
           </span>
         </div>
       </div>

@@ -4,6 +4,9 @@
       <i class="icon bars"></i>
       <div class="menu">
         <% if (user) { %>
+          <h2 style="color: #000;">
+            <%= user.name %>
+          </h2>
           <a class="item" href="/posts?author=<%= user._id %>" target="_blank">个人主页</a>
           <div class="divider"></div>
 

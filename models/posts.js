@@ -102,6 +102,34 @@ module.exports = {
       .update({ _id: postId }, { $inc: { pv: 1 } })
       .exec();
   },
+  
+  // 通过课程 id 给 cmt 加 1
+  incCmt: function incCmt(postId) {
+    return Post
+      .update({ _id: postId }, { $inc: { cmt: 1 } })
+      .exec();
+  },
+  
+  // 通过课程 id 给 atd 加 1
+  incAtd: function incAtd(postId) {
+    return Post
+      .update({ _id: postId }, { $inc: { atd: 1 } })
+      .exec();
+  },
+
+  // 通过课程 id 给 cmt 减 1
+  decCmt: function decCmt(postId) {
+    return Post
+      .update({ _id: postId }, { $inc: { cmt: -1 } })
+      .exec();
+  },
+
+  // 通过课程 id 给 atd 减 1
+  decAtd: function decAtd(postId) {
+    return Post
+      .update({ _id: postId }, { $inc: { atd: -1 } })
+      .exec();
+  },
 
   // 通过课程 id 获取原来课程内容（编辑课程）
   getRawPostById: function getRawPostById(postId) {
@@ -121,9 +149,10 @@ module.exports = {
     return Post.remove({ author: author, _id: postId })
       .exec()
       .then(function (res) {
-        // 文章删除后，再删除该文章下的所有留言
+        // 课程删除后，删除该课程下的所有留言和所有参与者
         if (res.result.ok && res.result.n > 0) {
-          return CommentModel.delCommentsByPostId(postId);
+            CommentModel.delCommentsByPostId(postId);
+            AttenderModel.delAttendersByPostId(postId);
         }
       });
   }

@@ -34,8 +34,6 @@ module.exports = {
       .populate({ path: 'userId', model: 'User' })
       .sort({ _id: 1 })
       .addCreatedAt()
-      //.addAttendersCount()
-      //.addCommentsCount()
       .exec();
   },
   // 通过课程 id 获取该课程参与者人数
