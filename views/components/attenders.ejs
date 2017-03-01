@@ -14,14 +14,14 @@
 
         </h3>
 
-        <% attenders.forEach(function (attender) { %>
+        <% attendances.forEach(function (attendance) { %>
         <div class="four wide column">
           <a class="avatar"
              target="_blank"
-             href="/posts?author=<%= attender.userId._id %>"
-             data-title="<%= attender.userName %> | <%= ({teacher: '教师', student: '学生'})[attender.userId.identity] %>"
-             data-content="<%= attender.userId.bio %>">
-            <img class="avatar" src="/img/<%= attender.userId.avatar %>">
+             href="/posts?author=<%= attendance.attender._id %>"
+             data-title="<%= attendance.attender.userName %> | <%= ({teacher: '教师', student: '学生'})[attendance.attender.identity] %>"
+             data-content="<%= attendance.attender.bio %>">
+            <img class="avatar" src="/img/<%= attendance.attender.avatar %>">
           </a>
         </div>
         <% }) %>

@@ -21,7 +21,7 @@ module.exports = {
   getAttenders: function getAttenders(postId) {
     return Attender
       .find({ postId: postId })
-      .populate({ path: 'userId', model: 'User' })
+      .populate({ path: 'attender', model: 'User' })
       .sort({ _id: 1 })
       .addCreatedAt()
       .exec();
@@ -29,10 +29,10 @@ module.exports = {
   // 通过用户 id 获取用户加入的所有课程
   getPostsByUserId: function getPostsByUserId(userId) {
     return Attender
-      .find({ userId: userId })
+      .find({ attender: userId })
       .populate({ path: 'postId', model: 'Post' })
-      .populate({ path: 'authorId', model: 'User' })
-      .populate({ path: 'userId', model: 'User' })
+      .populate({ path: 'author', model: 'User' })
+      .populate({ path: 'attender', model: 'User' })
       .sort({ _id: 1 })
       .addCreatedAt()
       .exec();

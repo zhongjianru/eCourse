@@ -131,7 +131,7 @@ router.get('/:postId', function(req, res, next) {
   .then(function (result) {
     var post = result[0];
     var comments = result[1];
-    var attenders = result[2];
+    var attendances = result[2];
     if (!post) {
       throw new Error('该课程不存在');
     }
@@ -139,7 +139,7 @@ router.get('/:postId', function(req, res, next) {
     res.render('post', {
       post: post,
       comments: comments,
-      attenders: attenders,
+      attendances: attendances,
       subtitle: post.title + ' - 课程页'
     });
   })
@@ -248,7 +248,6 @@ router.post('/:postId/attend', checkLogin, function(req, res, next) {
 
   var postId = req.params.postId;
   var userId = req.session.user._id;
-  var userName = req.session.user.name;
 
   PostModel.getPostById(postId)
     .then(function (post) {
@@ -256,9 +255,8 @@ router.post('/:postId/attend', checkLogin, function(req, res, next) {
 
       var attender = {
         postId: postId,
-        authorId: authorId,
-        userId: userId,
-        userName: userName
+        author: authorId,
+        attender: userId
       };
 
       AttenderModel.create(attender)
