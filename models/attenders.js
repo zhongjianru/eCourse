@@ -10,8 +10,8 @@ module.exports = {
     return Attender.create(attender).exec();
   },
   // 通过用户 id 和参与者 id 删除一位课程参与者
-  delAttenderByPostId: function delAttendByPostId(userId, attenderId) {
-    return Attender.remove({ userId: userId, _id: attenderId });
+  delAttenderByAttendId: function delAttendByPostId(userId, attendId) {
+    return Attender.remove({ userId: userId, _id: attendId });
   },
   // 通过课程 id 删除该课程下的所有参与者
   delAttendersByPostId: function delAttendersByPostId(postId) {
@@ -34,6 +34,13 @@ module.exports = {
       .populate({ path: 'author', model: 'User' })
       .populate({ path: 'attender', model: 'User' })
       .sort({ _id: 1 })
+      .addCreatedAt()
+      .exec();
+  },
+  // 通过用户 id 和 课程 id 获取用户是否已加入该课程
+  isAttended: function isAttended(userId, postId) {
+    return Attender
+      .find({ attender: userId, postId: postId })
       .addCreatedAt()
       .exec();
   },

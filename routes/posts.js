@@ -26,6 +26,7 @@ router.get('/', function(req, res, next) {
   else {
     var activeuser = req.session.user;
     var authorid = req.query.author;// 获取url中的查询参数author
+    
     Promise.all([
         UserModel.getUserById(authorid)
       ])
@@ -121,17 +122,24 @@ router.post('/', checkLogin, function(req, res, next) {
 // GET /posts/:postId 单独一篇的课程页
 router.get('/:postId', function(req, res, next) {
   var postId = req.params.postId;
+  var userId = '';
+  if(req.session.user) {
+    userId = req.session.user._id;
+  }
   
   Promise.all([
     PostModel.getPostById(postId),// 获取课程 id
     CommentModel.getComments(postId),// 获取该课程所有留言
     AttenderModel.getAttenders(postId),
+    AttenderModel.isAttended(userId, postId),
     PostModel.incPv(postId)// pv 加 1
   ])
   .then(function (result) {
     var post = result[0];
     var comments = result[1];
     var attendances = result[2];
+    var isAttended = result[3];
+    
     if (!post) {
       throw new Error('该课程不存在');
     }
@@ -140,7 +148,8 @@ router.get('/:postId', function(req, res, next) {
       post: post,
       comments: comments,
       attendances: attendances,
-      subtitle: post.title + ' - 课程页'
+      subtitle: post.title + ' - 课程页',
+      isAttended: isAttended
     });
   })
   .catch(next);
@@ -184,7 +193,7 @@ router.post('/:postId/edit', checkLogin, function(req, res, next) {
     .catch(next);
 });
 
-// GET /posts/:postId/remove 删除一个课程
+// GET /posts/:postId/remove 删除课程
 router.get('/:postId/remove', checkLogin, function(req, res, next) {
   var postId = req.params.postId;
   var author = req.session.user._id;
@@ -272,12 +281,12 @@ router.post('/:postId/attend', checkLogin, function(req, res, next) {
 
 // GET /posts/:postId/attend
 // /:attenderId/remove 删除课程参与人
-router.get('/:postId/attend/:attenderId/remove', checkLogin, function (req, res, next) {
+router.get('/:postId/attend/:attendId/remove', checkLogin, function (req, res, next) {
   var postId = req.params.postId;
-  var attenderId = req.params.attenderId;
   var attender = req.session.user._id;
+  var attendId = req.params.attendId;
 
-  AttenderModel.delAttendById(attenderId, attender)
+  AttenderModel.delAttenderByAttendId(attender, attendId)
     .then(function () {
       PostModel.decAtd(postId);
       req.flash('success', '退出课程成功');
