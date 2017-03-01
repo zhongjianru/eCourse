@@ -31,6 +31,7 @@ module.exports = {
     return Attender
       .find({ userId: userId })
       .populate({ path: 'postId', model: 'Post' })
+      .populate({ path: 'authorId', model: 'User' })
       .populate({ path: 'userId', model: 'User' })
       .sort({ _id: 1 })
       .addCreatedAt()

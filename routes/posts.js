@@ -24,7 +24,7 @@ router.get('/', function(req, res, next) {
   }
   //个人主页
   else {
-    var user = req.session.user;
+    var activeuser = req.session.user;
     var authorid = req.query.author;// 获取url中的查询参数author
     Promise.all([
         UserModel.getUserById(authorid)
@@ -40,7 +40,7 @@ router.get('/', function(req, res, next) {
                 posts: posts,
                 subtitle: author.name + ' - 个人主页',
                 author: author,
-                user: user
+                user: activeuser
               });
             })
             .catch(next);
@@ -52,7 +52,7 @@ router.get('/', function(req, res, next) {
                 posts: posts,
                 subtitle: author.name + ' - 个人主页',
                 author: author,
-                user: user
+                user: activeuser
               });
             })
             .catch(next);
@@ -249,20 +249,27 @@ router.post('/:postId/attend', checkLogin, function(req, res, next) {
   var postId = req.params.postId;
   var userId = req.session.user._id;
   var userName = req.session.user.name;
-  var attender = {
-    postId: postId,
-    userId: userId,
-    userName: userName
-  };
 
-  AttenderModel.create(attender)
-    .then(function () {
-      PostModel.incAtd(postId);
-      req.flash('success', '加入课程成功');
-      // 加入课程成功后跳转到上一页
-      res.redirect('back');
-    })
-    .catch(next);
+  PostModel.getPostById(postId)
+    .then(function (post) {
+      var authorId = post.author._id;
+
+      var attender = {
+        postId: postId,
+        authorId: authorId,
+        userId: userId,
+        userName: userName
+      };
+
+      AttenderModel.create(attender)
+        .then(function () {
+          PostModel.incAtd(postId);
+          req.flash('success', '加入课程成功');
+          // 加入课程成功后跳转到上一页
+          res.redirect('back');
+        })
+        .catch(next);
+    });
 });
 
 // GET /posts/:postId/attend
