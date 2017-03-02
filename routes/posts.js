@@ -279,18 +279,17 @@ router.post('/:postId/attend', checkLogin, function(req, res, next) {
     });
 });
 
-// GET /posts/:postId/attend
-// /:attenderId/remove 删除课程参与人
+// GET /posts/:postId/attend/:attendId/remove 删除课程参与人
 router.get('/:postId/attend/:attendId/remove', checkLogin, function (req, res, next) {
   var postId = req.params.postId;
-  var attender = req.session.user._id;
   var attendId = req.params.attendId;
+  var attender = req.session.user._id;
 
-  AttenderModel.delAttenderByAttendId(attender, attendId)
+  AttenderModel.delAttenderByAttendId(attendId, attender)
     .then(function () {
       PostModel.decAtd(postId);
       req.flash('success', '退出课程成功');
-      // 退出成功后跳转上一页
+      // 退出课程成功后跳转到上一页
       res.redirect('back');
     })
     .catch(next);

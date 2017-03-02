@@ -14,7 +14,7 @@
             <input type="submit" class="ui icon button" value="加入课程" />
           </form>
           <% } else { %>
-          <form class="ui reply form" method="post" action="/posts/<%= post._id %>/attend/<%= isAttended[0]._id %>/remove">
+          <form class="ui reply form" method="get" action="/posts/<%= post._id %>/attend/<%= isAttended[0]._id %>/remove">
             <div class="field">
             </div>
             <input type="submit" class="ui icon button" value="退出课程" />

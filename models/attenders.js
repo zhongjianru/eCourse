@@ -10,8 +10,8 @@ module.exports = {
     return Attender.create(attender).exec();
   },
   // 通过用户 id 和参与者 id 删除一位课程参与者
-  delAttenderByAttendId: function delAttendByPostId(userId, attendId) {
-    return Attender.remove({ userId: userId, _id: attendId });
+  delAttenderByAttendId: function delAttendByPostId(attendId, attender) {
+    return Attender.remove({ _id: attendId, attender: attender }).exec();
   },
   // 通过课程 id 删除该课程下的所有参与者
   delAttendersByPostId: function delAttendersByPostId(postId) {
