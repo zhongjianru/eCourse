@@ -12,10 +12,10 @@ router.get('/', checkNotLogin, function(req, res, next) {
 
 // POST /signin 用户登录
 router.post('/', checkNotLogin, function(req, res, next) {
-  var name = req.fields.name;
+  var username = req.fields.username;
   var password = req.fields.password;
 
-  UserModel.getUserByName(name)
+  UserModel.getUserByUsername(username)
     .then(function (user) {
       if (!user) {
         req.flash('error', '用户不存在');
