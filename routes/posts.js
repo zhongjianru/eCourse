@@ -5,6 +5,7 @@ var UserModel = require('../models/users');
 var PostModel = require('../models/posts');
 var CommentModel = require('../models/comments');
 var AttenderModel = require('../models/attenders');
+var LessonModel = require('../models/lessons');
 var checkLogin = require('../middlewares/check').checkLogin;
 
 // GET /posts 所有课程页或者特定用户的个人主页
@@ -16,8 +17,8 @@ router.get('/', function(req, res, next) {
     PostModel.getPosts(null)
       .then(function (posts) {
         res.render('posts', {
-          posts: posts,
-          subtitle: 'scnu online'
+          subtitle: 'scnu online',
+          posts: posts
         });
       })
       .catch(next);
@@ -26,7 +27,7 @@ router.get('/', function(req, res, next) {
   else {
     var activeuser = req.session.user;
     var authorid = req.query.author;// 获取url中的查询参数author
-    
+
     Promise.all([
         UserModel.getUserById(authorid)
       ])
@@ -38,8 +39,8 @@ router.get('/', function(req, res, next) {
           PostModel.getPosts(authorid)
             .then(function (posts) {
               res.render('profile', {
-                posts: posts,
                 subtitle: author.name + ' - 个人主页',
+                posts: posts,
                 author: author,
                 user: activeuser
               });
@@ -50,8 +51,8 @@ router.get('/', function(req, res, next) {
           AttenderModel.getPostsByUserId(authorid)
             .then(function (posts) {
               res.render('profile', {
-                posts: posts,
                 subtitle: author.name + ' - 个人主页',
+                posts: posts,
                 author: author,
                 user: activeuser
               });
@@ -62,17 +63,17 @@ router.get('/', function(req, res, next) {
   }
 });
 
-// GET /posts/create 发表课程页
+// GET /posts/create 发布课程页
 router.get('/create', checkLogin, function(req, res, next) {
   if(req.session.user.identity === 'teacher') {
-    res.render('create', { subtitle: '发表课程' });
+    res.render('create', { subtitle: '发布课程' });
   }
   else {
     res.render('404');
   }
 });
 
-// POST /posts 发表课程
+// POST /posts 发布课程
 router.post('/', checkLogin, function(req, res, next) {
   var author = req.session.user._id;
   var title = req.fields.title;
@@ -112,47 +113,50 @@ router.post('/', checkLogin, function(req, res, next) {
     .then(function (result) {
       // 此 post 是插入 mongodb 后的值，包含 _id
       post = result.ops[0];
-      req.flash('success', '发表成功');
-      // 发表成功后跳转到该课程页
+      req.flash('success', '发布课程成功');
+      // 发布成功后跳转到该课程页
       res.redirect(`/posts/${post._id}`);
     })
     .catch(next);
 });
 
-// GET /posts/:postId 单独一篇的课程页
+// GET /posts/:postId 课程页
 router.get('/:postId', function(req, res, next) {
   var postId = req.params.postId;
   var userId = '';
   if(req.session.user) {
     userId = req.session.user._id;
   }
-  
-  Promise.all([
-    PostModel.getPostById(postId),// 获取课程 id
-    CommentModel.getComments(postId),// 获取该课程所有留言
-    AttenderModel.getAttenders(postId),
-    AttenderModel.isAttended(userId, postId),
-    PostModel.incPv(postId)// pv 加 1
-  ])
-  .then(function (result) {
-    var post = result[0];
-    var comments = result[1];
-    var attendances = result[2];
-    var isAttended = result[3];
-    
-    if (!post) {
-      throw new Error('该课程不存在');
-    }
 
-    res.render('post', {
-      post: post,
-      comments: comments,
-      attendances: attendances,
-      subtitle: post.title + ' - 课程页',
-      isAttended: isAttended
-    });
-  })
-  .catch(next);
+  Promise.all([
+      PostModel.getPostById(postId),// 获取课程 id
+      CommentModel.getComments(postId),// 获取该课程所有留言
+      AttenderModel.getAttenders(postId),// 获取该课程所有参与者
+      AttenderModel.isAttended(userId, postId),// 获取当前用户是否已加入该课程
+      LessonModel.getLessons(postId),// 获取该课程所有课程内容
+      PostModel.incPv(postId)// pv 加 1
+    ])
+    .then(function (result) {
+      var post = result[0];
+      var comments = result[1];
+      var attendances = result[2];
+      var isAttended = result[3];
+      var lessons = result[4];
+
+      if (!post) {
+        throw new Error('该课程不存在');
+      }
+
+      res.render('post', {
+        subtitle: post.title + ' - 课程页',
+        post: post,
+        comments: comments,
+        attendances: attendances,
+        isAttended: isAttended,
+        lessons: lessons
+      });
+    })
+    .catch(next);
 });
 
 // GET /posts/:postId/edit 更新课程页
@@ -169,8 +173,8 @@ router.get('/:postId/edit', checkLogin, function(req, res, next) {
         throw new Error('权限不足');
       }
       res.render('edit', {
-        post: post,
-        subtitle: post.title + ' - 修改课程'
+        subtitle: post.title + ' - 修改课程',
+        post: post
       });
     })
     .catch(next);
@@ -291,6 +295,68 @@ router.get('/:postId/attend/:attendId/remove', checkLogin, function (req, res, n
       req.flash('success', '退出课程成功');
       // 退出课程成功后跳转到上一页
       res.redirect('back');
+    })
+    .catch(next);
+});
+
+// GET /posts/:postId/lesson 添加课程内容页
+router.get('/:postId/lesson', checkLogin, function(req, res, next) {
+  var postId = req.params.postId;
+  var userId = req.session.user._id;
+
+  PostModel.getPostById(postId)
+    .then(function (post) {
+      var author = post.author._id;
+
+      if(userId.toString() === author.toString()) {
+        res.render('addlesson', {
+          subtitle: '添加课程内容',
+          postId: postId
+        });
+      }
+      else {
+        throw new Error('权限不足');
+      }
+    })
+    .catch(next);
+});
+
+// POST /posts/:postId/lesson 添加课程内容
+router.post('/:postId/lesson', checkLogin, function (req, res, next) {
+  var postId = req.params.postId;
+  var order = req.fields.order;
+  var title = req.fields.title;
+  var content = req.fields.content;
+
+  var lesson = {
+    postId: postId,
+    order: order,
+    title: title,
+    content: content
+  };
+
+  LessonModel.create(lesson)
+    .then(function () {
+      req.flash('success', '添加课程内容成功');
+      // 添加课程内容成功后跳转到上一页
+      res.redirect('/posts/' + postId);
+    })
+    .catch(next);
+});
+
+// GET /posts/:postId/lesson/:lessonId 课程内容页
+router.get('/:postId/lesson/lessonId', function (req, res, next) {
+  var postId = req.params.postId;
+  var lessonId =req.params.lessonId;
+
+  LessonModel.getLessonByLessonId(lessonId)
+    .then(function (lesson) {
+      res.render('lesson', {
+        subtitle: '第' + lesson.order + '课时：' + lesson.title,
+        postId: postId,
+        lessonId: lessonId,
+        lesson: lesson
+      });
     })
     .catch(next);
 });

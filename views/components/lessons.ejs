@@ -1,0 +1,24 @@
+<div class="ui grid">
+  <div class="four wide column"></div>
+  <div class="eight wide column">
+    <div class="ui segment">
+      <div class="ui minimal comments">
+        <h3 class="ui dividing header">
+          课程内容
+        </h3>
+
+        <% lessons.forEach(function (lesson) { %>
+        <a href="/posts/<%= post._id %>/lesson/<%= lesson._id %>" target="_blank">
+          第<%= lesson.order %>课时：<%= lesson.title %>
+        </a>
+        <br />
+        <% }) %>
+
+        <% if (user && post.author._id && user._id.toString() === post.author._id.toString()) { %>
+          <a href="/posts/<%= post._id %>/lesson" type="submit" class="ui icon button">添加课程内容</a>
+        <% } %>
+
+      </div>
+    </div>
+  </div>
+</div>

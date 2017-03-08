@@ -1,0 +1,24 @@
+<div class="post-content">
+  <div class="ui grid">
+    <div class="four wide column">
+      <a class="avatar"
+         target="_blank"
+         href="/posts?author=<%= post.author._id %>"
+         data-title="<%= post.author.name %> | <%= ({teacher: '教师', student: '学生'})[post.author.identity] %>"
+         data-content="<%= post.author.bio %>">
+        <img class="avatar" src="/img/<%= post.author.avatar %>">
+      </a>
+    </div>
+
+    <div class="eight wide column">
+      <div class="ui segment">
+        <h3>
+          <a href="/posts/<%= post._id %>/lesson/<%= lesson._id%>" target="_blank">
+            第<%= lesson.order %>课时：<%= lesson.title %>
+          </a>
+        </h3>
+        <pre><%- lesson.content %></pre>
+      </div>
+    </div>
+  </div>
+</div>
