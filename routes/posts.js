@@ -345,17 +345,22 @@ router.post('/:postId/lesson', checkLogin, function (req, res, next) {
 });
 
 // GET /posts/:postId/lesson/:lessonId 课程内容页
-router.get('/:postId/lesson/lessonId', function (req, res, next) {
+router.get('/:postId/lesson/:lessonId', function (req, res, next) {
   var postId = req.params.postId;
   var lessonId =req.params.lessonId;
 
-  LessonModel.getLessonByLessonId(lessonId)
-    .then(function (lesson) {
+  Promise.all([
+      LessonModel.getLessonByLessonId(lessonId),
+      PostModel.getPostById(postId)
+    ])
+    .then(function (result) {
+      var lesson = result[0];
+      var post = result[1];
+
       res.render('lesson', {
         subtitle: '第' + lesson.order + '课时：' + lesson.title,
-        postId: postId,
-        lessonId: lessonId,
-        lesson: lesson
+        lesson: lesson,
+        post: post
       });
     })
     .catch(next);

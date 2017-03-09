@@ -23,44 +23,38 @@ router.post('/', checkNotLogin, function(req, res, next) {
   var repassword = req.fields.repassword;
   var fname = avatar.split('.');
 
-  // 检测用户名是否已存在
-  UserModel.getUserByUsername(username)
-    .then(function (user) {
-      var usertmp = user;
-
-      // 校验参数
-      try {
-        if (usertmp) {
-          throw new Error('用户名已被占用');
-        }
-        if (!(username.length >= 6 && username.length <= 16)) {
-          throw new Error('用户名请限制在 6-16 个字符内');
-        }
-        if (['student', 'teacher'].indexOf(identity) === -1) {
-          throw new Error('职业只能为学生或教师');
-        }
-        if (!(bio.length >= 1 && bio.length <= 200)) {
-          throw new Error('个人简介请限制在 1-200 个字符内');
-        }
-        if (!req.files.avatar.name) {
-          throw new Error('缺少头像');
-        }
-        if (!(password.length >= 6 && password.length <= 16)) {
-          throw new Error('密码请限制在 6-16 个字符内');
-        }
-        if (password !== repassword) {
-          throw new Error('两次输入密码不一致');
-        }
-        if (['gif', 'jpeg', 'jpg', 'png'].indexOf(fname[fname.length - 1]) === -1) {
-          throw new Error('上传头像格式只能为gif、jpg或png');
-        }
-      } catch (e) {
-        // 注册失败，异步删除上传的头像
-        fs.unlink(req.files.avatar.path);
-        req.flash('error', e.message);
-        return res.redirect('/signup');
-      }
-    });
+  // 校验参数
+  try {
+    if (!(username.length >= 6 && username.length <= 16)) {
+      throw new Error('用户名请限制在 6-16 个字符内');
+    }
+    if (!(name.length >= 1 && name.length <= 12)) {
+      throw new Error('姓名请限制在 1-12 个字符内');
+    }
+    if (['student', 'teacher'].indexOf(identity) === -1) {
+      throw new Error('职业只能为学生或教师');
+    }
+    if (!(bio.length >= 1 && bio.length <= 200)) {
+      throw new Error('个人简介请限制在 1-200 个字符内');
+    }
+    if (!req.files.avatar.name) {
+      throw new Error('缺少头像');
+    }
+    if (!(password.length >= 6 && password.length <= 16)) {
+      throw new Error('密码请限制在 6-16 个字符内');
+    }
+    if (password !== repassword) {
+      throw new Error('两次输入密码不一致');
+    }
+    if(['gif', 'jpeg', 'jpg', 'png'].indexOf(fname[fname.length - 1]) === -1) {
+      throw new Error('上传头像格式只能为gif、jpg或png');
+    }
+  } catch (e) {
+    // 注册失败，异步删除上传的头像
+    fs.unlink(req.files.avatar.path);
+    req.flash('error', e.message);
+    return res.redirect('/signup');
+  }
 
   // 明文密码加密
   password = sha1(password);

@@ -12,6 +12,12 @@ Lesson.plugin('contentToHtml', {
       lesson.content = marked(lesson.content);
       return lesson;
     });
+  },
+  afterFindOne: function (lesson) {
+    if (lesson) {
+      lesson.content = marked(lesson.content);
+    }
+    return lesson;
   }
 });
 
@@ -44,7 +50,9 @@ module.exports = {
   // 通过课程内容 id 获取该课程内容
   getLessonByLessonId: function getLessonByLessonId(lessonId) {
     return Lesson
-      .find({ lessonId: lessonId })
+      .findOne({ _id: lessonId })
+      .addCreatedAt()
+      .contentToHtml()
       .exec();
   }
 };
