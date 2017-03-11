@@ -260,16 +260,18 @@ router.post('/:postId/attend', checkLogin, function(req, res, next) {
   }
 
   var postId = req.params.postId;
-  var userId = req.session.user._id;
+  var attender = req.session.user._id;
 
   PostModel.getPostById(postId)
     .then(function (post) {
-      var authorId = post.author._id;
+      if(!post) {
+        throw new Error('该课程不存在');
+      }
 
       var attender = {
         postId: postId,
-        author: authorId,
-        attender: userId
+        author: post.author._id,
+        attender: attender
       };
 
       AttenderModel.create(attender)
@@ -289,7 +291,7 @@ router.get('/:postId/attend/:attendId/remove', checkLogin, function (req, res, n
   var attendId = req.params.attendId;
   var attender = req.session.user._id;
 
-  AttenderModel.delAttenderByAttendId(attendId, attender)
+  AttenderModel.delAttenderById(attendId, attender)
     .then(function () {
       PostModel.decAtd(postId);
       req.flash('success', '退出课程成功');
@@ -302,13 +304,11 @@ router.get('/:postId/attend/:attendId/remove', checkLogin, function (req, res, n
 // GET /posts/:postId/lesson 添加课程内容页
 router.get('/:postId/lesson', checkLogin, function(req, res, next) {
   var postId = req.params.postId;
-  var userId = req.session.user._id;
+  var author = req.session.user._id;
 
   PostModel.getPostById(postId)
     .then(function (post) {
-      var author = post.author._id;
-
-      if(userId.toString() === author.toString()) {
+      if(author.toString() === post.author._id.toString()) {
         res.render('addlesson', {
           subtitle: '添加课程内容',
           postId: postId
@@ -339,7 +339,7 @@ router.post('/:postId/lesson', checkLogin, function (req, res, next) {
     .then(function () {
       req.flash('success', '添加课程内容成功');
       // 添加课程内容成功后跳转到上一页
-      res.redirect('/posts/' + postId);
+      res.redirect(`/posts/${postId}`);
     })
     .catch(next);
 });
@@ -350,7 +350,7 @@ router.get('/:postId/lesson/:lessonId', function (req, res, next) {
   var lessonId =req.params.lessonId;
 
   Promise.all([
-      LessonModel.getLessonByLessonId(lessonId),
+      LessonModel.getLessonById(lessonId),
       PostModel.getPostById(postId)
     ])
     .then(function (result) {
@@ -362,6 +362,64 @@ router.get('/:postId/lesson/:lessonId', function (req, res, next) {
         lesson: lesson,
         post: post
       });
+    })
+    .catch(next);
+});
+
+// GET /posts/:postId/lesson/:lessonId/remove 删除课程内容
+router.get('/:postId/lesson/:lessonId/remove', checkLogin, function (req, res, next) {
+  var postId = req.params.postId;
+  var lessonId = req.params.lessonId;
+
+  LessonModel.delLessonById(postId, lessonId)
+    .then(function () {
+      req.flash('success', '删除课程内容成功');
+      res.redirect('back');
+    })
+    .catch(next);
+});
+
+// GET /posts/:postId/lesson/:lessonId/edit 更新课程内容页
+router.get('/:postId/lesson/:lessonId/edit', checkLogin, function (req, res, next) {
+  var postId = req.params.postId;
+  var lessonId = req.params.lessonId;
+  var author = req.session.user._id;
+
+  Promise.all([
+      LessonModel.getRawLessonById(lessonId),
+      PostModel.getPostById(postId)
+    ])
+    .then(function (result) {
+      var lesson = result[0];
+      var post = result[1];
+
+      if(!lesson) {
+        throw new Error('课程内容不存在');
+      }
+      if(author.toString() !== post.author._id.toString()) {
+        throw new Error('权限不足');
+      }
+
+      res.render('editlesson', {
+        subtitle: post.title + ' - 编辑课程内容',
+        lesson: lesson
+      });
+    })
+    .catch(next);
+});
+
+// POST /posts/:postId/lesson/:lessonId/edit 更新课程内容
+router.post('/:postId/lesson/:lessonId/edit', checkLogin, function (req, res, next) {
+  var postId = req.params.postId;
+  var lessonId = req.params.lessonId;
+  var order = req.fields.order;
+  var title = req.fields.title;
+  var content = req.fields.content;
+
+  LessonModel.updateLessonById(postId, lessonId, { order: order, title: title, content: content })
+    .then(function () {
+      req.flash('success', '编辑课程内容成功');
+      res.redirect(`/posts/${postId}/lesson/${lessonId}`);
     })
     .catch(next);
 });

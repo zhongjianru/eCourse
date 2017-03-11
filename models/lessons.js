@@ -48,11 +48,23 @@ module.exports = {
   },
   
   // 通过课程内容 id 获取该课程内容
-  getLessonByLessonId: function getLessonByLessonId(lessonId) {
+  getLessonById: function getLessonById(lessonId) {
     return Lesson
       .findOne({ _id: lessonId })
       .addCreatedAt()
       .contentToHtml()
       .exec();
+  },
+  
+  // 通过课程 id 获取原来课程内容（编辑课程）
+  getRawLessonById: function getRawLessonById(lessonId) {
+    return Lesson
+      .findOne({ _id: lessonId })
+      .exec();
+  },
+
+  // 通过课程 id 和课程内容 id 更新课程内容
+  updateLessonById: function updateLessonById(postId, lessonId, data) {
+    return Lesson.update({ postId: postId, _id: lessonId }, { $set: data }).exec();
   }
 };

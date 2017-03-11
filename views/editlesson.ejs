@@ -1,0 +1,32 @@
+<%- include('header') %>
+
+<div class="ui grid">
+  <div class="four wide column">
+    <a class="avatar"
+       href="/posts?author=<%= user._id %>"
+       data-title="<%= user.name %> | <%= ({teacher: '教师', student: '学生'})[user.identity] %>"
+       data-content="<%= user.bio %>">
+      <img class="avatar" src="/img/<%= user.avatar %>">
+    </a>
+  </div>
+
+  <div class="eight wide column">
+    <form class="ui form segment" method="post" action="/posts/<%= lesson.postId %>/lesson/<%= lesson._id %>/edit">
+      <div class="field required">
+        <label>课时</label>
+        <input type="number" name = "order" value="<%= lesson.order %>">
+      </div>
+      <div class="field required">
+        <label>课时名称</label>
+        <input type="text" name="title" value="<%= lesson.title %>">
+      </div>
+      <div class="field required">
+        <label>课时内容</label>
+        <textarea name="content" rows="15"><%= lesson.content %></textarea>
+      </div>
+      <input type="submit" class="ui button" value="发布">
+    </form>
+  </div>
+</div>
+
+<%- include('footer') %>
