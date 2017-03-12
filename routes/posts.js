@@ -1,3 +1,5 @@
+var fs = require('fs');
+var path = require('path');
 var express = require('express');
 var router = express.Router();
 
@@ -6,6 +8,7 @@ var PostModel = require('../models/posts');
 var CommentModel = require('../models/comments');
 var AttenderModel = require('../models/attenders');
 var LessonModel = require('../models/lessons');
+var CozwareModel = require('../models/cozwares');
 var checkLogin = require('../middlewares/check').checkLogin;
 
 // GET /posts 所有课程页或者特定用户的个人主页
@@ -351,16 +354,19 @@ router.get('/:postId/lesson/:lessonId', function (req, res, next) {
 
   Promise.all([
       LessonModel.getLessonById(lessonId),
-      PostModel.getPostById(postId)
+      PostModel.getPostById(postId),
+      CozwareModel.getCozwares(lessonId)
     ])
     .then(function (result) {
       var lesson = result[0];
       var post = result[1];
+      var cozwares = result[2];
 
       res.render('lesson', {
         subtitle: '第' + lesson.order + '课时：' + lesson.title,
         lesson: lesson,
-        post: post
+        post: post,
+        cozwares: cozwares
       });
     })
     .catch(next);
@@ -420,6 +426,40 @@ router.post('/:postId/lesson/:lessonId/edit', checkLogin, function (req, res, ne
     .then(function () {
       req.flash('success', '编辑课程内容成功');
       res.redirect(`/posts/${postId}/lesson/${lessonId}`);
+    })
+    .catch(next);
+});
+
+// POST //posts/:postId/lesson/:lessonId/cozware 上传课件
+router.post('/posts/:postId/lesson/:lessonId/cozware', checkLogin, function (req, res, next) {
+  var postId = req.params.postId;
+  var lessonId = req.params.lessonId;
+  var cwpath = req.files.cozware.path.split(path.sep).pop();// split(path.sep) 将路径转化为数组对象
+  var cwname = req.files.cozware.name;
+  var fname = cwpath.split('.');
+
+  try {
+    if( ['ppt', 'pptx', 'doc', 'docx', 'txt'].indexOf(fname[fname.length - 1]) === -1) {
+      throw new Error('课件格式只能为ppt、doc和、或txt');
+    }
+  } catch (e) {
+    // 上传课件失败，异步删除上传的文件
+    fs.unlink(req.files.cozware.path);
+    req.flash('error', e.message);
+    return res.redirect('back');
+  }
+
+  var cozware = {
+    lessonId: lessonId,
+    postId: postId,
+    cwpath: cwpath,
+    cwname: cwname
+  };
+
+  CozwareModel.create(cozware)
+    .then(function () {
+      req.flash('success', '课件上传成功');
+      res.redirect('back');
     })
     .catch(next);
 });

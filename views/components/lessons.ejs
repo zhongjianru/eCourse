@@ -11,14 +11,6 @@
         <a href="/posts/<%= post._id %>/lesson/<%= lesson._id %>" target="_blank">
           第<%= lesson.order %>课时：<%= lesson.title %>
         </a>
-
-        <% if (user && post.author._id && user._id.toString() === post.author._id.toString()) { %>
-        <div class="actions">
-          <a class="reply" href="/posts/<%= post._id %>/lesson/<%= lesson._id %>/edit" target="_blank">编辑</a>
-          <a class="reply" href="/posts/<%= post._id %>/lesson/<%= lesson._id %>/remove" target="_blank">删除</a>
-        </div>
-        <% } %>
-
         <br />
         <% }) %>
 

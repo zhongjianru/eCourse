@@ -17,7 +17,7 @@ router.post('/', checkNotLogin, function(req, res, next) {
   var name = req.fields.name;
   var identity = req.fields.gender;
   var bio = req.fields.bio;
-  var avatar = req.files.avatar.path.split(path.sep).pop();
+  var avatar = req.files.avatar.path.split(path.sep).pop();// split(path.sep) 将路径转化为数组对象
   var username = req.fields.username;
   var password = req.fields.password;
   var repassword = req.fields.repassword;
