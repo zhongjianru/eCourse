@@ -1,14 +1,7 @@
 <%- include('header') %>
 
 <div class="ui grid">
-  <div class="four wide column">
-    <a class="avatar"
-       href="/posts?author=<%= user._id %>"
-       data-title="<%= user.name %> | <%= ({teacher: '教师', student: '学生'})[post.author.identity] %>"
-       data-content="<%= user.bio %>">
-      <img class="avatar" src="/img/<%= user.avatar %>">
-    </a>
-  </div>
+  <%- include('components/avatar', { user: user }) %>
 
   <div class="eight wide column">
     <form class="ui form segment" method="post" action="/posts/<%= post._id %>/edit">

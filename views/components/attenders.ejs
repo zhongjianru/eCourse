@@ -22,15 +22,7 @@
         <% } %>
 
         <% attendances.forEach(function (attendance) { %>
-        <div class="four wide column">
-          <a class="avatar"
-             target="_blank"
-             href="/posts?author=<%= attendance.attender._id %>"
-             data-title="<%= attendance.attender.userName %> | <%= ({teacher: '教师', student: '学生'})[attendance.attender.identity] %>"
-             data-content="<%= attendance.attender.bio %>">
-            <img class="avatar" src="/img/<%= attendance.attender.avatar %>">
-          </a>
-        </div>
+          <%- include('avatar', { user: attendance.attender }) %>
         <% }) %>
 
       </div>
