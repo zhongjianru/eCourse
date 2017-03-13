@@ -431,16 +431,22 @@ router.post('/:postId/lesson/:lessonId/edit', checkLogin, function (req, res, ne
 });
 
 // POST //posts/:postId/lesson/:lessonId/cozware 上传课件
-router.post('/posts/:postId/lesson/:lessonId/cozware', checkLogin, function (req, res, next) {
+router.post('/:postId/lesson/:lessonId/cozware', checkLogin, function (req, res, next) {
   var postId = req.params.postId;
   var lessonId = req.params.lessonId;
-  var cwpath = req.files.cozware.path.split(path.sep).pop();// split(path.sep) 将路径转化为数组对象
-  var cwname = req.files.cozware.name;
+  // split(path.sep) 将路径转化为数组对象，pop() 取文件上传后的文件名（不包括前面路径）
+  var cwpath = req.files.cozware.path.split(path.sep).pop();
   var fname = cwpath.split('.');
 
   try {
-    if( ['ppt', 'pptx', 'doc', 'docx', 'txt'].indexOf(fname[fname.length - 1]) === -1) {
-      throw new Error('课件格式只能为ppt、doc和、或txt');
+    if (!req.files.cozware.name) {
+      throw new Error('缺少文件');
+    }
+    if(['ppt', 'pptx', 'doc', 'docx', 'txt'].indexOf(fname[fname.length - 1]) === -1) {
+      throw new Error('文件格式只能为ppt、doc或txt');
+    }
+    if(req.files.cozware.size === 0 || req.files.cozware.size > 10 * 1024 * 1024) {
+      throw new Error('文件大小超过限制');
     }
   } catch (e) {
     // 上传课件失败，异步删除上传的文件
@@ -453,7 +459,7 @@ router.post('/posts/:postId/lesson/:lessonId/cozware', checkLogin, function (req
     lessonId: lessonId,
     postId: postId,
     cwpath: cwpath,
-    cwname: cwname
+    cwname: req.files.cozware.name
   };
 
   CozwareModel.create(cozware)
