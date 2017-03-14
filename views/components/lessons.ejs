@@ -11,7 +11,7 @@
         <a href="/posts/<%= post._id %>/lesson/<%= lesson._id %>" target="_blank">
           第<%= lesson.order %>课时：<%= lesson.title %>
         </a>
-        <br />
+        <br>
         <% }) %>
 
         <% if (user && post.author._id && user._id.toString() === post.author._id.toString()) { %>

@@ -6,7 +6,8 @@
 
         <h3>本节课件</h3>
         <% cozwares.forEach(function (cw) { %>
-          <a href="/posts/<%= cw.postId %>/lesson/<%= cw.lessonId %>/cozware/<%= cw._id %>"><%= cw.cwname %></a>
+          <a href="/posts/file/<%= cw.path %>" download="<%= cw.name %>"><%= cw.name %></a>
+          <br>
         <% }) %>
 
         <% if (user && post.author._id && user._id.toString() === post.author._id.toString()) { %>

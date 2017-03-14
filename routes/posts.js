@@ -458,8 +458,8 @@ router.post('/:postId/lesson/:lessonId/cozware', checkLogin, function (req, res,
   var cozware = {
     lessonId: lessonId,
     postId: postId,
-    cwpath: cwpath,
-    cwname: req.files.cozware.name
+    path: cwpath,
+    name: req.files.cozware.name
   };
 
   CozwareModel.create(cozware)
@@ -468,6 +468,29 @@ router.post('/:postId/lesson/:lessonId/cozware', checkLogin, function (req, res,
       res.redirect('back');
     })
     .catch(next);
+});
+
+// GET /posts/file/:filename 下载课件
+router.get('/file/:fileName', checkLogin, function (req, res, next) {
+  var fileName = req.params.fileName;
+  var filePath = path.join(__dirname,'../public/upload/', fileName);
+  var stats = fs.statSync(filePath);
+
+  try {
+    if(!stats.isFile()) {
+      throw new Error('文件不存在');
+    }
+  } catch(e) {
+    req.flash('error', e.message);
+    res.redirect('back');
+  }
+
+  res.set({
+    'Content-Type': 'application/octet-stream',
+    'Content-Dispositon': 'attachment; filename = ' + fileName,
+    'Content-Length': stats.size
+  });
+  fs.createReadStream(filePath).pipe(res);
 });
 
 module.exports = router;
