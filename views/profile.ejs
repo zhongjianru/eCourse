@@ -1,11 +1,11 @@
 <%- include('header') %>
 
-<% if (author.identity === 'teacher') { %>
+<% if (user.identity === 'teacher') { %>
 <div class="ui grid">
   <div class="three wide column"></div>
   <div class="nine wide column">
     <div class="ui segment">
-      <h1><%= author.name %>发布的课程</h1>
+      <h1><%= user.name %>发布的课程</h1>
     </div>
   </div>
 </div>
@@ -19,7 +19,7 @@
   <div class="three wide column"></div>
   <div class="nine wide column">
     <div class="ui segment">
-      <h1><%= author.name %>参与的课程</h1>
+      <h1><%= user.name %>参与的课程</h1>
     </div>
   </div>
 </div>

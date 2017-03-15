@@ -3,7 +3,6 @@ var path = require('path');
 var express = require('express');
 var router = express.Router();
 
-var UserModel = require('../models/users');
 var PostModel = require('../models/posts');
 var CommentModel = require('../models/comments');
 var AttenderModel = require('../models/attenders');
@@ -11,59 +10,17 @@ var LessonModel = require('../models/lessons');
 var CozwareModel = require('../models/cozwares');
 var checkLogin = require('../middlewares/check').checkLogin;
 
-// GET /posts 所有课程页或者特定用户的个人主页
-// eg: GET /posts?author=xxx
+// GET /posts 所有课程页
 router.get('/', function(req, res, next) {
-  //所有课程页
-  if(!req.query.author) {
-    //获取所有课程
-    PostModel.getPosts(null)
-      .then(function (posts) {
-        res.render('posts', {
-          subtitle: 'scnu online',
-          posts: posts
-        });
-      })
-      .catch(next);
-  }
-  //个人主页
-  else {
-    var activeuser = req.session.user;
-    var authorid = req.query.author;// 获取url中的查询参数author
-
-    Promise.all([
-        UserModel.getUserById(authorid)
-      ])
-      .then(function (result) {
-        var author = result[0];// 查询参数 author 作为 userId 在 user 库中的信息
-
-        // 教师显示发布的课程，学生显示加入的课程
-        if(author.identity === 'teacher') {
-          PostModel.getPosts(authorid)
-            .then(function (posts) {
-              res.render('profile', {
-                subtitle: author.name + ' - 个人主页',
-                posts: posts,
-                author: author,
-                user: activeuser
-              });
-            })
-            .catch(next);
-        }
-        else {
-          AttenderModel.getPostsByUserId(authorid)
-            .then(function (posts) {
-              res.render('profile', {
-                subtitle: author.name + ' - 个人主页',
-                posts: posts,
-                author: author,
-                user: activeuser
-              });
-            })
-            .catch(next);
-        }
+  //获取所有课程
+  PostModel.getPosts(null)
+    .then(function (posts) {
+      res.render('posts', {
+        subtitle: 'scnu online',
+        posts: posts
       });
-  }
+    })
+    .catch(next);
 });
 
 // GET /posts/create 发布课程页
