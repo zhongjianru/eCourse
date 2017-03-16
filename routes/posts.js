@@ -220,7 +220,7 @@ router.post('/:postId/attend', checkLogin, function(req, res, next) {
   }
 
   var postId = req.params.postId;
-  var attender = req.session.user._id;
+  var userId = req.session.user._id;
 
   PostModel.getPostById(postId)
     .then(function (post) {
@@ -231,7 +231,7 @@ router.post('/:postId/attend', checkLogin, function(req, res, next) {
       var attender = {
         postId: postId,
         author: post.author._id,
-        attender: attender
+        attender: userId
       };
 
       AttenderModel.create(attender)
