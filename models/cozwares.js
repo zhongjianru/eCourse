@@ -1,6 +1,7 @@
 /**
  * Created by zhongjr on 2017/3/12.
  */
+
  var Cozware = require('../lib/mongo').Cozware;
 
 module.exports = {

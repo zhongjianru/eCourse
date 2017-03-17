@@ -24,8 +24,7 @@ router.get('/:userId', function (req, res, next) {
               user: user,
               posts: posts
             });
-          })
-          .catch(next);
+          });
       }
       else {
         AttenderModel.getPostsByUserId(userId)
@@ -35,10 +34,10 @@ router.get('/:userId', function (req, res, next) {
               user: user,
               posts: posts
             });
-          })
-          .catch(next);
+          });
       }
-    });
+    })
+    .catch(next);
 });
 
 module.exports = router;

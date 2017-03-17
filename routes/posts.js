@@ -8,6 +8,8 @@ var CommentModel = require('../models/comments');
 var AttenderModel = require('../models/attenders');
 var LessonModel = require('../models/lessons');
 var CozwareModel = require('../models/cozwares');
+var LessoncmtModel = require('../models/lessoncmts');
+var LessonhwkModel = require('../models/lessonhwks');
 var checkLogin = require('../middlewares/check').checkLogin;
 
 // GET /posts 所有课程页
@@ -307,12 +309,14 @@ router.post('/:postId/lesson', checkLogin, function (req, res, next) {
 // GET /posts/:postId/lesson/:lessonId 课程内容页
 router.get('/:postId/lesson/:lessonId', function (req, res, next) {
   var postId = req.params.postId;
-  var lessonId =req.params.lessonId;
+  var lessonId = req.params.lessonId;
+  var userId = req.session.user._id;
 
   Promise.all([
       LessonModel.getLessonById(lessonId),
       PostModel.getPostById(postId),
-      CozwareModel.getCozwares(lessonId)
+      CozwareModel.getCozwares(lessonId),
+      LessoncmtModel.getLessoncmtsByUserId(userId)
     ])
     .then(function (result) {
       var lesson = result[0];
