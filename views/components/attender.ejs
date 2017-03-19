@@ -1,0 +1,8 @@
+
+  <a class="avatar clear"
+     target="_blank"
+     href="/user/<%= user._id %>"
+     data-title="<%= user.name %> | <%= ({teacher: '教师', student: '学生'})[user.identity] %>"
+     data-content="<%= user.bio %>">
+    <img class="avatar clear" src="/upload/<%= user.avatar %>">
+  </a>

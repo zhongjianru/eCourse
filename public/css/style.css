@@ -21,6 +21,15 @@ a:hover {
   width: 48px;
   height: 48px;
   float: right;
+  display: inline-block;
+}
+
+.clear {
+  float: none;
+}
+
+.clear:hover {
+  border: none;
 }
 
 /* ---------- nav ---------- */
