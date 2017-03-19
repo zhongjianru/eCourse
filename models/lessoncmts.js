@@ -23,7 +23,7 @@ module.exports = {
 
   // 通过用户 id 和留言 id 删除一个留言
   delLessoncmtById: function delLessoncmtById(lessoncmtId, author) {
-    return Lessoncmt.remove({ author: author, _id: lessoncmtId }).exec();
+    return Lessoncmt.remove({ _id: lessoncmtId, author: author }).exec();
   },
 
   // 通过课程 id 删除该课程下所有留言

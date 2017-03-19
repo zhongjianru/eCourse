@@ -10,9 +10,9 @@ module.exports = {
     return Lessonhwk.create(lessonhwk).exec();
   },
 
-  // 根据课程内容 id 和作业 id 删除一个作业
-  delLessonhwkById: function delLessonhwkById(lessonId, lessonhwkId) {
-    return Lessonhwk.remove({ lessonId: lessonId, _id: lessonhwkId }).exec();
+  // 根据用户 id 和作业 id 删除一个作业
+  delLessonhwkById: function delLessonhwkById(lessonhwkId, author) {
+    return Lessonhwk.remove({ _id: lessonhwkId, author: author }).exec();
   },
 
   // 根据课程 id 删除所有作业
@@ -41,7 +41,7 @@ module.exports = {
       .exec();
   },
 
-  // 根据作业 id 获取作业
+  // 根据课件 id 获取课件
   getLessonhwkById: function getLessonhwkById(lessonhwkId) {
     return Lessonhwk.findOne({ _id: lessonhwkId }).exec();
   }

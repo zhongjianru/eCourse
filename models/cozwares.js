@@ -10,14 +10,19 @@ module.exports = {
     return Cozware.create(cozware).exec();
   },
 
-  // 根据课程内容 id 和课件 id 删除一个课件
-  delCozwareById: function delCozwareById(lessonId, cozwareId) {
-    return Cozware.remove({ lessonId: lessonId, _id: cozwareId }).exec();
+  // 根据用户 id 和课件 id 删除一个课件
+  delCozwareById: function delCozwareById(cozwareId, author) {
+    return Cozware.remove({ _id: cozwareId, author: author }).exec();
   },
 
   // 根据课程 id 删除所有课件
   delCozwaresByPostId: function delCozwaresByPostId(postId) {
     return Cozware.remove({ postId: postId }).exec();
+  },
+
+  // 根据课程内容 id 删除所有课件
+  delCozwaresByLessonId: function delCozwaresByLessonId(lessonId) {
+    return Cozware.remove({ lessonId: lessonId }).exec();
   },
 
   // 获取课程内容下的所有课件，按课件上传时间升序

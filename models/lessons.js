@@ -27,9 +27,9 @@ module.exports = {
     return Lesson.create(lesson).exec();
   },
 
-  // 通过课程 id 和课程内容 id 删除一个课程内容
-  delLessonById: function delLessonById(postId, lessonId) {
-    return Lesson.remove({ postId: postId, _id: lessonId }).exec();
+  // 通过用户 id 和课程内容 id 删除一个课程内容
+  delLessonById: function delLessonById(lessonId, author) {
+    return Lesson.remove({ _id: lessonId, author: author }).exec();
   },
 
   // 通过课程 id 删除该课程下所有课程内容

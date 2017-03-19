@@ -8,23 +8,32 @@
         </h3>
 
         <% cozwares.forEach(function (cw) { %>
+        <div class="content">
           <a href="/posts/file/<%= cw.path %>" download="<%= cw.name %>"><%= cw.name %></a>
-          <br>
-        <% }) %>
 
-        <% if (user && post.author._id && user._id.toString() === post.author._id.toString()) { %>
-        <div class="actions">
-          <form class="ui form segment" method="post" enctype="multipart/form-data" action="/posts/<%= post._id %>/lesson/<%= lesson._id %>/cozware">
-            <div class="field required">
-              <label>课件上传</label>
-              <input type="file" name="cozware">
-            </div>
-            <input type="submit" class="ui button fluid" value="上传">
-          </form>
+          <% if (user && cw.author && user._id.toString() === cw.author.toString()) { %>
+          <div class="actions">
+            <a class="reply" href="/posts/<%= post._id %>/lesson/<%= lesson._id %>/cozware/<%= cw._id %>/remove">删除</a>
+          </div>
+          <% } %>
+
         </div>
-        <% } %>
+        <% }) %>
 
       </div>
     </div>
+
+    <% if (user && post.author._id && user._id.toString() === post.author._id.toString()) { %>
+    <div class="four wide column">
+      <form class="ui form segment" method="post" enctype="multipart/form-data" action="/posts/<%= post._id %>/lesson/<%= lesson._id %>/cozware">
+        <div class="field required">
+          <label>课件上传</label>
+          <input type="file" name="cozware">
+        </div>
+        <input type="submit" class="ui button fluid" value="上传">
+      </form>
+    </div>
+    <% } %>
+
   </div>
 </div>

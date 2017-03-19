@@ -2,7 +2,12 @@
 
 <%- include('components/lesson-content') %>
 <%- include('components/lesson-cozware') %>
-<%- include('components/lesson-comment') %>
+
+<% if(user.identity === 'student') { %>
 <%- include('components/lesson-homework') %>
+<%- include('components/lesson-comment') %>
+<% } else { %>
+<%- include('components/lesson-tchview') %>
+<% } %>
 
 <%- include('footer') %>
