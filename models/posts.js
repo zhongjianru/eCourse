@@ -2,6 +2,10 @@ var marked = require('marked');
 var Post = require('../lib/mongo').Post;
 var CommentModel = require('./comments');
 var AttenderModel = require('./attenders');
+var LessonModel = require('../models/lessons');
+var CozwareModel = require('../models/cozwares');
+var LessoncmtModel = require('../models/lessoncmts');
+var LessonhwkModel = require('../models/lessonhwks');
 
 // 给 post 添加留言数 commentsCount
 Post.plugin('addCommentsCount', {
@@ -146,13 +150,18 @@ module.exports = {
 
   // 通过用户 id 和课程 id 删除课程
   delPostById: function delPostById(postId, author) {
-    return Post.remove({ author: author, _id: postId })
+    return Post
+      .remove({ author: author, _id: postId })
       .exec()
       .then(function (res) {
-        // 课程删除后，删除该课程下的所有留言和所有参与者
+        // 课程删除后，删除该课程下的所有留言、参与者、课程内容、课件、学生作业、学生留言
         if (res.result.ok && res.result.n > 0) {
             CommentModel.delCommentsByPostId(postId);
             AttenderModel.delAttendersByPostId(postId);
+            LessonModel.delLessonsByPostId(postId);
+            CozwareModel.delCozwaresByPostId(postId);
+            LessoncmtModel.delLessoncmtsByPostId(postId);
+            LessonhwkModel.delLessonhwksByPostId(postId);
         }
       });
   }
