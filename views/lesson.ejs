@@ -4,10 +4,11 @@
 <%- include('components/lesson-cozware') %>
 
 <% if(user.identity === 'student') { %>
-<%- include('components/lesson-homework') %>
-<%- include('components/lesson-comment') %>
+<%- include('components/lesson-stuhwk') %>
+<%- include('components/lesson-stucmt') %>
 <% } else { %>
-<%- include('components/lesson-tchview') %>
+<%- include('components/lesson-tchhwk') %>
+<%- include('components/lesson-tchcmt') %>
 <% } %>
 
 <%- include('footer') %>

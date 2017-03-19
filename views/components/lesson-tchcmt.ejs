@@ -1,0 +1,28 @@
+<div class="ui grid">
+  <div class="four wide column"></div>
+  <div class="eight wide column">
+    <div class="ui segment">
+      <div class="ui minimal comments">
+        <h3 class="ui dividing header">
+          学生留言
+        </h3>
+        
+        <% lessoncmts.forEach(function (cmt) { %>
+          <div class="comment">
+            <span class="avatar">
+              <img src="/upload/<%= cmt.author.avatar %>">
+            </span>
+            <div class="content">
+              <a class="author" href="/user/<%= cmt.author._id %>" target="_blank"><%= cmt.author.name %></a>
+              <div class="metadata">
+                <span class="date"><%= cmt.created_at %></span>
+              </div>
+              <div class="text"><%- cmt.content %></div>
+            </div>
+          </div>
+        <% }) %>
+
+      </div>
+    </div>
+  </div>
+</div>

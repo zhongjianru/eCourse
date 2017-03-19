@@ -29,7 +29,8 @@ module.exports = {
   getLessonhwks: function getLessonhwks(lessonId) {
     return Lessonhwk
       .find({ lessonId: lessonId })
-      .sort({ _id: 1 })
+      .populate({ path: 'author', model: 'User' })
+      .sort({ author: 1, _id: 1 })
       .exec();
   },
 
@@ -37,6 +38,7 @@ module.exports = {
   getLessonhwksByUserId: function getLessonhwks(userId) {
     return Lessonhwk
       .find({ author: userId })
+      .populate({ path: 'author', model: 'User' })
       .sort({ _id: 1 })
       .exec();
   },

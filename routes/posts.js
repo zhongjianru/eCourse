@@ -328,14 +328,20 @@ router.post('/:postId/lesson', checkLogin, function (req, res, next) {
     if(!order.length) {
       throw new Error('课时不能为空');
     }
-    if(order <= 0 ) {
+    if(!(order > 0 && Number.isInteger(order))) {
       throw new Error('课时只能为正整数');
+    }
+    if(order > 100) {
+      throw new Error('课时数限制为1-100');
     }
     if(!(title.length >= 1 && title.length <= 50)) {
       throw new Error('标题字数限制为1-50');
     }
     if(!content.length) {
       throw new Error('内容不能为空');
+    }
+    if(content.length > 10000) {
+      throw new Error('内容字数限制为1-10000');
     }
   } catch (e) {
     req.flash('error', e.message);
@@ -457,6 +463,30 @@ router.post('/:postId/lesson/:lessonId/edit', checkLogin, function (req, res, ne
   var title = req.fields.title;
   var content = req.fields.content;
 
+  try {
+    if(!order.length) {
+      throw new Error('课时不能为空');
+    }
+    if(!(order > 0 && Number.isInteger(order))) {
+      throw new Error('课时只能为正整数');
+    }
+    if(order > 100) {
+      throw new Error('课时数超过限制');
+    }
+    if(!(title.length >= 1 && title.length <= 50)) {
+      throw new Error('标题字数限制为1-50');
+    }
+    if(!content.length) {
+      throw new Error('内容不能为空');
+    }
+    if(content.length > 10000) {
+      throw new Error('内容字数限制为1-10000');
+    }
+  } catch (e) {
+    req.flash('error', e.message);
+    return res.redirect('back');
+  }
+
   LessonModel.updateLessonById(postId, lessonId, { order: order, title: title, content: content })
     .then(function () {
       req.flash('success', '编辑课程内容成功');
@@ -478,8 +508,8 @@ router.post('/:postId/lesson/:lessonId/cozware', checkLogin, function (req, res,
     if (!req.files.cozware.name) {
       throw new Error('缺少文件');
     }
-    if(['ppt', 'pptx', 'doc', 'docx','pdf', 'txt'].indexOf(fname[fname.length - 1]) === -1) {
-      throw new Error('文件格式只能为ppt、doc、pdf或txt');
+    if(['ppt', 'pptx', 'doc', 'docx','pdf', 'txt','rar'].indexOf(fname[fname.length - 1]) === -1) {
+      throw new Error('文件格式只能为ppt、doc、pdf、txt或rar');
     }
     if(req.files.cozware.size === 0 || req.files.cozware.size > 10 * 1024 * 1024) {
       throw new Error('文件大小超过限制');
@@ -563,8 +593,8 @@ router.post('/:postId/lesson/:lessonId/lessonhwk', checkLogin, function (req, re
     if (!req.files.lessonhwk.name) {
       throw new Error('缺少文件');
     }
-    if(['ppt', 'pptx', 'doc', 'docx','pdf', 'txt'].indexOf(fname[fname.length - 1]) === -1) {
-      throw new Error('文件格式只能为ppt、doc、pdf或txt');
+    if(['ppt', 'pptx', 'doc', 'docx','pdf', 'txt','rar'].indexOf(fname[fname.length - 1]) === -1) {
+      throw new Error('文件格式只能为ppt、doc、pdf、txt或rar');
     }
     if(req.files.lessonhwk.size === 0 || req.files.lessonhwk.size > 10 * 1024 * 1024) {
       throw new Error('文件大小超过限制');

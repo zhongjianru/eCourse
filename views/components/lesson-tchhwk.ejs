@@ -1,0 +1,28 @@
+<div class="ui grid">
+  <div class="four wide column"></div>
+    <div class="eight wide column">
+      <div class="ui segment">
+        <div class="ui minimal comments">
+          <h3 class="ui dividing header">
+            学生作业
+          </h3>
+
+          <% lessonhwks.forEach(function (hwk) { %>
+            <div class="comment">
+              <span class="avatar">
+                <img src="/upload/<%= hwk.author.avatar %>">
+              </span>
+              <div class="content">
+                <a class="author" href="/user/<%= hwk.author._id %>" target="_blank"><%= hwk.author.name %></a>
+                <div class="content">
+                  <a href="/posts/file/<%= hwk.path %>" download="<%= hwk.name %>"><%= hwk.name %></a>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
