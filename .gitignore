@@ -1,5 +1,2 @@
 /node_modules
-/test/*
 /.idea
-/logs/*
-/public/upload/*
