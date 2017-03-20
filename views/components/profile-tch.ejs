@@ -4,7 +4,14 @@
 
     <div class="eight wide column">
       <div class="ui segment">
-        <h3><a href="/posts/<%= post._id %>" target="_blank"><%= post.type %> | <%= post.title %></a></h3>
+        <h3>
+          <a href="/posts/<%= post._id %>" target="_blank">
+            <%= post.type %> | <%= post.title %>
+            <% if(post.status === '0') { %>
+            <span style="color: #999;">（未审核）</span>
+            <% } %>
+          </a>
+        </h3>
         <pre><%- post.content %></pre>
         <div>
           <span class="tag"><%= post.created_at %></span>

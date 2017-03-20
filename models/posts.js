@@ -96,18 +96,6 @@ module.exports = {
       .exec();
   },
 
-  // 通过课程 id 获取未审核的课程
-  getRejectedPostById: function getRejectedPostById(postId) {
-    return Post
-      .findOne({ _id: postId })
-      .populate({ path: 'author', model: 'User' })
-      .addCreatedAt()
-      .addAttendersCount()
-      .addCommentsCount()
-      .contentToHtml()
-      .exec();
-  },
-
   // 按创建时间降序获取所有未审核的课程
   getRejectedPosts: function getRejectedPosts() {
     return Post

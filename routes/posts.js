@@ -329,7 +329,7 @@ router.post('/:postId/lesson', checkLogin, function (req, res, next) {
     if(!order.length) {
       throw new Error('课时不能为空');
     }
-    if(!(order > 0 && Number.isInteger(order))) {
+    if(order <= 0) {
       throw new Error('课时只能为正整数');
     }
     if(order > 100) {
@@ -468,7 +468,7 @@ router.post('/:postId/lesson/:lessonId/edit', checkLogin, function (req, res, ne
     if(!order.length) {
       throw new Error('课时不能为空');
     }
-    if(!(order > 0 && Number.isInteger(order))) {
+    if(order <= 0) {
       throw new Error('课时只能为正整数');
     }
     if(order > 100) {
