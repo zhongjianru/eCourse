@@ -71,7 +71,7 @@ module.exports = {
     return Post.create(post).exec();
   },
 
-  // 通过课程 id 获取课程内容
+  // 通过课程 id 获取已审核的课程
   getPostById: function getPostById(postId) {
     return Post
       .findOne({ _id: postId })
@@ -83,14 +83,35 @@ module.exports = {
       .exec();
   },
 
-  // 按创建时间降序获取所有课程或者某个特定用户的所有课程
-  getPosts: function getPosts(author) {
-    var query = {};
-    if (author) {
-      query.author = author;
-    }
+  // 按创建时间降序获取所有已审核的课程
+  getPosts: function getPosts() {
     return Post
-      .find(query)
+      .find({ status: '1' })
+      .populate({ path: 'author', model: 'User' })
+      .sort({ _id: -1 })
+      .addCreatedAt()
+      .addAttendersCount()
+      .addCommentsCount()
+      .contentToHtml()
+      .exec();
+  },
+
+  // 通过课程 id 获取未审核的课程
+  getRejectedPostById: function getRejectedPostById(postId) {
+    return Post
+      .findOne({ _id: postId })
+      .populate({ path: 'author', model: 'User' })
+      .addCreatedAt()
+      .addAttendersCount()
+      .addCommentsCount()
+      .contentToHtml()
+      .exec();
+  },
+
+  // 按创建时间降序获取所有未审核的课程
+  getRejectedPosts: function getRejectedPosts() {
+    return Post
+      .find({ status: '0' })
       .populate({ path: 'author', model: 'User' })
       .sort({ _id: -1 })
       .addCreatedAt()
@@ -151,7 +172,7 @@ module.exports = {
   // 通过用户 id 和课程 id 删除课程
   delPostById: function delPostById(postId, author) {
     return Post
-      .remove({ author: author, _id: postId })
+      .update({ author: author, _id: postId }, { status: '2' })
       .exec()
       .then(function (res) {
         // 课程删除后，删除该课程下的所有留言、参与者、课程内容、课件、学生作业、学生留言

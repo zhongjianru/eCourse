@@ -5,7 +5,13 @@
   <div class="three wide column"></div>
   <div class="nine wide column">
     <div class="ui segment">
+
+      <% if (isUser === true) { %>
+      <h1>我发布的课程</h1>
+      <% } else { %>
       <h1><%= user.name %>发布的课程</h1>
+      <% } %>
+
     </div>
   </div>
 </div>
@@ -14,12 +20,33 @@
 <%- include('components/profile-tch', { post: post }) %>
 <% }) %>
 
+<% if (isUser === true) { %>
+<div class="ui grid">
+  <div class="three wide column"></div>
+  <div class="nine wide column">
+    <div class="ui segment">
+      <h1>未通过审核的课程</h1>
+    </div>
+  </div>
+</div>
+
+<% rejposts.forEach(function (post) { %>
+<%- include('components/profile-tch', { post: post }) %>
+<% }) %>
+<% } %>
+
 <% } else { %>
 <div class="ui grid">
   <div class="three wide column"></div>
   <div class="nine wide column">
     <div class="ui segment">
-      <h1><%= user.name %>参与的课程</h1>
+
+      <% if (isUser === true) { %>
+      <h1>我加入的课程</h1>
+      <% } else { %>
+      <h1><%= user.name %>加入的课程</h1>
+      <% } %>
+
     </div>
   </div>
 </div>

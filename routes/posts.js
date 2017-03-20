@@ -15,7 +15,7 @@ var checkLogin = require('../middlewares/check').checkLogin;
 // GET /posts 所有课程页
 router.get('/', function(req, res, next) {
   //获取所有课程
-  PostModel.getPosts(null)
+  PostModel.getPosts()
     .then(function (posts) {
       res.render('posts', {
         subtitle: 'scnu online',
@@ -68,7 +68,8 @@ router.post('/', checkLogin, function(req, res, next) {
     type: type,
     pv: 0,
     cmt: 0,
-    atd: 0
+    atd: 0,
+    status: '0'
   };
 
   PostModel.create(post)

@@ -34,6 +34,7 @@ module.exports = {
   getLessons: function getLessons(postId) {
     return Lesson
       .find({ postId: postId })
+      .populate({ path: 'author', model: 'User' })
       .sort({ order: 1 })
       .addCreatedAt()
       .contentToHtml()
@@ -44,15 +45,17 @@ module.exports = {
   getLessonById: function getLessonById(lessonId) {
     return Lesson
       .findOne({ _id: lessonId })
+      .populate({ path: 'author', model: 'User' })
       .addCreatedAt()
       .contentToHtml()
       .exec();
   },
   
-  // 通过课程 id 获取原来课程内容（编辑课程）
+  // 通过课程 id 获取原来课程内容（编辑课程内容）
   getRawLessonById: function getRawLessonById(lessonId) {
     return Lesson
       .findOne({ _id: lessonId })
+      .populate({ path: 'author', model: 'User' })
       .exec();
   },
 
