@@ -71,7 +71,7 @@ module.exports = {
     return Post.create(post).exec();
   },
 
-  // 通过课程 id 获取已审核的课程
+  // 通过课程 id 获取课程
   getPostById: function getPostById(postId) {
     return Post
       .findOne({ _id: postId })
@@ -100,6 +100,32 @@ module.exports = {
   getRejectedPosts: function getRejectedPosts() {
     return Post
       .find({ status: '0' })
+      .populate({ path: 'author', model: 'User' })
+      .sort({ _id: -1 })
+      .addCreatedAt()
+      .addAttendersCount()
+      .addCommentsCount()
+      .contentToHtml()
+      .exec();
+  },
+
+  // 通过用户 id 获取该用户发表的已审核的课程
+  getPostsByUserId: function getPostsByUserId(userId) {
+    return Post
+      .find({ author: userId, status: '1' })
+      .populate({ path: 'author', model: 'User' })
+      .sort({ _id: -1 })
+      .addCreatedAt()
+      .addAttendersCount()
+      .addCommentsCount()
+      .contentToHtml()
+      .exec();
+  },
+
+  // 通过用户 id 获取该用户发表的未审核的课程
+  getRejectedPostsByUserId: function getRejectedPostsByUserId(userId) {
+    return Post
+      .find({ author: userId, status: '0' })
       .populate({ path: 'author', model: 'User' })
       .sort({ _id: -1 })
       .addCreatedAt()

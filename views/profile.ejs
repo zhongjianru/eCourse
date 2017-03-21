@@ -1,6 +1,6 @@
 <%- include('header') %>
 
-<% if (user.identity === 'teacher') { %>
+<% if (author.identity === 'teacher') { %>
 <div class="ui grid">
   <div class="three wide column"></div>
   <div class="nine wide column">
@@ -9,7 +9,7 @@
       <% if (isUser === true) { %>
       <h1>我发布的课程</h1>
       <% } else { %>
-      <h1><%= user.name %>发布的课程</h1>
+      <h1><%= author.name %>发布的课程</h1>
       <% } %>
 
     </div>
@@ -35,7 +35,7 @@
 <% }) %>
 <% } %>
 
-<% } else { %>
+<% } else if(author.identity === 'student') { %>
 <div class="ui grid">
   <div class="three wide column"></div>
   <div class="nine wide column">
@@ -44,7 +44,7 @@
       <% if (isUser === true) { %>
       <h1>我加入的课程</h1>
       <% } else { %>
-      <h1><%= user.name %>加入的课程</h1>
+      <h1><%= author.name %>加入的课程</h1>
       <% } %>
 
     </div>
