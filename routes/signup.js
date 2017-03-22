@@ -16,6 +16,7 @@ router.get('/', checkNotLogin, function(req, res, next) {
 router.post('/', checkNotLogin, function(req, res, next) {
   var name = req.fields.name;
   var identity = req.fields.gender;
+  var school = req.fields.school;
   var bio = req.fields.bio;
   var avatar = req.files.avatar.path.split(path.sep).pop();// split(path.sep) 将路径转化为数组对象
   var username = req.fields.username;
@@ -33,6 +34,9 @@ router.post('/', checkNotLogin, function(req, res, next) {
     }
     if (['student', 'teacher'].indexOf(identity) === -1) {
       throw new Error('职业只能为学生或教师');
+    }
+    if (!(school.length >= 1 && school.length <= 20)) {
+      throw new Error('学校请限制在 1-20 个字符内');
     }
     if (!(bio.length >= 1 && bio.length <= 200)) {
       throw new Error('个人简介请限制在 1-200 个字符内');
@@ -64,6 +68,7 @@ router.post('/', checkNotLogin, function(req, res, next) {
     name: name,
     username: username,
     password: password,
+    school: school,
     identity: identity,
     bio: bio,
     avatar: avatar
