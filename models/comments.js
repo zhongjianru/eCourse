@@ -37,6 +37,11 @@ module.exports = {
       .contentToHtml()
       .exec();
   },
+  
+  // 通过留言 id 获取该留言
+  getCommentById: function getCommentById(commentId) {
+    return Comment.findOne({ _id: commentId }).exec();
+  },
 
   // 通过课程 id 获取该课程下留言数
   getCommentsCount: function getCommentsCount(postId) {

@@ -36,6 +36,11 @@ module.exports = {
     return Lessoncmt.remove({ lessonId: lessonId }).exec();
   },
 
+  // 通过留言 id 获取该留言
+  getLessoncmtById: function getLessoncmtById(lessoncmtId) {
+    return Lessoncmt.findOne({ _id: lessoncmtId }).exec();
+  },
+
   // 通过课程内容 id 获取该课程内容下所有留言，按留言创建时间升序
   getLessoncmts: function getLessoncmts(lessonId) {
     return Lessoncmt

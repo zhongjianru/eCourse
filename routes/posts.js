@@ -27,12 +27,16 @@ router.get('/', function(req, res, next) {
 
 // GET /posts/create 发布课程页
 router.get('/create', checkLogin, function(req, res, next) {
-  if(req.session.user.identity === 'teacher') {
-    res.render('create', { subtitle: '发布课程' });
+  try {
+    if (req.session.user.identity !== 'teacher') {
+      throw new Error('权限不足');
+    }
+  } catch (e) {
+    req.flash('error', e.message);
+    return res.redirect('/posts');
   }
-  else {
-    res.render('404');
-  }
+
+  res.render('create', { subtitle: '发布课程' });
 });
 
 // POST /posts 发布课程
@@ -78,7 +82,7 @@ router.post('/', checkLogin, function(req, res, next) {
       post = result.ops[0];
       req.flash('success', '发布课程成功');
       // 发布成功后跳转到该课程页
-      res.redirect(`/posts/${post._id}`);
+      return res.redirect(`/posts/${post._id}`);
     })
     .catch(next);
 });
@@ -106,8 +110,13 @@ router.get('/:postId', function(req, res, next) {
       var isAttended = result[3];
       var lessons = result[4];
 
-      if (!post) {
-        throw new Error('该课程不存在');
+      try {
+        if (!post) {
+          throw new Error('该课程不存在');
+        }
+      } catch (e) {
+        req.flash('error', e.message);
+        return res.redirect('/posts');
       }
 
       res.render('post', {
@@ -125,16 +134,22 @@ router.get('/:postId', function(req, res, next) {
 // GET /posts/:postId/edit 更新课程页
 router.get('/:postId/edit', checkLogin, function(req, res, next) {
   var postId = req.params.postId;
-  var author = req.session.user._id;
+  var user = req.session.user;
 
   PostModel.getRawPostById(postId)
     .then(function (post) {
-      if (!post) {
-        throw new Error('该课程不存在');
+      try {
+        if (!post) {
+          throw new Error('该课程不存在');
+        }
+        if (user && post.author && user._id.toString() !== post.author._id.toString()) {
+          throw new Error('权限不足');
+        }
+      } catch (e) {
+        req.flash('error', e.message);
+        return res.redirect(`/posts/${postId}`);
       }
-      if (author.toString() !== post.author._id.toString()) {
-        throw new Error('权限不足');
-      }
+
       res.render('edit', {
         subtitle: post.title + ' - 修改课程',
         post: post
@@ -174,7 +189,7 @@ router.post('/:postId/edit', checkLogin, function(req, res, next) {
     .then(function () {
       req.flash('success', '编辑课程成功');
       // 编辑成功后跳转到上一页
-      res.redirect(`/posts/${postId}`);
+      return res.redirect(`/posts/${postId}`);
     })
     .catch(next);
 });
@@ -182,13 +197,28 @@ router.post('/:postId/edit', checkLogin, function(req, res, next) {
 // GET /posts/:postId/remove 删除课程
 router.get('/:postId/remove', checkLogin, function(req, res, next) {
   var postId = req.params.postId;
-  var author = req.session.user._id;
+  var user = req.session.user;
 
-  PostModel.delPostById(postId, author)
-    .then(function () {
-      req.flash('success', '删除课程成功');
-      // 删除成功后跳转到主页
-      res.redirect('/posts');
+  PostModel.getPostById(postId)
+    .then(function (post) {
+      try {
+        if (!post) {
+          throw new Error('该课程不存在');
+        }
+        if (user && post.author && user._id.toString() !== post.author._id.toString()) {
+          throw new Error('权限不足');
+        }
+      } catch (e) {
+        req.flash('error', e.message);
+        return res.redirect(`/posts/${postId}`);
+      }
+
+      PostModel.delPostById(postId, user._id)
+        .then(function () {
+          req.flash('success', '删除课程成功');
+          // 删除成功后跳转到主页
+          return res.redirect('/posts');
+        });
     })
     .catch(next);
 });
@@ -199,31 +229,40 @@ router.post('/:postId/comment', checkLogin, function(req, res, next) {
   var postId = req.params.postId;
   var content = req.fields.content;
 
-  // 校验参数
-  try {
-    if (!content.length) {
-      throw new Error('请填写留言内容');
-    }
-    if (!(content.length >= 1 && content.length <= 500)) {
-      throw new Error('留言字数限制为1-500');
-    }
-  } catch (e) {
-    req.flash('error', e.message);
-    return res.redirect('back');
-  }
+  PostModel.getPostById(postId)
+    .then(function (post) {
+      // 校验参数
+      try {
+        if(!post) {
+          throw new Error('该课程不存在');
+        }
+        if (post.status === '0') {
+          throw new Error('该课程未通过审核');
+        }
+        if (!content.length) {
+          throw new Error('请填写留言内容');
+        }
+        if (!(content.length >= 1 && content.length <= 500)) {
+          throw new Error('留言字数限制为1-500');
+        }
+      } catch (e) {
+        req.flash('error', e.message);
+        return res.redirect('back');
+      }
 
-  var comment = {
-    author: author,
-    postId: postId,
-    content: content
-  };
+      var comment = {
+        author: author,
+        postId: postId,
+        content: content
+      };
 
-  CommentModel.create(comment)
-    .then(function () {
-      PostModel.incCmt(postId);
-      req.flash('success', '留言成功');
-      // 留言成功后跳转到上一页
-      res.redirect('back');
+      CommentModel.create(comment)
+        .then(function () {
+          PostModel.incCmt(postId);
+          req.flash('success', '留言成功');
+          // 留言成功后跳转到上一页
+          return res.redirect('back');
+        });
     })
     .catch(next);
 });
@@ -232,42 +271,59 @@ router.post('/:postId/comment', checkLogin, function(req, res, next) {
 router.get('/:postId/comment/:commentId/remove', checkLogin, function(req, res, next) {
   var postId = req.params.postId;
   var commentId = req.params.commentId;
-  var author = req.session.user._id;
+  var user = req.session.user;
 
-  CommentModel.delCommentById(commentId, author)
-    .then(function () {
-      PostModel.decCmt(postId);
-      req.flash('success', '删除留言成功');
-      // 删除成功后跳转到上一页
-      res.redirect('back');
+  CommentModel.getCommentById(commentId)
+    .then(function (comment) {
+      try {
+        if (!comment) {
+          throw new Error('该留言不存在');
+        }
+        if (user && comment.author && user._id.toString() !== comment.author.toString()) {
+          throw new Error('权限不足');
+        }
+      } catch (e) {
+        req.flash('error', e.message);
+        return res.redirect(`/posts/${postId}`);
+      }
+
+      CommentModel.delCommentById(commentId, user._id)
+        .then(function () {
+          PostModel.decCmt(postId);
+          req.flash('success', '删除留言成功');
+          // 删除成功后跳转到上一页
+          return res.redirect('back');
+        });
     })
     .catch(next);
 });
 
 // POST /posts/:postId/attend 添加课程参与人
 router.post('/:postId/attend', checkLogin, function(req, res, next) {
-  try {
-    if (req.session.user.identity === 'teacher') {
-      throw new Error('教师不能加入课程');
-    }
-  } catch (e) {
-    req.flash('error', e.message);
-    return res.redirect('back');
-  }
-
   var postId = req.params.postId;
-  var userId = req.session.user._id;
+  var user = req.session.user;
 
   PostModel.getPostById(postId)
     .then(function (post) {
-      if(!post) {
-        throw new Error('该课程不存在');
+      try {
+        if(!post) {
+          throw new Error('该课程不存在');
+        }
+        if (post.status === '0') {
+          throw new Error('该课程未通过审核');
+        }
+        if (user.identity === 'teacher') {
+          throw new Error('教师不能加入课程');
+        }
+      } catch (e) {
+        req.flash('error', e.message);
+        return res.redirect('back');
       }
 
       var attender = {
         postId: postId,
         author: post.author._id,
-        attender: userId
+        attender: user._id
       };
 
       AttenderModel.create(attender)
@@ -275,24 +331,45 @@ router.post('/:postId/attend', checkLogin, function(req, res, next) {
           PostModel.incAtd(postId);
           req.flash('success', '加入课程成功');
           // 加入课程成功后跳转到上一页
-          res.redirect('back');
-        })
-        .catch(next);
-    });
+          return res.redirect('back');
+        });
+    })
+    .catch(next);
 });
 
 // GET /posts/:postId/attend/:attendId/remove 删除课程参与人
 router.get('/:postId/attend/:attendId/remove', checkLogin, function (req, res, next) {
   var postId = req.params.postId;
   var attendId = req.params.attendId;
-  var attender = req.session.user._id;
+  var user = req.session.user;
 
-  AttenderModel.delAttenderById(attendId, attender)
-    .then(function () {
-      PostModel.decAtd(postId);
-      req.flash('success', '退出课程成功');
-      // 退出课程成功后跳转到上一页
-      res.redirect('back');
+  Promise.all([
+      PostModel.getPostById(postId),
+      AttenderModel.isAttended(user._id, postId)
+    ])
+    .then(function (result) {
+      var post = result[0];
+      var isAttend = result[1];
+
+      try {
+        if (!post) {
+          throw new Error('该课程不存在');
+        }
+        if (!isAttend) {
+          throw new Error('权限不足');
+        }
+      } catch (e) {
+        req.flash('error', e.message);
+        return res.redirect(`/posts/${postId}`);
+      }
+
+      AttenderModel.delAttenderById(attendId, user._id)
+        .then(function () {
+          PostModel.decAtd(postId);
+          req.flash('success', '退出课程成功');
+          // 退出课程成功后跳转到上一页
+          return res.redirect('back');
+        });
     })
     .catch(next);
 });
@@ -300,19 +377,29 @@ router.get('/:postId/attend/:attendId/remove', checkLogin, function (req, res, n
 // GET /posts/:postId/lesson 添加课程内容页
 router.get('/:postId/lesson', checkLogin, function(req, res, next) {
   var postId = req.params.postId;
-  var author = req.session.user._id;
+  var user = req.session.user;
 
   PostModel.getPostById(postId)
     .then(function (post) {
-      if(author.toString() === post.author._id.toString()) {
-        res.render('addlesson', {
-          subtitle: '添加课程内容',
-          postId: postId
-        });
+      try {
+        if(!post) {
+          throw new Error('该课程不存在');
+        }
+        if (post.status === '0') {
+          throw new Error('该课程未通过审核');
+        }
+        if (user._id.toString() !== post.author._id.toString()) {
+          throw new Error('权限不足');
+        }
+      } catch (e) {
+        req.flash('error', e.message);
+        return res.redirect(`/posts/${postId}`);
       }
-      else {
-        throw new Error('权限不足');
-      }
+
+      res.render('addlesson', {
+        subtitle: '添加课程内容',
+        postId: postId
+      });
     })
     .catch(next);
 });
@@ -361,7 +448,7 @@ router.post('/:postId/lesson', checkLogin, function (req, res, next) {
     .then(function () {
       req.flash('success', '添加课程内容成功');
       // 添加课程内容成功后跳转到上一页
-      res.redirect(`/posts/${postId}`);
+      return res.redirect(`/posts/${postId}`);
     })
     .catch(next);
 });
@@ -388,10 +475,6 @@ router.get('/:postId/lesson/:lessonId', function (req, res, next) {
       var post = result[1];
       var cozwares = result[2];
 
-      if(!lesson) {
-        throw new Error('该课程不存在');
-      }
-
       if(user.identity === 'student') {
         hwks = result[5];
         cmts = result[6];
@@ -416,13 +499,37 @@ router.get('/:postId/lesson/:lessonId', function (req, res, next) {
 // GET /posts/:postId/lesson/:lessonId/remove 删除课程内容
 router.get('/:postId/lesson/:lessonId/remove', checkLogin, function (req, res, next) {
   var postId = req.params.postId;
-  var author = req.session.user._id;
+  var user = req.session.user;
   var lessonId = req.params.lessonId;
 
-  LessonModel.delLessonById(lessonId, author)
-    .then(function () {
-      req.flash('success', '删除课程内容成功');
-      res.redirect(`/posts/${postId}`);
+  Promise.all([
+      PostModel.getPostById(postId),
+      LessonModel.getLessonById(lessonId)
+    ])
+    .then(function (result) {
+      var post = result[0];
+      var lesson = result[1]
+
+      try {
+        if (!post) {
+          throw new Error('该课程不存在');
+        }
+        if (!lesson) {
+          throw new Error('该课程内容不存在');
+        }
+        if (user && lesson.author && user._id.toString() !== lesson.author._id.toString()) {
+          throw new Error('权限不足');
+        }
+      } catch (e) {
+        req.flash('error', e.message);
+        return res.redirect(`/posts/${postId}/lesson/${lessonId}`);
+      }
+
+      LessonModel.delLessonById(lessonId, user._id)
+        .then(function () {
+          req.flash('success', '删除课程内容成功');
+          return res.redirect(`/posts/${postId}`);
+        });
     })
     .catch(next);
 });
@@ -431,21 +538,29 @@ router.get('/:postId/lesson/:lessonId/remove', checkLogin, function (req, res, n
 router.get('/:postId/lesson/:lessonId/edit', checkLogin, function (req, res, next) {
   var postId = req.params.postId;
   var lessonId = req.params.lessonId;
-  var author = req.session.user._id;
+  var user = req.session.user;
 
   Promise.all([
-      LessonModel.getRawLessonById(lessonId),
-      PostModel.getPostById(postId)
+      PostModel.getPostById(postId),
+      LessonModel.getRawLessonById(lessonId)
     ])
     .then(function (result) {
-      var lesson = result[0];
-      var post = result[1];
+      var post = result[0];
+      var lesson = result[1];
 
-      if(!lesson) {
-        throw new Error('课程内容不存在');
-      }
-      if(author.toString() !== post.author._id.toString()) {
-        throw new Error('权限不足');
+      try {
+        if (!post) {
+          throw new Error('该课程不存在');
+        }
+        if (!lesson) {
+          throw new Error('该课程内容不存在');
+        }
+        if (user && lesson.author && user._id.toString() !== lesson.author._id.toString()) {
+          throw new Error('权限不足');
+        }
+      } catch (e) {
+        req.flash('error', e.message);
+        return res.redirect(`/posts/${postId}/lesson/${lessonId}`);
       }
 
       res.render('editlesson', {
@@ -491,7 +606,7 @@ router.post('/:postId/lesson/:lessonId/edit', checkLogin, function (req, res, ne
   LessonModel.updateLessonById(postId, lessonId, { order: order, title: title, content: content })
     .then(function () {
       req.flash('success', '编辑课程内容成功');
-      res.redirect(`/posts/${postId}/lesson/${lessonId}`);
+      return res.redirect(`/posts/${postId}/lesson/${lessonId}`);
     })
     .catch(next);
 });
@@ -510,7 +625,7 @@ router.post('/:postId/lesson/:lessonId/cozware', checkLogin, function (req, res,
       throw new Error('缺少文件');
     }
     if(['ppt', 'pptx', 'doc', 'docx','pdf', 'txt','rar'].indexOf(fname[fname.length - 1]) === -1) {
-      throw new Error('文件格式只能为ppt、doc、pdf、txt或rar');
+      throw new Error('文件格式只能为ppt、doc、pdf、txt、rar或zip');
     }
     if(req.files.cozware.size === 0 || req.files.cozware.size > 10 * 1024 * 1024) {
       throw new Error('文件大小超过限制');
@@ -533,7 +648,7 @@ router.post('/:postId/lesson/:lessonId/cozware', checkLogin, function (req, res,
   CozwareModel.create(cozware)
     .then(function () {
       req.flash('success', '课件上传成功');
-      res.redirect('back');
+      return res.redirect('back');
     })
     .catch(next);
 });
@@ -541,19 +656,27 @@ router.post('/:postId/lesson/:lessonId/cozware', checkLogin, function (req, res,
 // GET /posts/:postId/lesson/:lessonId/cozware/:cozwareId/remove 教师删除课件
 router.get('/:postId/lesson/:lessonId/cozware/:cozwareId/remove', checkLogin, function (req, res, next) {
   var cozwareId = req.params.cozwareId;
-  var author = req.session.user._id;
+  var user = req.session.user;
 
-  Promise.all([
-      CozwareModel.getCozwareById(cozwareId),
-      CozwareModel.delCozwareById(cozwareId, author)
-    ])
-    .then(function (result) {
-      var cozware = result[0];
-      var filepath = path.join(__dirname,'../public/upload/', cozware.path);
-      fs.unlink(filepath.toString());// 删除上传的文件
+  CozwareModel.getCozwareById(cozwareId)
+    .then(function (cw) {
+      try {
+        if(user && cw.author && user._id.toString() !== cw.author._id.toString()) {
+          throw new Error('权限不足');
+        }
+      } catch (e) {
+        req.flash('error', e.message);
+        return res.redirect('back');
+      }
 
-      req.flash('success', '删除课件成功');
-      res.redirect('back');
+      CozwareModel.delCozwareById(cozwareId, user._id)
+        .then(function () {
+          var filepath = path.join(__dirname,'../public/upload/', cw.path);
+          fs.unlink(filepath.toString());// 删除上传的文件
+
+          req.flash('success', '删除课件成功');
+          return res.redirect('back');
+        });
     })
     .catch(next);
 });
@@ -570,7 +693,7 @@ router.get('/file/:fileName', checkLogin, function (req, res, next) {
     }
   } catch(e) {
     req.flash('error', e.message);
-    res.redirect('back');
+    return res.redirect('back');
   }
 
   res.set({
@@ -595,7 +718,7 @@ router.post('/:postId/lesson/:lessonId/lessonhwk', checkLogin, function (req, re
       throw new Error('缺少文件');
     }
     if(['ppt', 'pptx', 'doc', 'docx','pdf', 'txt','rar'].indexOf(fname[fname.length - 1]) === -1) {
-      throw new Error('文件格式只能为ppt、doc、pdf、txt或rar');
+      throw new Error('文件格式只能为ppt、doc、pdf、txt、rar或zip');
     }
     if(req.files.lessonhwk.size === 0 || req.files.lessonhwk.size > 10 * 1024 * 1024) {
       throw new Error('文件大小超过限制');
@@ -618,7 +741,7 @@ router.post('/:postId/lesson/:lessonId/lessonhwk', checkLogin, function (req, re
   LessonhwkModel.create(lessonhwk)
     .then(function () {
       req.flash('success', '作业上传成功');
-      res.redirect('back');
+      return res.redirect('back');
     })
     .catch(next);
 });
@@ -626,19 +749,30 @@ router.post('/:postId/lesson/:lessonId/lessonhwk', checkLogin, function (req, re
 // GET /posts/:postId/lesson/:lessonId/lessonhwk/:lessonhwkId/remove 学生删除作业
 router.get('/:postId/lesson/:lessonId/lessonhwk/:lessonhwkId/remove', checkLogin, function (req, res, next) {
   var lessonhwkId = req.params.lessonhwkId;
-  var author = req.session.user._id;
+  var user = req.session.user;
 
-  Promise.all([
-    LessonhwkModel.getLessonhwkById(lessonhwkId),
-    LessonhwkModel.delLessonhwkById(lessonhwkId, author)
-  ])
-    .then(function (result) {
-      var lessonhwk = result[0];
-      var filepath = path.join(__dirname,'../public/upload/', lessonhwk.path);
-      fs.unlink(filepath.toString());// 删除上传的文件
+  LessonhwkModel.getLessonhwkById(lessonhwkId)
+    .then(function (hwk) {
+      try {
+        if(!hwk) {
+          throw new Error('该作业不存在');
+        }
+        if(user && hwk.author && user._id.toString() !== hwk.author.toString()) {
+          throw new Error('权限不足');
+        }
+      } catch(e) {
+        req.flash('error', e.message);
+        return res.redirect('back');
+      }
 
-      req.flash('success', '删除作业成功');
-      res.redirect('back');
+      LessonhwkModel.delLessonhwkById(lessonhwkId, user._id)
+        .then(function () {
+          var filepath = path.join(__dirname,'../public/upload/', hwk.path);
+          fs.unlink(filepath.toString());// 删除上传的文件
+
+          req.flash('success', '删除作业成功');
+          return res.redirect('back');
+        });
     })
     .catch(next);
 });
@@ -655,7 +789,7 @@ router.get('/file/:fileName', checkLogin, function (req, res, next) {
     }
   } catch(e) {
     req.flash('error', e.message);
-    res.redirect('back');
+    return res.redirect('back');
   }
 
   res.set({
@@ -673,45 +807,74 @@ router.post('/:postId/lesson/:lessonId/lessoncmt', checkLogin, function(req, res
   var lessonId = req.params.lessonId;
   var content = req.fields.content;
 
-  // 校验参数
-  try {
-    if (!content.length) {
-      throw new Error('请填写留言内容');
-    }
-    if (!(content.length >= 1 && content.length <= 500)) {
-      throw new Error('留言字数限制为1-500');
-    }
-  } catch (e) {
-    req.flash('error', e.message);
-    return res.redirect('back');
-  }
+  Promise.all([
+      PostModel.getPostById(postId),
+      LessonModel.getLessonById(lessonId)
+    ])
+    .then(function (result) {
+      var post = result[0];
+      var lesson = result[1];
 
-  var lessoncmt = {
-    lessonId: lessonId,
-    postId: postId,
-    author: author,
-    content: content
-  };
+      try {
+        if(!post) {
+          throw new Error('该课程不存在');
+        }
+        if(!lesson) {
+          throw new Error('该课程内容不存在');
+        }
+        if (!content.length) {
+          throw new Error('请填写留言内容');
+        }
+        if (!(content.length >= 1 && content.length <= 500)) {
+          throw new Error('留言字数限制为1-500');
+        }
+      } catch (e) {
+        req.flash('error', e.message);
+        return res.redirect('back');
+      }
 
-  LessoncmtModel.create(lessoncmt)
-    .then(function () {
-      req.flash('success', '留言成功');
-      // 留言成功后跳转到上一页
-      res.redirect('back');
+      var lessoncmt = {
+        lessonId: lessonId,
+        postId: postId,
+        author: author,
+        content: content
+      };
+
+      LessoncmtModel.create(lessoncmt)
+        .then(function () {
+          req.flash('success', '留言成功');
+          // 留言成功后跳转到上一页
+          return res.redirect('back');
+        });
     })
     .catch(next);
 });
 
-// GET /posts/:postId/lesson/:lessonId/lessoncmt/:lessoncmtId/remove 删除一条留言
+// GET /posts/:postId/lesson/:lessonId/lessoncmt/:lessoncmtId/remove 删除一条课程内容留言
 router.get('/:postId/lesson/:lessonId/lessoncmt/:lessoncmtId/remove', checkLogin, function(req, res, next) {
   var lessoncmtId = req.params.lessoncmtId;
-  var author = req.session.user._id;
+  var user = req.session.user;
 
-  LessoncmtModel.delLessoncmtById(lessoncmtId, author)
-    .then(function () {
-      req.flash('success', '删除留言成功');
-      // 删除成功后跳转到上一页
-      res.redirect('back');
+  LessoncmtModel.getLessoncmtById(lessoncmtId)
+    .then(function (cmt) {
+      try {
+        if (!cmt) {
+          throw new Error('该留言不存在');
+        }
+        if (user && cmt.author && user._id.toString() !== cmt.author.toString()) {
+          throw new Error('权限不足');
+        }
+      } catch(e) {
+        req.flash('error', e.message);
+        return res.redirect('back');
+      }
+
+      LessoncmtModel.delLessoncmtById(lessoncmtId, user._id)
+        .then(function () {
+          req.flash('success', '删除留言成功');
+          // 删除成功后跳转到上一页
+          return res.redirect('back');
+        });
     })
     .catch(next);
 });
