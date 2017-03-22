@@ -15,7 +15,7 @@ router.get('/:userId', function (req, res, next) {
   var user = req.session.user;// 当前登录用户
   var isUser = false;// 访问主页的用户是不是该主页显示的用户
   
-  if(authorId.toString() === user._id.toString()) {
+  if(authorId && user && authorId.toString() === user._id.toString()) {
     isUser = true;
   }
 
