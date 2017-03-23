@@ -96,6 +96,7 @@ router.post('/', checkNotLogin, function(req, res, next) {
     .catch(function (e) {
       // 注册失败，异步删除上传的头像
       fs.unlink(req.files.avatar.path);
+      delete req.session.user;
       // 用户名被占用则跳回注册页，而不是错误页
       if (e.message.match('E11000 duplicate key')) {
         req.flash('error', '用户名已被占用');

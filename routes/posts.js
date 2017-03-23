@@ -3,6 +3,7 @@ var path = require('path');
 var express = require('express');
 var router = express.Router();
 
+var UserModel = require('../models/users');
 var PostModel = require('../models/posts');
 var CommentModel = require('../models/comments');
 var AttenderModel = require('../models/attenders');
@@ -27,14 +28,23 @@ router.get('/', function(req, res, next) {
 
 // GET /posts/create 发布课程页
 router.get('/create', checkLogin, function(req, res, next) {
-  try {
-    if (req.session.user.identity !== 'teacher') {
-      throw new Error('权限不足');
-    }
-  } catch (e) {
-    req.flash('error', e.message);
-    return res.redirect('/posts');
-  }
+  var user = req.session.user;
+
+  UserModel.getUserById(user._id)
+    .then(function (user) {
+      try {
+        if (user.identity === 'teacher' && user.status === '0') {
+          throw new Error('未审核用户不能发表课程');
+        }
+        if (user.identity !== 'teacher') {
+          throw new Error('权限不足');
+        }
+      } catch (e) {
+        req.flash('error', e.message);
+        return res.redirect('/posts');
+      }
+    });
+    //.catch(next);
 
   res.render('create', { subtitle: '发布课程' });
 });
@@ -233,7 +243,7 @@ router.post('/:postId/comment', checkLogin, function(req, res, next) {
     .then(function (post) {
       // 校验参数
       try {
-        if(!post) {
+        if (!post) {
           throw new Error('该课程不存在');
         }
         if (post.status === '0') {
@@ -382,7 +392,7 @@ router.get('/:postId/lesson', checkLogin, function(req, res, next) {
   PostModel.getPostById(postId)
     .then(function (post) {
       try {
-        if(!post) {
+        if (!post) {
           throw new Error('该课程不存在');
         }
         if (post.status === '0') {
