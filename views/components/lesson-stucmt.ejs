@@ -6,7 +6,10 @@
         <h3 class="ui dividing header">
           留言
         </h3>
-        
+
+        <% if(!lessoncmts[0]) { %>
+        <p>暂无</p>
+        <% } else { %>
         <% lessoncmts.forEach(function (cmt) { %>
           <div class="comment">
             <span class="avatar">
@@ -27,6 +30,7 @@
             </div>
           </div>
         <% }) %>
+        <% } %>
 
         <% if (user) { %>
           <form class="ui reply form" method="post" action="/posts/<%= post._id %>/lesson/<%= lesson._id %>/lessoncmt">

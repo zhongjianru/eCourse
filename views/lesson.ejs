@@ -3,10 +3,10 @@
 <%- include('components/lesson-content') %>
 <%- include('components/lesson-cozware') %>
 
-<% if(user.identity === 'student') { %>
+<% if(user && user.identity === 'student') { %>
 <%- include('components/lesson-stuhwk') %>
 <%- include('components/lesson-stucmt') %>
-<% } else { %>
+<% } else if(user && user.identity === 'teacher') { %>
 <%- include('components/lesson-tchhwk') %>
 <%- include('components/lesson-tchcmt') %>
 <% } %>

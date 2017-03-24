@@ -2,11 +2,14 @@
   <div class="ui grid">
     <div class="four wide column"></div>
     <div class="eight wide column">
-      <div class="ui segment">
+      <div class="ui segment minheight">
         <h3 class="ui dividing header">
           提交作业
         </h3>
 
+        <% if(!lessonhwks[0]) { %>
+        <p>暂无</p>
+        <% } else { %>
         <% lessonhwks.forEach(function (hwk) { %>
         <div class="content">
           <a href="/posts/file/<%= hwk.path %>" download="<%= hwk.name %>"><%= hwk.name %></a>
@@ -19,6 +22,7 @@
 
         </div>
         <% }) %>
+        <% } %>
 
       </div>
     </div>

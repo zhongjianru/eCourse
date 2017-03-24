@@ -7,19 +7,23 @@
           加入该课程的有
         </h3>
 
+        <% if(!attendances[0]) { %>
+        <p>暂无</p>
+        <% } else { %>
         <% attendances.forEach(function (attendance) { %>
         <%- include('attender', { user: attendance.attender }) %>
         <% }) %>
+        <% } %>
 
         <div>
-        <% if (!isAttended[0]) { %>
+        <% if (!isAttended) { %>
         <form method="post" action="/posts/<%= post._id %>/attend">
           <div class="field">
           </div>
           <input type="submit" class="ui icon button" value="加入课程" />
         </form>
         <% } else { %>
-        <form method="get" action="/posts/<%= post._id %>/attend/<%= isAttended[0]._id %>/remove">
+        <form method="get" action="/posts/<%= post._id %>/attend/<%= isAttended._id %>/remove">
           <div class="field">
           </div>
           <input type="submit" class="ui icon button" value="退出课程" />

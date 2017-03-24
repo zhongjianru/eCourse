@@ -7,6 +7,9 @@
             学生作业
           </h3>
 
+          <% if(!lessonhwks[0]) { %>
+          <p>暂无</p>
+          <% } else { %>
           <% lessonhwks.forEach(function (hwk) { %>
             <div class="comment">
               <span class="avatar">
@@ -20,6 +23,7 @@
               </div>
             </div>
           <% }) %>
+          <% } %>
 
         </div>
       </div>

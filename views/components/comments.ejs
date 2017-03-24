@@ -4,7 +4,10 @@
     <div class="ui segment">
       <div class="ui minimal comments">
         <h3 class="ui dividing header">留言</h3>
-        
+
+        <% if(!comments[0]) { %>
+        <p>暂无</p>
+        <% } else { %>
         <% comments.forEach(function (comment) { %>
           <div class="comment">
             <span class="avatar">
@@ -25,6 +28,7 @@
             </div>
           </div>
         <% }) %>
+        <% } %>
 
         <% if (user) { %>
           <form class="ui reply form" method="post" action="/posts/<%= post._id %>/comment">

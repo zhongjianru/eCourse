@@ -6,7 +6,10 @@
         <h3 class="ui dividing header">
           学生留言
         </h3>
-        
+
+        <% if(!lessoncmts[0]) { %>
+        <p>暂无</p>
+        <% } else { %>
         <% lessoncmts.forEach(function (cmt) { %>
           <div class="comment">
             <span class="avatar">
@@ -21,6 +24,7 @@
             </div>
           </div>
         <% }) %>
+        <% } %>
 
       </div>
     </div>

@@ -40,7 +40,7 @@ module.exports = {
   // 通过用户 id 和 课程 id 获取用户是否已加入该课程
   isAttended: function isAttended(userId, postId) {
     return Attender
-      .find({ attender: userId, postId: postId })
+      .findOne({ attender: userId, postId: postId })
       .addCreatedAt()
       .exec();
   },

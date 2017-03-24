@@ -2,23 +2,28 @@
   <div class="ui grid">
     <div class="four wide column"></div>
     <div class="eight wide column">
-      <div class="ui segment">
+      <div class="ui segment minheight">
         <h3 class="ui dividing header">
           本节课件
         </h3>
 
+        <% if(!cozwares[0]) { %>
+        <p>暂无</p>
+        <br>
+        <% } else { %>
         <% cozwares.forEach(function (cw) { %>
         <div class="content">
           <a href="/posts/file/<%= cw.path %>" download="<%= cw.name %>"><%= cw.name %></a>
 
           <% if (user && cw.author && user._id.toString() === cw.author.toString()) { %>
-          <div class="actions">
+          <div class="right">
             <a class="reply" href="/posts/<%= post._id %>/lesson/<%= lesson._id %>/cozware/<%= cw._id %>/remove">删除</a>
           </div>
           <% } %>
 
         </div>
         <% }) %>
+        <% } %>
 
       </div>
     </div>

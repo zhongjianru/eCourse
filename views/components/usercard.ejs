@@ -1,0 +1,27 @@
+<div class="ui cards">
+  <div class="card">
+    <div class="content">
+      <div class="userCard">
+        <img src="/upload/<%= user.avatar %>">
+        <div class="info">
+          <p><%= user.name %></p>
+          <p class="meta"><%= user.school %></p>
+        </div>
+      </div>
+      <div class="description">
+        <%= user.bio %>
+      </div>
+    </div>
+    <% if (user) { %>
+    <div class="extra content">
+      <a href="/user/<%= user._id %>" class=""><i class="home icon"></i>个人主页</a>
+      <a href="#" class="right floated"><i class="setting icon"></i>设置</a>
+    </div>
+    <% } else { %>
+    <div class="extra content">
+      <a class=""><i class="send icon"></i>私信</a>
+      <a class="right floated"><i class="plus icon"></i>加好友</a>
+    </div>
+    <% } %>
+  </div>
+</div>

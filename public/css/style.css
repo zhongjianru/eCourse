@@ -32,6 +32,20 @@ a:hover {
   border: none;
 }
 
+.right {
+  float: right;
+}
+
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin-bottom: 0;
+}
+
+.minheight {
+  min-height: 128px;
+}
+
 /* ---------- nav ---------- */
 
 .nav {

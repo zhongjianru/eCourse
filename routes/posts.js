@@ -465,9 +465,13 @@ router.post('/:postId/lesson', checkLogin, function (req, res, next) {
 router.get('/:postId/lesson/:lessonId', function (req, res, next) {
   var postId = req.params.postId;
   var lessonId = req.params.lessonId;
-  var user = req.session.user;
+  var user = {};
   var hwks = [];
   var cmts = [];
+
+  if(req.session.user) {
+    user = req.session.user;
+  }
 
   Promise.all([
       LessonModel.getLessonById(lessonId),
@@ -483,11 +487,11 @@ router.get('/:postId/lesson/:lessonId', function (req, res, next) {
       var post = result[1];
       var cozwares = result[2];
 
-      if(user.identity === 'student') {
+      if(user.identity && user.identity === 'student') {
         hwks = result[5];
         cmts = result[6];
       }
-      else {
+      else if(user.identity && user.identity === 'teacher') {
         hwks = result[3];
         cmts = result[4];
       }
@@ -669,7 +673,7 @@ router.get('/:postId/lesson/:lessonId/cozware/:cozwareId/remove', checkLogin, fu
   CozwareModel.getCozwareById(cozwareId)
     .then(function (cw) {
       try {
-        if(user && cw.author && user._id.toString() !== cw.author._id.toString()) {
+        if(user && cw.author && user._id.toString() !== cw.author.toString()) {
           throw new Error('权限不足');
         }
       } catch (e) {
