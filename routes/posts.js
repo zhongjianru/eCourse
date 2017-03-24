@@ -28,25 +28,23 @@ router.get('/', function(req, res, next) {
 
 // GET /posts/create 发布课程页
 router.get('/create', checkLogin, function(req, res, next) {
-  var user = req.session.user;
-
-  UserModel.getUserById(user._id)
+  UserModel.getUserById(req.session.user._id)
     .then(function (user) {
       try {
-        if (user.identity === 'teacher' && user.status === '0') {
+        if (user && user.identity === 'teacher' && user.status === '0') {
           throw new Error('未审核用户不能发表课程');
         }
-        if (user.identity !== 'teacher') {
+        if (user && user.identity !== 'teacher') {
           throw new Error('权限不足');
         }
       } catch (e) {
         req.flash('error', e.message);
         return res.redirect('/posts');
       }
-    });
-    //.catch(next);
 
-  res.render('create', { subtitle: '发布课程' });
+      res.render('create', { subtitle: '发布课程' });
+    })
+    .catch(next);
 });
 
 // POST /posts 发布课程
