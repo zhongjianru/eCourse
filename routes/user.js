@@ -22,7 +22,16 @@ router.get('/:userId', function (req, res, next) {
   UserModel.getUserById(authorId)
     .then(function (author) {
       // 教师显示发布的课程，学生显示加入的课程
-      if(author.identity === 'teacher') {
+      try {
+        if(!author) {
+          throw new Error('该用户不存在');
+        }
+      } catch (e) {
+        req.flash('error', e.message);
+        return res.redirect('/posts');
+      }
+
+      if(author && author.identity === 'teacher') {
         Promise.all([
             PostModel.getPostsByUserId(authorId),
             PostModel.getRejectedPostsByUserId(authorId)
