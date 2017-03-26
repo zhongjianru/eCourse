@@ -79,7 +79,7 @@ module.exports = {
   },
 
   // 通过课程 id 删除该课程下所有课程内容
-  delLessonsByPostId: function delLessonsByPostId(courseId) {
+  delLessonsByCourseId: function delLessonsByCourseId(courseId) {
     return Lesson.remove({ courseId: courseId }).exec();
   }
 };
