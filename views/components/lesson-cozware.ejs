@@ -1,4 +1,4 @@
-<div class="post-content">
+<div class="course-content">
   <div class="ui grid">
     <div class="four wide column"></div>
     <div class="eight wide column">
@@ -13,11 +13,11 @@
         <% } else { %>
         <% cozwares.forEach(function (cw) { %>
         <div class="content">
-          <a href="/posts/file/<%= cw.path %>" download="<%= cw.name %>"><%= cw.name %></a>
+          <a href="/course/file/<%= cw.path %>" download="<%= cw.name %>"><%= cw.name %></a>
 
           <% if (user && cw.author && user._id.toString() === cw.author.toString()) { %>
           <div class="right">
-            <a class="reply" href="/posts/<%= post._id %>/lesson/<%= lesson._id %>/cozware/<%= cw._id %>/remove">删除</a>
+            <a class="reply" href="/course/<%= course._id %>/lesson/<%= lesson._id %>/cozware/<%= cw._id %>/remove">删除</a>
           </div>
           <% } %>
 
@@ -28,9 +28,9 @@
       </div>
     </div>
 
-    <% if (user && post.author._id && user._id.toString() === post.author._id.toString()) { %>
+    <% if (user && course.author._id && user._id.toString() === course.author._id.toString()) { %>
     <div class="four wide column">
-      <form class="ui form segment" method="post" enctype="multipart/form-data" action="/posts/<%= post._id %>/lesson/<%= lesson._id %>/cozware">
+      <form class="ui form segment" method="post" enctype="multipart/form-data" action="/course/<%= course._id %>/lesson/<%= lesson._id %>/cozware">
         <div class="field required">
           <label>课件上传</label>
           <input type="file" name="cozware">

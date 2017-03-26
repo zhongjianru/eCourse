@@ -79,23 +79,23 @@ pre {
   font-size: 18px;
 }
 
-/* ---------- post-content ---------- */
+/* ---------- course-content ---------- */
 
-.post-content h3 a {
+.course-content h3 a {
   color: #4fc08d !important;
 }
 
-.post-content .tag {
+.course-content .tag {
   font-size: 13px;
   margin-right: 5px;
   color: #999;
 }
 
-.post-content .tag.right {
+.course-content .tag.right {
   float: right;
   margin-right: 0;
 }
 
-.post-content .tag.right a {
+.course-content .tag.right a {
   color: #999;
 }

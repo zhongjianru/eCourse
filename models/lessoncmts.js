@@ -27,8 +27,8 @@ module.exports = {
   },
 
   // 通过课程 id 删除该课程下所有留言
-  delLessoncmtsByPostId: function delLessoncmtsByPostId(postId) {
-    return Lessoncmt.remove({ postId: postId }).exec();
+  delLessoncmtsByCourseId: function delLessoncmtsByCourseId(courseId) {
+    return Lessoncmt.remove({ courseId: courseId }).exec();
   },
 
   // 通过课程内容 id 删除该课程下所有留言

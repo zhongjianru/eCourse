@@ -4,7 +4,7 @@
   <%- include('components/avatar', { user: user }) %>
 
   <div class="eight wide column">
-    <form class="ui form segment" method="post" action="/posts/<%= postId %>/lesson">
+    <form class="ui form segment" method="post" action="/course/<%= courseId %>/lesson">
       <div class="field required">
         <label>课时</label>
         <input type="number" name = "order">

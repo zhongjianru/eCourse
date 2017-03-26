@@ -1,17 +1,17 @@
-<div class="post-content">
+<div class="course-content">
   <div class="ui grid">
-    <%- include('avatar', { user: post.author }) %>
+    <%- include('avatar', { user: course.author }) %>
 
     <div class="eight wide column">
       <div class="ui segment">
-        <h3><a href="/posts/<%= post.postId._id %>" target="_blank"><%= post.postId.type %> | <%= post.postId.title %></a></h3>
-        <pre><%- post.postId.content %></pre>
+        <h3><a href="/course/<%= course.courseId._id %>" target="_blank"><%= course.courseId.type %> | <%= course.courseId.title %></a></h3>
+        <pre><%- course.courseId.content %></pre>
         <div>
-          <span class="tag"><%= post.postId.created_at %></span>
+          <span class="tag"><%= course.courseId.created_at %></span>
           <span class="tag right">
-            <span>浏览(<%= post.postId.pv %>)</span>
-            <span>留言(<%= post.postId.cmt %>)</span>
-            <span>参与人数(<%= post.postId.atd %>)</span>
+            <span>浏览(<%= course.courseId.pv %>)</span>
+            <span>留言(<%= course.courseId.cmt %>)</span>
+            <span>参与人数(<%= course.courseId.atd %>)</span>
           </span>
         </div>
       </div>

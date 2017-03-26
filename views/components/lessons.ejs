@@ -11,16 +11,16 @@
         <p>暂无</p>
         <% } else { %>
         <% lessons.forEach(function (lesson) { %>
-        <a href="/posts/<%= post._id %>/lesson/<%= lesson._id %>" target="_blank">
+        <a href="/course/<%= course._id %>/lesson/<%= lesson._id %>" target="_blank">
           第<%= lesson.order %>课时：<%= lesson.title %>
         </a>
         <br>
         <% }) %>
         <% } %>
 
-        <% if (user && post.author._id && user._id.toString() === post.author._id.toString()) { %>
+        <% if (user && course.author._id && user._id.toString() === course.author._id.toString()) { %>
           <br>
-          <a href="/posts/<%= post._id %>/lesson" type="submit" class="ui icon button">添加课程内容</a>
+          <a href="/course/<%= course._id %>/lesson" type="submit" class="ui icon button">添加课程内容</a>
         <% } %>
 
       </div>

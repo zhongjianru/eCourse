@@ -1,0 +1,7 @@
+<%- include('header') %>
+
+<% courses.forEach(function (course) { %>
+  <%- include('components/course-content', { course: course }) %>
+<% }) %>
+
+<%- include('footer') %>

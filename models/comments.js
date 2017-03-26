@@ -23,14 +23,14 @@ module.exports = {
   },
 
   // 通过课程 id 删除该课程下所有留言
-  delCommentsByPostId: function delCommentsByPostId(postId) {
-    return Comment.remove({ postId: postId }).exec();
+  delCommentsByCourseId: function delCommentsByCourseId(courseId) {
+    return Comment.remove({ courseId: courseId }).exec();
   },
 
   // 通过课程 id 获取该课程下所有留言，按留言创建时间升序
-  getComments: function getComments(postId) {
+  getComments: function getComments(courseId) {
     return Comment
-      .find({ postId: postId })
+      .find({ courseId: courseId })
       .populate({ path: 'author', model: 'User' })
       .sort({ _id: 1 })
       .addCreatedAt()
@@ -44,7 +44,7 @@ module.exports = {
   },
 
   // 通过课程 id 获取该课程下留言数
-  getCommentsCount: function getCommentsCount(postId) {
-    return Comment.count({ postId: postId }).exec();
+  getCommentsCount: function getCommentsCount(courseId) {
+    return Comment.count({ courseId: courseId }).exec();
   }
 };

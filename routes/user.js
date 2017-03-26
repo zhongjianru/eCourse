@@ -6,7 +6,7 @@ var express = require('express');
 var router = express.Router();
 
 var UserModel = require('../models/users');
-var PostModel = require('../models/posts');
+var CourseModel = require('../models/courses');
 var AttenderModel = require('../models/attenders');
 
 // GET /user/:userId
@@ -28,36 +28,36 @@ router.get('/:userId', function (req, res, next) {
         }
       } catch (e) {
         req.flash('error', e.message);
-        return res.redirect('/posts');
+        return res.redirect('/courses');
       }
 
       if(author && author.identity === 'teacher') {
         Promise.all([
-            PostModel.getPostsByUserId(authorId),
-            PostModel.getRejectedPostsByUserId(authorId)
+            CourseModel.getCoursesByUserId(authorId),
+            CourseModel.getRejectedCoursesByUserId(authorId)
           ])
           .then(function (result) {
-            var posts = result[0];
-            var rejposts = result[1];// 审核未通过的课程
+            var courses = result[0];
+            var rejcourses = result[1];// 审核未通过的课程
             
             res.render('profile', {
               subtitle: author.name + ' - 个人主页',
               author: author,
               user: user,
-              posts: posts,
-              rejposts: rejposts,
+              courses: courses,
+              rejcourses: rejcourses,
               isUser: isUser
             });
           });
       }
       else {
-        AttenderModel.getPostsByUserId(authorId)
-          .then(function (posts) {
+        AttenderModel.getCoursessByUserId(authorId)
+          .then(function (courses) {
             res.render('profile', {
               subtitle: author.name + ' - 个人主页',
               author: author,
               user: user,
-              posts: posts,
+              courses: courses,
               isUser: isUser
             });
           });

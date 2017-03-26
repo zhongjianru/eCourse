@@ -16,8 +16,8 @@ module.exports = {
   },
 
   // 根据课程 id 删除所有课件
-  delCozwaresByPostId: function delCozwaresByPostId(postId) {
-    return Cozware.remove({ postId: postId }).exec();
+  delCozwaresByCourseId: function delCozwaresByCourseId(courseId) {
+    return Cozware.remove({ courseId: courseId }).exec();
   },
 
   // 根据课程内容 id 删除所有课件

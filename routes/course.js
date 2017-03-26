@@ -4,7 +4,7 @@ var express = require('express');
 var router = express.Router();
 
 var UserModel = require('../models/users');
-var PostModel = require('../models/posts');
+var CourseModel = require('../models/courses');
 var CommentModel = require('../models/comments');
 var AttenderModel = require('../models/attenders');
 var LessonModel = require('../models/lessons');
@@ -13,20 +13,7 @@ var LessoncmtModel = require('../models/lessoncmts');
 var LessonhwkModel = require('../models/lessonhwks');
 var checkLogin = require('../middlewares/check').checkLogin;
 
-// GET /posts 所有课程页
-router.get('/', function(req, res, next) {
-  //获取所有课程
-  PostModel.getPosts()
-    .then(function (posts) {
-      res.render('posts', {
-        subtitle: 'scnu online',
-        posts: posts
-      });
-    })
-    .catch(next);
-});
-
-// GET /posts/create 发布课程页
+// GET /course/create 发布课程页
 router.get('/create', checkLogin, function(req, res, next) {
   UserModel.getUserById(req.session.user._id)
     .then(function (user) {
@@ -39,7 +26,7 @@ router.get('/create', checkLogin, function(req, res, next) {
         }
       } catch (e) {
         req.flash('error', e.message);
-        return res.redirect('/posts');
+        return res.redirect('/courses');
       }
 
       res.render('create', { subtitle: '发布课程' });
@@ -47,8 +34,8 @@ router.get('/create', checkLogin, function(req, res, next) {
     .catch(next);
 });
 
-// POST /posts 发布课程
-router.post('/', checkLogin, function(req, res, next) {
+// POST /course/create 发布课程
+router.post('/create', checkLogin, function(req, res, next) {
   var author = req.session.user._id;
   var title = req.fields.title;
   var content = req.fields.content;
@@ -73,7 +60,7 @@ router.post('/', checkLogin, function(req, res, next) {
     return res.redirect('back');
   }
 
-  var post = {
+  var course = {
     author: author,
     title: title,
     content: content,
@@ -84,52 +71,52 @@ router.post('/', checkLogin, function(req, res, next) {
     status: '0'
   };
 
-  PostModel.create(post)
+  CourseModel.create(course)
     .then(function (result) {
-      // 此 post 是插入 mongodb 后的值，包含 _id
-      post = result.ops[0];
+      // 此 course 是插入 mongodb 后的值，包含 _id
+      course = result.ops[0];
       req.flash('success', '发布课程成功');
       // 发布成功后跳转到该课程页
-      return res.redirect(`/posts/${post._id}`);
+      return res.redirect(`/course/${course._id}`);
     })
     .catch(next);
 });
 
-// GET /posts/:postId 课程页
-router.get('/:postId', function(req, res, next) {
-  var postId = req.params.postId;
+// GET /course/:courseId 课程页
+router.get('/:courseId', function(req, res, next) {
+  var courseId = req.params.courseId;
   var userId = '';
   if(req.session.user) {
     userId = req.session.user._id;
   }
 
   Promise.all([
-      PostModel.getPostById(postId),// 获取课程
-      CommentModel.getComments(postId),// 获取该课程所有留言
-      AttenderModel.getAttenders(postId),// 获取该课程所有参与者
-      AttenderModel.isAttended(userId, postId),// 获取当前用户是否已加入该课程
-      LessonModel.getLessons(postId),// 获取该课程所有课程内容
-      PostModel.incPv(postId)// pv 加 1
+      CourseModel.getCourseById(courseId),// 获取课程
+      CommentModel.getComments(courseId),// 获取该课程所有留言
+      AttenderModel.getAttenders(courseId),// 获取该课程所有参与者
+      AttenderModel.isAttended(userId, courseId),// 获取当前用户是否已加入该课程
+      LessonModel.getLessons(courseId),// 获取该课程所有课程内容
+      CourseModel.incPv(courseId)// pv 加 1
     ])
     .then(function (result) {
-      var post = result[0];
+      var course = result[0];
       var comments = result[1];
       var attendances = result[2];
       var isAttended = result[3];
       var lessons = result[4];
 
       try {
-        if (!post) {
+        if (!course) {
           throw new Error('该课程不存在');
         }
       } catch (e) {
         req.flash('error', e.message);
-        return res.redirect('/posts');
+        return res.redirect('/courses');
       }
 
-      res.render('post', {
-        subtitle: post.title + ' - 课程页',
-        post: post,
+      res.render('course', {
+        subtitle: course.title + ' - 课程页',
+        course: course,
         comments: comments,
         attendances: attendances,
         isAttended: isAttended,
@@ -139,36 +126,36 @@ router.get('/:postId', function(req, res, next) {
     .catch(next);
 });
 
-// GET /posts/:postId/edit 更新课程页
-router.get('/:postId/edit', checkLogin, function(req, res, next) {
-  var postId = req.params.postId;
+// GET /course/:courseId/edit 更新课程页
+router.get('/:courseId/edit', checkLogin, function(req, res, next) {
+  var courseId = req.params.courseId;
   var user = req.session.user;
 
-  PostModel.getRawPostById(postId)
-    .then(function (post) {
+  CourseModel.getRawCourseById(courseId)
+    .then(function (course) {
       try {
-        if (!post) {
+        if (!course) {
           throw new Error('该课程不存在');
         }
-        if (user && post.author && user._id.toString() !== post.author._id.toString()) {
+        if (user && course.author && user._id.toString() !== course.author._id.toString()) {
           throw new Error('权限不足');
         }
       } catch (e) {
         req.flash('error', e.message);
-        return res.redirect(`/posts/${postId}`);
+        return res.redirect(`/course/${courseId}`);
       }
 
       res.render('edit', {
-        subtitle: post.title + ' - 修改课程',
-        post: post
+        subtitle: course.title + ' - 修改课程',
+        course: course
       });
     })
     .catch(next);
 });
 
-// POST /posts/:postId/edit 更新课程
-router.post('/:postId/edit', checkLogin, function(req, res, next) {
-  var postId = req.params.postId;
+// POST /course/:courseId/edit 更新课程
+router.post('/:courseId/edit', checkLogin, function(req, res, next) {
+  var courseId = req.params.courseId;
   var author = req.session.user._id;
   var title = req.fields.title;
   var content = req.fields.content;
@@ -193,58 +180,58 @@ router.post('/:postId/edit', checkLogin, function(req, res, next) {
     return res.redirect('back');
   }
 
-  PostModel.updatePostById(postId, author, { title: title, content: content, type: type })
+  CourseModel.updateCourseById(courseId, author, { title: title, content: content, type: type })
     .then(function () {
       req.flash('success', '编辑课程成功');
       // 编辑成功后跳转到上一页
-      return res.redirect(`/posts/${postId}`);
+      return res.redirect(`/course/${courseId}`);
     })
     .catch(next);
 });
 
-// GET /posts/:postId/remove 删除课程
-router.get('/:postId/remove', checkLogin, function(req, res, next) {
-  var postId = req.params.postId;
+// GET /course/:courseId/remove 删除课程
+router.get('/:courseId/remove', checkLogin, function(req, res, next) {
+  var courseId = req.params.courseId;
   var user = req.session.user;
 
-  PostModel.getPostById(postId)
-    .then(function (post) {
+  CourseModel.getCourseById(courseId)
+    .then(function (course) {
       try {
-        if (!post) {
+        if (!course) {
           throw new Error('该课程不存在');
         }
-        if (user && post.author && user._id.toString() !== post.author._id.toString()) {
+        if (user && course.author && user._id.toString() !== course.author._id.toString()) {
           throw new Error('权限不足');
         }
       } catch (e) {
         req.flash('error', e.message);
-        return res.redirect(`/posts/${postId}`);
+        return res.redirect(`/course/${courseId}`);
       }
 
-      PostModel.delPostById(postId, user._id)
+      CourseModel.delCourseById(courseId, user._id)
         .then(function () {
           req.flash('success', '删除课程成功');
           // 删除成功后跳转到主页
-          return res.redirect('/posts');
+          return res.redirect('/courses');
         });
     })
     .catch(next);
 });
 
-// POST /posts/:postId/comment 创建一条留言
-router.post('/:postId/comment', checkLogin, function(req, res, next) {
+// POST /course/:courseId/comment 创建一条留言
+router.post('/:courseId/comment', checkLogin, function(req, res, next) {
   var author = req.session.user._id;
-  var postId = req.params.postId;
+  var courseId = req.params.courseId;
   var content = req.fields.content;
 
-  PostModel.getPostById(postId)
-    .then(function (post) {
+  CourseModel.getCourseById(courseId)
+    .then(function (course) {
       // 校验参数
       try {
-        if (!post) {
+        if (!course) {
           throw new Error('该课程不存在');
         }
-        if (post.status === '0') {
+        if (course.status === '0') {
           throw new Error('该课程未通过审核');
         }
         if (!content.length) {
@@ -260,13 +247,13 @@ router.post('/:postId/comment', checkLogin, function(req, res, next) {
 
       var comment = {
         author: author,
-        postId: postId,
+        courseId: courseId,
         content: content
       };
 
       CommentModel.create(comment)
         .then(function () {
-          PostModel.incCmt(postId);
+          CourseModel.incCmt(courseId);
           req.flash('success', '留言成功');
           // 留言成功后跳转到上一页
           return res.redirect('back');
@@ -275,9 +262,9 @@ router.post('/:postId/comment', checkLogin, function(req, res, next) {
     .catch(next);
 });
 
-// GET /posts/:postId/comment/:commentId/remove 删除一条留言
-router.get('/:postId/comment/:commentId/remove', checkLogin, function(req, res, next) {
-  var postId = req.params.postId;
+// GET /course/:courseId/comment/:commentId/remove 删除一条留言
+router.get('/:courseId/comment/:commentId/remove', checkLogin, function(req, res, next) {
+  var courseId = req.params.courseId;
   var commentId = req.params.commentId;
   var user = req.session.user;
 
@@ -292,12 +279,12 @@ router.get('/:postId/comment/:commentId/remove', checkLogin, function(req, res, 
         }
       } catch (e) {
         req.flash('error', e.message);
-        return res.redirect(`/posts/${postId}`);
+        return res.redirect(`/course/${courseId}`);
       }
 
       CommentModel.delCommentById(commentId, user._id)
         .then(function () {
-          PostModel.decCmt(postId);
+          CourseModel.decCmt(courseId);
           req.flash('success', '删除留言成功');
           // 删除成功后跳转到上一页
           return res.redirect('back');
@@ -306,18 +293,18 @@ router.get('/:postId/comment/:commentId/remove', checkLogin, function(req, res, 
     .catch(next);
 });
 
-// POST /posts/:postId/attend 添加课程参与人
-router.post('/:postId/attend', checkLogin, function(req, res, next) {
-  var postId = req.params.postId;
+// POST /course/:courseId/attend 添加课程参与人
+router.post('/:courseId/attend', checkLogin, function(req, res, next) {
+  var courseId = req.params.courseId;
   var user = req.session.user;
 
-  PostModel.getPostById(postId)
-    .then(function (post) {
+  CourseModel.getCourseById(courseId)
+    .then(function (course) {
       try {
-        if(!post) {
+        if(!course) {
           throw new Error('该课程不存在');
         }
-        if (post.status === '0') {
+        if (course.status === '0') {
           throw new Error('该课程未通过审核');
         }
         if (user.identity === 'teacher') {
@@ -329,14 +316,14 @@ router.post('/:postId/attend', checkLogin, function(req, res, next) {
       }
 
       var attender = {
-        postId: postId,
-        author: post.author._id,
+        courseId: courseId,
+        author: course.author._id,
         attender: user._id
       };
 
       AttenderModel.create(attender)
         .then(function () {
-          PostModel.incAtd(postId);
+          CourseModel.incAtd(courseId);
           req.flash('success', '加入课程成功');
           // 加入课程成功后跳转到上一页
           return res.redirect('back');
@@ -345,22 +332,22 @@ router.post('/:postId/attend', checkLogin, function(req, res, next) {
     .catch(next);
 });
 
-// GET /posts/:postId/attend/:attendId/remove 删除课程参与人
-router.get('/:postId/attend/:attendId/remove', checkLogin, function (req, res, next) {
-  var postId = req.params.postId;
+// GET /course/:courseId/attend/:attendId/remove 删除课程参与人
+router.get('/:courseId/attend/:attendId/remove', checkLogin, function (req, res, next) {
+  var courseId = req.params.courseId;
   var attendId = req.params.attendId;
   var user = req.session.user;
 
   Promise.all([
-      PostModel.getPostById(postId),
-      AttenderModel.isAttended(user._id, postId)
+      CourseModel.getCourseById(courseId),
+      AttenderModel.isAttended(user._id, courseId)
     ])
     .then(function (result) {
-      var post = result[0];
+      var course = result[0];
       var isAttend = result[1];
 
       try {
-        if (!post) {
+        if (!course) {
           throw new Error('该课程不存在');
         }
         if (!isAttend) {
@@ -368,12 +355,12 @@ router.get('/:postId/attend/:attendId/remove', checkLogin, function (req, res, n
         }
       } catch (e) {
         req.flash('error', e.message);
-        return res.redirect(`/posts/${postId}`);
+        return res.redirect(`/course/${courseId}`);
       }
 
       AttenderModel.delAttenderById(attendId, user._id)
         .then(function () {
-          PostModel.decAtd(postId);
+          CourseModel.decAtd(courseId);
           req.flash('success', '退出课程成功');
           // 退出课程成功后跳转到上一页
           return res.redirect('back');
@@ -382,40 +369,40 @@ router.get('/:postId/attend/:attendId/remove', checkLogin, function (req, res, n
     .catch(next);
 });
 
-// GET /posts/:postId/lesson 添加课程内容页
-router.get('/:postId/lesson', checkLogin, function(req, res, next) {
-  var postId = req.params.postId;
+// GET /course/:courseId/lesson 添加课程内容页
+router.get('/:courseId/lesson', checkLogin, function(req, res, next) {
+  var courseId = req.params.courseId;
   var user = req.session.user;
 
-  PostModel.getPostById(postId)
-    .then(function (post) {
+  CourseModel.getCourseById(courseId)
+    .then(function (course) {
       try {
-        if (!post) {
+        if (!course) {
           throw new Error('该课程不存在');
         }
-        if (post.status === '0') {
+        if (course.status === '0') {
           throw new Error('该课程未通过审核');
         }
-        if (user._id.toString() !== post.author._id.toString()) {
+        if (user._id.toString() !== course.author._id.toString()) {
           throw new Error('权限不足');
         }
       } catch (e) {
         req.flash('error', e.message);
-        return res.redirect(`/posts/${postId}`);
+        return res.redirect(`/course/${courseId}`);
       }
 
       res.render('addlesson', {
         subtitle: '添加课程内容',
-        postId: postId
+        courseId: courseId
       });
     })
     .catch(next);
 });
 
-// POST /posts/:postId/lesson 添加课程内容
-router.post('/:postId/lesson', checkLogin, function (req, res, next) {
+// POST /course/:courseId/lesson 添加课程内容
+router.post('/:courseId/lesson', checkLogin, function (req, res, next) {
   var author = req.session.user._id;
-  var postId = req.params.postId;
+  var courseId = req.params.courseId;
   var order = req.fields.order;
   var title = req.fields.title;
   var content = req.fields.content;
@@ -445,7 +432,7 @@ router.post('/:postId/lesson', checkLogin, function (req, res, next) {
   }
 
   var lesson = {
-    postId: postId,
+    courseId: courseId,
     author: author,
     order: order,
     title: title,
@@ -456,14 +443,14 @@ router.post('/:postId/lesson', checkLogin, function (req, res, next) {
     .then(function () {
       req.flash('success', '添加课程内容成功');
       // 添加课程内容成功后跳转到上一页
-      return res.redirect(`/posts/${postId}`);
+      return res.redirect(`/course/${courseId}`);
     })
     .catch(next);
 });
 
-// GET /posts/:postId/lesson/:lessonId 课程内容页
-router.get('/:postId/lesson/:lessonId', function (req, res, next) {
-  var postId = req.params.postId;
+// GET /course/:courseId/lesson/:lessonId 课程内容页
+router.get('/:courseId/lesson/:lessonId', function (req, res, next) {
+  var courseId = req.params.courseId;
   var lessonId = req.params.lessonId;
   var user = {};
   var hwks = [];
@@ -475,7 +462,7 @@ router.get('/:postId/lesson/:lessonId', function (req, res, next) {
 
   Promise.all([
       LessonModel.getLessonById(lessonId),
-      PostModel.getPostById(postId),
+      CourseModel.getCourseById(courseId),
       CozwareModel.getCozwares(lessonId),
       LessonhwkModel.getLessonhwks(lessonId),// 教师显示所有学生的作业
       LessoncmtModel.getLessoncmts(lessonId),// 教师显示所有学生的留言
@@ -484,7 +471,7 @@ router.get('/:postId/lesson/:lessonId', function (req, res, next) {
     ])
     .then(function (result) {
       var lesson = result[0];
-      var post = result[1];
+      var course = result[1];
       var cozwares = result[2];
 
       if(user.identity && user.identity === 'student') {
@@ -499,7 +486,7 @@ router.get('/:postId/lesson/:lessonId', function (req, res, next) {
       res.render('lesson', {
         subtitle: '第' + lesson.order + '课时：' + lesson.title,
         lesson: lesson,
-        post: post,
+        course: course,
         cozwares: cozwares,
         lessonhwks: hwks,
         lessoncmts: cmts,
@@ -508,22 +495,22 @@ router.get('/:postId/lesson/:lessonId', function (req, res, next) {
     .catch(next);
 });
 
-// GET /posts/:postId/lesson/:lessonId/remove 删除课程内容
-router.get('/:postId/lesson/:lessonId/remove', checkLogin, function (req, res, next) {
-  var postId = req.params.postId;
+// GET /course/:courseId/lesson/:lessonId/remove 删除课程内容
+router.get('/:courseId/lesson/:lessonId/remove', checkLogin, function (req, res, next) {
+  var courseId = req.params.courseId;
   var user = req.session.user;
   var lessonId = req.params.lessonId;
 
   Promise.all([
-      PostModel.getPostById(postId),
+      CourseModel.getCourseById(courseId),
       LessonModel.getLessonById(lessonId)
     ])
     .then(function (result) {
-      var post = result[0];
+      var course = result[0];
       var lesson = result[1]
 
       try {
-        if (!post) {
+        if (!course) {
           throw new Error('该课程不存在');
         }
         if (!lesson) {
@@ -534,34 +521,34 @@ router.get('/:postId/lesson/:lessonId/remove', checkLogin, function (req, res, n
         }
       } catch (e) {
         req.flash('error', e.message);
-        return res.redirect(`/posts/${postId}/lesson/${lessonId}`);
+        return res.redirect(`/course/${courseId}/lesson/${lessonId}`);
       }
 
       LessonModel.delLessonById(lessonId, user._id)
         .then(function () {
           req.flash('success', '删除课程内容成功');
-          return res.redirect(`/posts/${postId}`);
+          return res.redirect(`/course/${courseId}`);
         });
     })
     .catch(next);
 });
 
-// GET /posts/:postId/lesson/:lessonId/edit 更新课程内容页
-router.get('/:postId/lesson/:lessonId/edit', checkLogin, function (req, res, next) {
-  var postId = req.params.postId;
+// GET /course/:courseId/lesson/:lessonId/edit 更新课程内容页
+router.get('/:courseId/lesson/:lessonId/edit', checkLogin, function (req, res, next) {
+  var courseId = req.params.courseId;
   var lessonId = req.params.lessonId;
   var user = req.session.user;
 
   Promise.all([
-      PostModel.getPostById(postId),
+      CourseModel.getCourseById(courseId),
       LessonModel.getRawLessonById(lessonId)
     ])
     .then(function (result) {
-      var post = result[0];
+      var course = result[0];
       var lesson = result[1];
 
       try {
-        if (!post) {
+        if (!course) {
           throw new Error('该课程不存在');
         }
         if (!lesson) {
@@ -572,20 +559,20 @@ router.get('/:postId/lesson/:lessonId/edit', checkLogin, function (req, res, nex
         }
       } catch (e) {
         req.flash('error', e.message);
-        return res.redirect(`/posts/${postId}/lesson/${lessonId}`);
+        return res.redirect(`/course/${courseId}/lesson/${lessonId}`);
       }
 
       res.render('editlesson', {
-        subtitle: post.title + ' - 编辑课程内容',
+        subtitle: course.title + ' - 编辑课程内容',
         lesson: lesson
       });
     })
     .catch(next);
 });
 
-// POST /posts/:postId/lesson/:lessonId/edit 更新课程内容
-router.post('/:postId/lesson/:lessonId/edit', checkLogin, function (req, res, next) {
-  var postId = req.params.postId;
+// POST /course/:courseId/lesson/:lessonId/edit 更新课程内容
+router.post('/:courseId/lesson/:lessonId/edit', checkLogin, function (req, res, next) {
+  var user = req.session.user;
   var lessonId = req.params.lessonId;
   var order = req.fields.order;
   var title = req.fields.title;
@@ -615,18 +602,18 @@ router.post('/:postId/lesson/:lessonId/edit', checkLogin, function (req, res, ne
     return res.redirect('back');
   }
 
-  LessonModel.updateLessonById(postId, lessonId, { order: order, title: title, content: content })
+  LessonModel.updateLessonById(lessonId, user._id, { order: order, title: title, content: content })
     .then(function () {
       req.flash('success', '编辑课程内容成功');
-      return res.redirect(`/posts/${postId}/lesson/${lessonId}`);
+      return res.redirect(`/course/${courseId}/lesson/${lessonId}`);
     })
     .catch(next);
 });
 
-// POST //posts/:postId/lesson/:lessonId/cozware 教师上传课件
-router.post('/:postId/lesson/:lessonId/cozware', checkLogin, function (req, res, next) {
+// POST /course/:courseId/lesson/:lessonId/cozware 教师上传课件
+router.post('/:courseId/lesson/:lessonId/cozware', checkLogin, function (req, res, next) {
   var author = req.session.user._id;
-  var postId = req.params.postId;
+  var courseId = req.params.courseId;
   var lessonId = req.params.lessonId;
   // split(path.sep) 将路径转化为数组对象，pop() 取文件上传后的文件名（不包括前面路径）
   var cwpath = req.files.cozware.path.split(path.sep).pop();
@@ -651,7 +638,7 @@ router.post('/:postId/lesson/:lessonId/cozware', checkLogin, function (req, res,
 
   var cozware = {
     lessonId: lessonId,
-    postId: postId,
+    courseId: courseId,
     author: author,
     path: cwpath,
     name: req.files.cozware.name
@@ -665,8 +652,8 @@ router.post('/:postId/lesson/:lessonId/cozware', checkLogin, function (req, res,
     .catch(next);
 });
 
-// GET /posts/:postId/lesson/:lessonId/cozware/:cozwareId/remove 教师删除课件
-router.get('/:postId/lesson/:lessonId/cozware/:cozwareId/remove', checkLogin, function (req, res, next) {
+// GET /course/:courseId/lesson/:lessonId/cozware/:cozwareId/remove 教师删除课件
+router.get('/:courseId/lesson/:lessonId/cozware/:cozwareId/remove', checkLogin, function (req, res, next) {
   var cozwareId = req.params.cozwareId;
   var user = req.session.user;
 
@@ -693,7 +680,7 @@ router.get('/:postId/lesson/:lessonId/cozware/:cozwareId/remove', checkLogin, fu
     .catch(next);
 });
 
-// GET /posts/file/:filename 下载课件
+// GET /course/file/:filename 下载课件
 router.get('/file/:fileName', checkLogin, function (req, res, next) {
   var fileName = req.params.fileName;
   var filePath = path.join(__dirname,'../public/upload/', fileName);
@@ -716,10 +703,10 @@ router.get('/file/:fileName', checkLogin, function (req, res, next) {
   fs.createReadStream(filePath).pipe(res);
 });
 
-// POST //posts/:postId/lesson/:lessonId/lessonhwk 学生上传作业
-router.post('/:postId/lesson/:lessonId/lessonhwk', checkLogin, function (req, res, next) {
+// POST /course/:courseId/lesson/:lessonId/lessonhwk 学生上传作业
+router.post('/:courseId/lesson/:lessonId/lessonhwk', checkLogin, function (req, res, next) {
   var author = req.session.user._id;
-  var postId = req.params.postId;
+  var courseId = req.params.courseId;
   var lessonId = req.params.lessonId;
   // split(path.sep) 将路径转化为数组对象，pop() 取文件上传后的文件名（不包括前面路径）
   var hwkpath = req.files.lessonhwk.path.split(path.sep).pop();
@@ -744,7 +731,7 @@ router.post('/:postId/lesson/:lessonId/lessonhwk', checkLogin, function (req, re
 
   var lessonhwk = {
     lessonId: lessonId,
-    postId: postId,
+    courseId: courseId,
     author: author,
     path: hwkpath,
     name: req.files.lessonhwk.name
@@ -758,8 +745,8 @@ router.post('/:postId/lesson/:lessonId/lessonhwk', checkLogin, function (req, re
     .catch(next);
 });
 
-// GET /posts/:postId/lesson/:lessonId/lessonhwk/:lessonhwkId/remove 学生删除作业
-router.get('/:postId/lesson/:lessonId/lessonhwk/:lessonhwkId/remove', checkLogin, function (req, res, next) {
+// GET /course/:courseId/lesson/:lessonId/lessonhwk/:lessonhwkId/remove 学生删除作业
+router.get('/:courseId/lesson/:lessonId/lessonhwk/:lessonhwkId/remove', checkLogin, function (req, res, next) {
   var lessonhwkId = req.params.lessonhwkId;
   var user = req.session.user;
 
@@ -789,7 +776,7 @@ router.get('/:postId/lesson/:lessonId/lessonhwk/:lessonhwkId/remove', checkLogin
     .catch(next);
 });
 
-// GET /posts/file/:filename 教师或学生下载作业
+// GET /course/file/:filename 教师或学生下载作业
 router.get('/file/:fileName', checkLogin, function (req, res, next) {
   var fileName = req.params.fileName;
   var filePath = path.join(__dirname,'../public/upload/', fileName);
@@ -812,23 +799,23 @@ router.get('/file/:fileName', checkLogin, function (req, res, next) {
   fs.createReadStream(filePath).pipe(res);
 });
 
-// POST /posts/:postId/lesson/:lessonId/lessoncmt 创建一条课程内容留言
-router.post('/:postId/lesson/:lessonId/lessoncmt', checkLogin, function(req, res, next) {
+// POST /course/:courseId/lesson/:lessonId/lessoncmt 创建一条课程内容留言
+router.post('/:courseId/lesson/:lessonId/lessoncmt', checkLogin, function(req, res, next) {
   var author = req.session.user._id;
-  var postId = req.params.postId;
+  var courseId = req.params.courseId;
   var lessonId = req.params.lessonId;
   var content = req.fields.content;
 
   Promise.all([
-      PostModel.getPostById(postId),
+      CourseModel.getCourseById(courseId),
       LessonModel.getLessonById(lessonId)
     ])
     .then(function (result) {
-      var post = result[0];
+      var course = result[0];
       var lesson = result[1];
 
       try {
-        if(!post) {
+        if(!course) {
           throw new Error('该课程不存在');
         }
         if(!lesson) {
@@ -847,7 +834,7 @@ router.post('/:postId/lesson/:lessonId/lessoncmt', checkLogin, function(req, res
 
       var lessoncmt = {
         lessonId: lessonId,
-        postId: postId,
+        courseId: courseId,
         author: author,
         content: content
       };
@@ -862,8 +849,8 @@ router.post('/:postId/lesson/:lessonId/lessoncmt', checkLogin, function(req, res
     .catch(next);
 });
 
-// GET /posts/:postId/lesson/:lessonId/lessoncmt/:lessoncmtId/remove 删除一条课程内容留言
-router.get('/:postId/lesson/:lessonId/lessoncmt/:lessoncmtId/remove', checkLogin, function(req, res, next) {
+// GET /course/:courseId/lesson/:lessonId/lessoncmt/:lessoncmtId/remove 删除一条课程内容留言
+router.get('/:courseId/lesson/:lessonId/lessoncmt/:lessoncmtId/remove', checkLogin, function(req, res, next) {
   var lessoncmtId = req.params.lessoncmtId;
   var user = req.session.user;
 

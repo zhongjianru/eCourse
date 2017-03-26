@@ -16,8 +16,8 @@ module.exports = {
   },
 
   // 根据课程 id 删除所有作业
-  delLessonhwksByPostId: function delLessonhwksByPostId(postId) {
-    return Lessonhwk.remove({ postId: postId }).exec();
+  delLessonhwksByCourseId: function delLessonhwksByCourseId(courseId) {
+    return Lessonhwk.remove({ courseId: courseId }).exec();
   },
 
   // 根据课程内容 id 删除所有作业

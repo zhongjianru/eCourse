@@ -14,23 +14,23 @@ module.exports = {
     return Attender.remove({ _id: attendId, attender: attender }).exec();
   },
   // 通过课程 id 删除该课程下的所有参与者
-  delAttendersByPostId: function delAttendersByPostId(postId) {
-    return Attender.remove({ postId: postId }).exec();
+  delAttendersByCourseId: function delAttendersByCourseId(courseId) {
+    return Attender.remove({ courseId: courseId }).exec();
   },
   // 通过课程 id 获取该课程的所有参与者，按参与时间升序
-  getAttenders: function getAttenders(postId) {
+  getAttenders: function getAttenders(courseId) {
     return Attender
-      .find({ postId: postId })
+      .find({ courseId: courseId })
       .populate({ path: 'attender', model: 'User' })
       .sort({ _id: 1 })
       .addCreatedAt()
       .exec();
   },
   // 通过用户 id 获取用户加入的所有课程
-  getPostsByUserId: function getPostsByUserId(userId) {
+  getCoursessByUserId: function getCoursessByUserId(userId) {
     return Attender
       .find({ attender: userId })
-      .populate({ path: 'postId', model: 'Post' })
+      .populate({ path: 'courseId', model: 'Course' })
       .populate({ path: 'author', model: 'User' })
       .populate({ path: 'attender', model: 'User' })
       .sort({ _id: 1 })
@@ -38,14 +38,14 @@ module.exports = {
       .exec();
   },
   // 通过用户 id 和 课程 id 获取用户是否已加入该课程
-  isAttended: function isAttended(userId, postId) {
+  isAttended: function isAttended(userId, courseId) {
     return Attender
-      .findOne({ attender: userId, postId: postId })
+      .findOne({ attender: userId, courseId: courseId })
       .addCreatedAt()
       .exec();
   },
   // 通过课程 id 获取该课程参与者人数
-  getAttendersCount: function getAttendersCount(postId) {
-    return Attender.count({ postId: postId }).exec();
+  getAttendersCount: function getAttendersCount(courseId) {
+    return Attender.count({ courseId: courseId }).exec();
   }
 };

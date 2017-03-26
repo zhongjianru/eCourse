@@ -31,9 +31,9 @@ module.exports = {
   },
 
   // 通过课程 id 获取该课程下所有课程内容，按课程次序升序
-  getLessons: function getLessons(postId) {
+  getLessons: function getLessons(courseId) {
     return Lesson
-      .find({ postId: postId })
+      .find({ courseId: courseId })
       .populate({ path: 'author', model: 'User' })
       .sort({ order: 1 })
       .addCreatedAt()
@@ -59,9 +59,9 @@ module.exports = {
       .exec();
   },
 
-  // 通过课程 id 和课程内容 id 更新课程内容
-  updateLessonById: function updateLessonById(postId, lessonId, data) {
-    return Lesson.update({ postId: postId, _id: lessonId }, { $set: data }).exec();
+  // 通过课程内容 id 和用户 id 更新课程内容
+  updateLessonById: function updateLessonById(lessonId, userId, data) {
+    return Lesson.update({ _id: lessonId, author: userId }, { $set: data }).exec();
   },
 
   // 通过用户 id 和课程内容 id 删除一个课程内容
@@ -79,7 +79,7 @@ module.exports = {
   },
 
   // 通过课程 id 删除该课程下所有课程内容
-  delLessonsByPostId: function delLessonsByPostId(postId) {
-    return Lesson.remove({ postId: postId }).exec();
+  delLessonsByPostId: function delLessonsByPostId(courseId) {
+    return Lesson.remove({ courseId: courseId }).exec();
   }
 };

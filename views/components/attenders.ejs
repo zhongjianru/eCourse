@@ -17,13 +17,13 @@
 
         <div>
         <% if (!isAttended) { %>
-        <form method="post" action="/posts/<%= post._id %>/attend">
+        <form method="post" action="/course/<%= course._id %>/attend">
           <div class="field">
           </div>
           <input type="submit" class="ui icon button" value="加入课程" />
         </form>
         <% } else { %>
-        <form method="get" action="/posts/<%= post._id %>/attend/<%= isAttended._id %>/remove">
+        <form method="get" action="/course/<%= course._id %>/attend/<%= isAttended._id %>/remove">
           <div class="field">
           </div>
           <input type="submit" class="ui icon button" value="退出课程" />

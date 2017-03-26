@@ -91,7 +91,7 @@ router.post('/', checkNotLogin, function(req, res, next) {
       // 写入 flash
       req.flash('success', '注册成功');
       // 跳转到首页
-      res.redirect('/posts');
+      res.redirect('/courses');
     })
     .catch(function (e) {
       // 注册失败，异步删除上传的头像

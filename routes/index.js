@@ -1,11 +1,12 @@
 module.exports = function (app) {
   app.get('/', function (req, res) {
-    res.redirect('/posts'); // 首页重定向到posts页面
+    res.redirect('/courses'); // 首页重定向到courses页面
   });
   app.use('/signup', require('./signup'));
   app.use('/signin', require('./signin'));
   app.use('/signout', require('./signout'));
-  app.use('/posts', require('./posts'));
+  app.use('/courses', require('./courses'));
+  app.use('/course', require('./course'));
   app.use('/user', require('./user'));
 
   // 404 page

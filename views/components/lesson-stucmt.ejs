@@ -24,7 +24,7 @@
 
               <% if (user && cmt.author._id && user._id.toString() === cmt.author._id.toString()) { %>
                 <div class="actions">
-                  <a class="reply" href="/posts/<%= post._id %>/lesson/<%= lesson._id %>/lessoncmt/<%= cmt._id %>/remove">删除</a>
+                  <a class="reply" href="/course/<%= course._id %>/lesson/<%= lesson._id %>/lessoncmt/<%= cmt._id %>/remove">删除</a>
                 </div>
               <% } %>
             </div>
@@ -33,7 +33,7 @@
         <% } %>
 
         <% if (user) { %>
-          <form class="ui reply form" method="post" action="/posts/<%= post._id %>/lesson/<%= lesson._id %>/lessoncmt">
+          <form class="ui reply form" method="post" action="/course/<%= course._id %>/lesson/<%= lesson._id %>/lessoncmt">
             <div class="field">
               <textarea name="content"></textarea>
             </div>

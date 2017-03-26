@@ -16,8 +16,8 @@
   </div>
 </div>
 
-<% posts.forEach(function (post) { %>
-<%- include('components/profile-tch', { post: post }) %>
+<% courses.forEach(function (course) { %>
+<%- include('components/profile-tch', { course: course }) %>
 <% }) %>
 
 <% if (isUser === true) { %>
@@ -30,8 +30,8 @@
   </div>
 </div>
 
-<% rejposts.forEach(function (post) { %>
-<%- include('components/profile-tch', { post: post }) %>
+<% rejcourses.forEach(function (course) { %>
+<%- include('components/profile-tch', { course: course }) %>
 <% }) %>
 <% } %>
 
@@ -51,8 +51,8 @@
   </div>
 </div>
 
-<% posts.forEach(function (post) { %>
-<%- include('components/profile-stu', { post: post }) %>
+<% courses.forEach(function (course) { %>
+<%- include('components/profile-stu', { course: course }) %>
 <% }) %>
 <% } %>
 
