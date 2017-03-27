@@ -109,6 +109,12 @@ router.post('/:userId/edit', checkLogin, function (req, res, next) {
     if (!(bio.length >= 1 && bio.length <= 200)) {
       throw new Error('个人简介请限制在 1-200 个字符内');
     }
+    if (email.length <= 0) {
+      throw new Error('邮箱不能为空');
+    }
+    if (email.length >= 30) {
+      throw new Error('邮箱长度超过限制');
+    }
   } catch (e) {
     req.flash('error', e.message);
     return res.redirect('back');
