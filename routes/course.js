@@ -572,11 +572,12 @@ router.get('/:courseId/lesson/:lessonId/edit', checkLogin, function (req, res, n
 
 // POST /course/:courseId/lesson/:lessonId/edit 更新课程内容
 router.post('/:courseId/lesson/:lessonId/edit', checkLogin, function (req, res, next) {
-  var user = req.session.user;
+  var courseId = req.params.courseId;
   var lessonId = req.params.lessonId;
   var order = req.fields.order;
   var title = req.fields.title;
   var content = req.fields.content;
+  var user = req.session.user;
 
   try {
     if(!order.length) {

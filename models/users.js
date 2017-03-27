@@ -14,11 +14,16 @@ module.exports = {
       .exec();
   },
 
-  // 通过用户id获取用户信息
+  // 通过用户 id 获取用户信息
   getUserById: function getUserById(userId) {
     return User
       .findOne({ _id: userId })
       .addCreatedAt()
       .exec();
+  },
+  
+  // 通过用户 id 更新用户信息
+  updateUserById: function updateUserById(userId, data) {
+    return User.update({ _id: userId }, { $set: data }).exec();
   }
 };
