@@ -17,6 +17,7 @@ router.post('/', checkNotLogin, function(req, res, next) {
   var name = req.fields.name;
   var identity = req.fields.gender;
   var school = req.fields.school;
+  var email = req.fields.email;
   var bio = req.fields.bio;
   var avatar = req.files.avatar.path.split(path.sep).pop();// split(path.sep) 将路径转化为数组对象
   var username = req.fields.username;
@@ -46,6 +47,12 @@ router.post('/', checkNotLogin, function(req, res, next) {
     }
     if (!(bio.length >= 1 && bio.length <= 200)) {
       throw new Error('个人简介请限制在 1-200 个字符内');
+    }
+    if (email.length <= 0) {
+      throw new Error('邮箱不能为空');
+    }
+    if (email.length >= 30) {
+      throw new Error('邮箱长度超过限制');
     }
     if (!req.files.avatar.name) {
       throw new Error('缺少头像');
@@ -77,6 +84,7 @@ router.post('/', checkNotLogin, function(req, res, next) {
     school: school,
     identity: identity,
     bio: bio,
+    email: email,
     avatar: avatar,
     status: status
   };

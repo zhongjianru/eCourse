@@ -25,6 +25,10 @@
         <input placeholder="学校" type="text" name="school">
       </div>
       <div class="field required">
+        <label>邮箱</label><span class="error"></span>
+        <input placeholder="邮箱" type="email" name="email">
+      </div>
+      <div class="field required">
         <label>职业</label>
         <select class="ui compact selection dropdown" name="gender">
           <option value="student">学生</option>
@@ -40,8 +44,8 @@
         <textarea name="bio" rows="5" v-model="user.bio"></textarea>
       </div>
       <input type="submit" class="ui button fluid" value="注册">
-    </div>
-  </form>
+    </form>
+  </div>
 </div>
 
 <%- include('footer') %>

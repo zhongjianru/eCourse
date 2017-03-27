@@ -1,21 +1,24 @@
 <div class="ui cards">
   <div class="card">
     <div class="content">
-      <div class="userCard">
-        <img src="/upload/<%= user.avatar %>">
+      <a href="javascript:void(0);" class="avatar-big" title="修改头像">
+        <img class="avatar-big" src="/upload/<%= author.avatar %>">
+      </a>
+      <div class="userCard right">
         <div class="info">
-          <p><%= user.name %></p>
-          <p class="meta"><%= user.school %></p>
+          <p><%= author.name %></p>
+          <p class="meta"><%= author.school %></p>
+          <p class="meta"><%= author.email %></p>
         </div>
       </div>
       <div class="description">
-        <%= user.bio %>
+        <%= author.bio %>
       </div>
     </div>
     <% if (isUser) { %>
     <div class="extra content">
-      <a href="/user/<%= user._id %>" class=""><i class="home icon"></i>个人主页</a>
-      <a href="/user/<%= user._id %>/edit" class="right floated"><i class="setting icon"></i>设置</a>
+      <a href="/user/<%= author._id %>" class=""><i class="home icon"></i>个人主页</a>
+      <a href="/user/<%= author._id %>/edit" class="right floated"><i class="setting icon"></i>设置</a>
     </div>
     <% } else { %>
     <div class="extra content">

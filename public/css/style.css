@@ -8,11 +8,11 @@ body {
 }
 
 a:hover {
-  border-bottom: 3px solid #4fc08d;
+  border-bottom: 3px solid #1e70bf;
 }
 
 .button {
-  background-color: #4fc08d !important;
+  background-color: #1e70bf !important;
   color: #fff !important;
 }
 
@@ -36,14 +36,21 @@ a:hover {
   float: right;
 }
 
-pre {
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  margin-bottom: 0;
+/* ---------- user ---------- */
+.userCard {
+  display: inline-block;
+  width: 60%;
 }
 
-.minheight {
-  min-height: 128px;
+.avatar-big {
+  border-radius: 50%;
+  width: 70px !important;
+  height: 70px !important;
+  display: inline-block;
+}
+
+.description {
+  margin-top: 0.6em;
 }
 
 /* ---------- nav ---------- */
@@ -55,7 +62,7 @@ pre {
 }
 
 .nav h1 {
-  color: #4fc08d;
+  color: #1e70bf;
   display: inline-block;
   margin: 10px 0;
 }
@@ -82,7 +89,7 @@ pre {
 /* ---------- course-content ---------- */
 
 .course-content h3 a {
-  color: #4fc08d !important;
+  color: #1e70bf !important;
 }
 
 .course-content .tag {
@@ -94,4 +101,14 @@ pre {
 .course-content .tag.right {
   float: right;
   margin-right: 0;
+}
+
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin-bottom: 0;
+}
+
+.minheight {
+  min-height: 128px;
 }

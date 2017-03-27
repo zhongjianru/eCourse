@@ -24,6 +24,10 @@
         </select>
       </div>
       <div class="field required">
+        <label>邮箱</label><span class="error"></span>
+        <input placeholder="邮箱" type="email" name="email" value="<%= user.email %>">
+      </div>
+      <div class="field required">
         <label>个人简介</label>
         <textarea name="bio" rows="5" v-model="user.bio"><%= user.bio %></textarea>
       </div>
