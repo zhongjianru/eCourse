@@ -186,7 +186,7 @@ module.exports = {
   // 通过用户 id 和课程 id 删除课程
   delCourseById: function delCourseById(courseId, author) {
     return Course
-      .update({ author: author, _id: courseId }, { status: '2' })
+      .update({ author: author, _id: courseId }, { $set: { status: '2' } })
       .exec()
       .then(function (res) {
         // 课程删除后，删除该课程下的所有留言、参与者、课程内容、课件、学生作业、学生留言
