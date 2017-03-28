@@ -119,6 +119,14 @@ pre {
 }
 
 .modal {
-  width: 20% !important;
-  margin-left: -10% !important;
+  width: 30% !important;
+  margin-left: -15% !important;
+}
+
+/* ---------- modal of delete ---------- */
+
+button[id="remove"] {
+    border: none;
+    background: white;
+    padding: 0;
 }

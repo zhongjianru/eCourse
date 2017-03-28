@@ -24,8 +24,8 @@
             <div class="ui inline dropdown">
               <i class="setting icon"></i>
               <div class="menu">
-                <div class="item"><a href="/course/<%= course._id %>/edit">编辑</a></div>
-                <div class="item"><input type="button" value="删除" href="" id="remove"></div>
+                <div class="item"><a href="/course/<%= course._id %>/edit" id="edit">编辑</a></div>
+                <div class="item"><button type="button" id="remove"><a>删除</a></button></div>
               </div>
             </div>
             <% } %>
@@ -51,7 +51,7 @@
     </div>
   </div>
   <div class="actions">
-    <div class="ui button">取消</div>
-    <div class="ui button">确认</div>
+    <div class="ui button" id="cancel">取消</div>
+    <div class="ui button" id="confirm">确认</div>
   </div>
 </div>

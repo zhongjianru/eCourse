@@ -45,8 +45,8 @@ router.post('/', checkNotLogin, function(req, res, next) {
     if (!(school.length >= 1 && school.length <= 20)) {
       throw new Error('学校请限制在 1-20 个字符内');
     }
-    if (!(bio.length >= 1 && bio.length <= 200)) {
-      throw new Error('个人简介请限制在 1-200 个字符内');
+    if (!(bio.length >= 1 && bio.length <= 50)) {
+      throw new Error('个人简介请限制在 1-50 个字符内');
     }
     if (email.length <= 0) {
       throw new Error('邮箱不能为空');

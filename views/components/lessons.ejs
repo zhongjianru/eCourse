@@ -11,7 +11,7 @@
         <p>暂无</p>
         <% } else { %>
         <% lessons.forEach(function (lesson) { %>
-        <a href="/course/<%= course._id %>/lesson/<%= lesson._id %>" target="_blank">
+        <a href="/course/<%= course._id %>/lesson/<%= lesson._id %>">
           第<%= lesson.order %>课时：<%= lesson.title %>
         </a>
         <br>
