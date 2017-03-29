@@ -4,6 +4,7 @@
 
 var express = require('express');
 var router = express.Router();
+var sha1 = require('sha1');
 
 var UserModel = require('../models/users');
 var CourseModel = require('../models/courses');
@@ -144,10 +145,10 @@ router.post('/:userId/edit', checkLogin, function (req, res, next) {
 // GET /user/:userId/modifypwd 修改密码页
 router.get('/:userId/modifypwd', checkLogin, function (req, res, next) {
   var authorId = req.params.userId;// 主页用户 id
-  var userId = req.session.user._id;
+  var user = req.session.user;
 
   try {
-    if(userId && authorId && userId.toString() !== authorId.toString()) {
+    if(user && authorId && user._id.toString() !== authorId.toString()) {
       throw new Error('权限不足');
     }
   } catch (e) {
@@ -155,27 +156,28 @@ router.get('/:userId/modifypwd', checkLogin, function (req, res, next) {
     return res.redirect('back');
   }
 
-  UserModel.getUserById(userId)
-    .then(function (user) {
-      res.render('modifypwd', {
-        subtitle: '修改密码',
-        user: user
-      });
-    })
-    .catch(next);
+  res.render('modifypwd', {
+    subtitle: '修改密码',
+    user: user
+  });
 });
 
-// POST /user/:userId/edit 修改密码
-router.post('/:userId/edit', checkLogin, function (req, res, next) {
+// POST /user/:userId/modifypwd 修改密码
+router.post('/:userId/modifypwd', checkLogin, function (req, res, next) {
   var oldpassword = req.fields.oldpassword;
   var password = req.fields.password;
   var repassword = req.fields.repassword;
   var authorId = req.params.userId;// 主页用户 id
-  var user = req.session.user;
 
   UserModel.getUserById(authorId)
-    .then(function () {
+    .then(function (user) {
       try {
+        if(!user) {
+          throw new Error('用户不存在');
+        }
+        if(user && user.password !== sha1(oldpassword)) {
+          throw new Error('原密码错误');
+        }
         if (!(password.length >= 6 && password.length <= 16)) {
           throw new Error('密码请限制在 6-16 个字符内');
         }
@@ -187,9 +189,10 @@ router.post('/:userId/edit', checkLogin, function (req, res, next) {
         return res.redirect('back');
       }
 
-      UserModel.updateUserById(user._id, { name: name, school: school, email: email, bio: bio })
+      UserModel.updateUserById(user._id, { password: sha1(password) })
         .then(function () {
-          req.flash('success', '编辑成功');
+          req.flash('success', '密码修改成功');
+          delete user.password;
           return res.redirect(`/user/${user._id}`);
         });
     })
