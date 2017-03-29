@@ -79,7 +79,7 @@ router.get('/:userId', function (req, res, next) {
     .catch(next);
 });
 
-// GET /user/:userId/edit
+// GET /user/:userId/edit 修改个人信息页
 router.get('/:userId/edit', checkLogin, function (req, res, next) {
   var authorId = req.params.userId;// 主页用户 id
   var userId = req.session.user._id;
@@ -95,7 +95,7 @@ router.get('/:userId/edit', checkLogin, function (req, res, next) {
   
   UserModel.getUserById(userId)
     .then(function (user) {
-      res.render('editinfo',{
+      res.render('editinfo', {
         subtitle: '编辑个人信息',
         user: user
       });
@@ -103,7 +103,7 @@ router.get('/:userId/edit', checkLogin, function (req, res, next) {
     .catch(next);
 });
 
-// POST /user/:userId/edit
+// POST /user/:userId/edit 修改个人信息
 router.post('/:userId/edit', checkLogin, function (req, res, next) {
   var name = req.fields.name;
   var school = req.fields.school;
@@ -137,6 +137,61 @@ router.post('/:userId/edit', checkLogin, function (req, res, next) {
     .then(function () {
       req.flash('success', '编辑成功');
       return res.redirect(`/user/${user._id}`);
+    })
+    .catch(next);
+});
+
+// GET /user/:userId/modifypwd 修改密码页
+router.get('/:userId/modifypwd', checkLogin, function (req, res, next) {
+  var authorId = req.params.userId;// 主页用户 id
+  var userId = req.session.user._id;
+
+  try {
+    if(userId && authorId && userId.toString() !== authorId.toString()) {
+      throw new Error('权限不足');
+    }
+  } catch (e) {
+    req.flash('error', e.message);
+    return res.redirect('back');
+  }
+
+  UserModel.getUserById(userId)
+    .then(function (user) {
+      res.render('modifypwd', {
+        subtitle: '修改密码',
+        user: user
+      });
+    })
+    .catch(next);
+});
+
+// POST /user/:userId/edit 修改密码
+router.post('/:userId/edit', checkLogin, function (req, res, next) {
+  var oldpassword = req.fields.oldpassword;
+  var password = req.fields.password;
+  var repassword = req.fields.repassword;
+  var authorId = req.params.userId;// 主页用户 id
+  var user = req.session.user;
+
+  UserModel.getUserById(authorId)
+    .then(function () {
+      try {
+        if (!(password.length >= 6 && password.length <= 16)) {
+          throw new Error('密码请限制在 6-16 个字符内');
+        }
+        if (password !== repassword) {
+          throw new Error('两次输入密码不一致');
+        }
+      } catch (e) {
+        req.flash('error', e.message);
+        return res.redirect('back');
+      }
+
+      UserModel.updateUserById(user._id, { name: name, school: school, email: email, bio: bio })
+        .then(function () {
+          req.flash('success', '编辑成功');
+          return res.redirect(`/user/${user._id}`);
+        });
     })
     .catch(next);
 });
