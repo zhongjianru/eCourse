@@ -8,6 +8,7 @@ var routes = require('./routes');
 var pkg = require('./package');
 var winston = require('winston');
 var expressWinston = require('express-winston');
+var admin = require('./config/admin');
 
 var app = express();
 
@@ -96,5 +97,6 @@ if (module.parent) {
   // 监听端口，启动程序
   app.listen(config.port, function () {
     console.log(`${pkg.name} listening on port ${config.port}`);
+    admin.init();
   });
 }
