@@ -8,6 +8,7 @@ var UserModel = require('../models/users');
 module.exports = {
   init: function init() {
     var admin = {
+      name: 'admin',
       username: 'admin',
       password: sha1('888888'),
       identity: 'admin'
