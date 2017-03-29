@@ -879,4 +879,38 @@ router.get('/:courseId/lesson/:lessonId/lessoncmt/:lessoncmtId/remove', checkLog
     .catch(next);
 });
 
+// GET /course/:courseId/approve 课程通过审核
+router.get('/:courseId/approve', checkLogin, function (req, res, next) {
+  var userId = req.session.user._id;
+  var courseId = req.params.courseId;
+
+  Promise.all([
+      UserModel.getUserById(userId),
+      CourseModel.getCourseById(courseId)
+    ])
+    .then(function (result) {
+      var user = result[0];
+      var course = result[1];
+
+      try {
+        if (user.identity !== 'admin') {
+          throw new Error('权限不足');
+        }
+        if (course.status !== '0') {
+          throw new Error('该课程不需要审核');
+        }
+      } catch (e) {
+        req.flash('error', e.message);
+        return res.redirect('back');
+      }
+      
+      CourseModel.updateStatusById(courseId)
+        .then(function () {
+          req.flash('success', '审核成功');
+          return res.redirect('back');
+        });
+    })
+    .catch(next);
+});
+
 module.exports = router;

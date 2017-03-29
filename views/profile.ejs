@@ -55,6 +55,12 @@
 <% courses.forEach(function (course) { %>
 <%- include('components/profile-stu', { course: course }) %>
 <% }) %>
+
+<% } else if(author.identity === 'admin' && isUser) { %>
+<h1>未审核课程</h1>
+<% courses.forEach(function (course) { %>
+<%- include('components/course-summary', { course: course }) %>
+<% }) %>
 <% } %>
 
 <%- include('footer') %>

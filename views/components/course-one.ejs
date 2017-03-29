@@ -28,6 +28,13 @@
                 <div class="item"><button type="button" id="remove"><a>删除</a></button></div>
               </div>
             </div>
+            <% } else if(user && user.identity === 'admin' && course.status === '0') { %>
+            <div class="ui inline dropdown">
+              <i class="setting icon"></i>
+              <div class="menu">
+                <div class="item"><a href="/course/<%= course._id %>/approve">审核通过</a></div>
+              </div>
+            </div>
             <% } %>
 
           </span>

@@ -50,10 +50,9 @@ router.get('/:userId', function (req, res, next) {
             });
           });
       }
-      else {
+      else if(author && author.identity === 'student') {
         AttenderModel.getCoursessByUserId(authorId)
           .then(function (courses) {
-
             res.render('profile', {
               subtitle: author.name + ' - 个人主页',
               author: author,
@@ -61,6 +60,20 @@ router.get('/:userId', function (req, res, next) {
               isUser: isUser
             });
           });
+      }
+      else if(author && author.identity === 'admin' && isUser) {
+        CourseModel.getRejectedCourses()
+          .then(function (courses) {
+            res.render('profile', {
+              subtitle: author.name + ' - 个人主页',
+              author: author,
+              courses: courses,
+              isUser: isUser
+            });
+          });
+      }
+      else {
+        res.render('404');
       }
     })
     .catch(next);

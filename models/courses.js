@@ -96,19 +96,6 @@ module.exports = {
       .exec();
   },
 
-  // 按创建时间降序获取所有未审核的课程
-  getRejectedCourses: function getRejectedCourses() {
-    return Course
-      .find({ status: '0' })
-      .populate({ path: 'author', model: 'User' })
-      .sort({ _id: -1 })
-      .addCreatedAt()
-      .addAttendersCount()
-      .addCommentsCount()
-      .contentToHtml()
-      .exec();
-  },
-
   // 通过用户 id 获取该用户发表的已审核的课程
   getCoursesByUserId: function getCoursesByUserId(userId) {
     return Course
@@ -199,5 +186,23 @@ module.exports = {
             LessonhwkModel.delLessonhwksByCourseId(courseId);
         }
       });
+  },
+
+  // 按创建时间降序获取所有未审核的课程
+  getRejectedCourses: function getRejectedCourses() {
+    return Course
+      .find({ status: '0' })
+      .populate({ path: 'author', model: 'User' })
+      .sort({ _id: -1 })
+      .addCreatedAt()
+      .addAttendersCount()
+      .addCommentsCount()
+      .contentToHtml()
+      .exec();
+  },
+
+  // 将未审核课程置为已通过审核
+  updateStatusById: function updateStatusById(courseId) {
+    return Course.update({ _id: courseId }, { $set: { status: '1' } }).exec();
   }
 };
