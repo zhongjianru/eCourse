@@ -24,12 +24,6 @@ router.post('/', checkNotLogin, function(req, res, next) {
   var password = req.fields.password;
   var repassword = req.fields.repassword;
   var fname = avatar.split('.');
-  var status = '0';// 0 未审核，1 已审核
-
-  // 学生注册不需要经过审核，教师则需要
-  if(identity === 'student') {
-    status = '1';
-  }
 
   // 校验参数
   try {
@@ -85,8 +79,7 @@ router.post('/', checkNotLogin, function(req, res, next) {
     identity: identity,
     bio: bio,
     email: email,
-    avatar: avatar,
-    status: status
+    avatar: avatar
   };
   // 用户信息写入数据库
   UserModel.create(user)
