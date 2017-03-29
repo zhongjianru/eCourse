@@ -1,7 +1,7 @@
 <div class="ui cards">
   <div class="card">
     <div class="content">
-      <a href="javascript:void(0);" class="avatar-big" title="修改头像">
+      <a href="javascript:void(0);" class="avatar-big clear" title="修改头像" id="modifyavt">
         <img class="avatar-big" src="/upload/<%= author.avatar %>">
       </a>
       <div class="userCard right">
@@ -28,4 +28,20 @@
     </div>
     <% } %>
   </div>
+</div>
+
+<div class="ui small modal modifyavt">
+  <i class="close icon"></i>
+  <div class="header">
+    修改头像
+  </div>
+  <form class="ui form segment" method="post" enctype="multipart/form-data" action="/user/<%= user._id %>/avatar">
+    <div class="field required">
+      <input type="file" name="avatar">
+    </div>
+    <div class="actions right">
+      <div class="ui button" id="cancel">取消</div>
+      <input type="submit" class="ui button fluid" value="确定">
+    </div>
+  </form>
 </div>
