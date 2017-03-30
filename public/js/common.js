@@ -12,7 +12,7 @@ $(document).ready(function () {
     lastResort: 'bottom right',
   });
 
-  // 取消按钮，模态框消失
+  // 点击取消按钮，模态框消失
   $('.modal #cancel').click(function () {
     $('.ui.small.modal').modal('hide');
   });
@@ -20,12 +20,6 @@ $(document).ready(function () {
   // 确认删除
   $('button[id="remove"]').click(function () {
     $('.ui.small.modal.remove').modal('show');
-  });
-
-  $('.modal.remove #confirm').click(function () {
-    var url = $('#edit').attr('href');
-    url = url.substr(0, url.length - 4) + 'remove';
-    window.location.href = url;
   });
 
   // 修改头像
