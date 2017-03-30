@@ -18,9 +18,6 @@ router.get('/create', checkLogin, function(req, res, next) {
   UserModel.getUserById(req.session.user._id)
     .then(function (user) {
       try {
-        if (user && user.identity === 'teacher' && user.status === '0') {
-          throw new Error('未审核用户不能发表课程');
-        }
         if (user && user.identity !== 'teacher') {
           throw new Error('权限不足');
         }

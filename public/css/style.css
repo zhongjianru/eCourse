@@ -31,6 +31,8 @@ a:hover {
 
 .clear {
   float: none;
+  border: none !important;
+  clear: both;
 }
 
 .clear:hover {
@@ -39,6 +41,10 @@ a:hover {
 
 .right {
   float: right;
+}
+
+.center {
+  text-align: center !important;
 }
 
 /* ---------- user ---------- */

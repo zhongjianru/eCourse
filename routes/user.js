@@ -2,6 +2,8 @@
  * Created by 45925 on 2017/3/15.
  */
 
+var fs = require('fs');
+var path = require('path');
 var express = require('express');
 var router = express.Router();
 var sha1 = require('sha1');
@@ -164,7 +166,7 @@ router.get('/:userId/modifypwd', checkLogin, function (req, res, next) {
 
 // POST /user/:userId/modifypwd 修改密码
 router.post('/:userId/modifypwd', checkLogin, function (req, res, next) {
-  var oldpassword = req.fields.oldpassword;
+  var password_old = req.fields.password_old;
   var password = req.fields.password;
   var repassword = req.fields.repassword;
   var authorId = req.params.userId;// 主页用户 id
@@ -175,7 +177,7 @@ router.post('/:userId/modifypwd', checkLogin, function (req, res, next) {
         if(!user) {
           throw new Error('用户不存在');
         }
-        if(user && user.password !== sha1(oldpassword)) {
+        if(user && user.password !== sha1(password_old)) {
           throw new Error('原密码错误');
         }
         if (!(password.length >= 6 && password.length <= 16)) {
@@ -201,7 +203,38 @@ router.post('/:userId/modifypwd', checkLogin, function (req, res, next) {
 
 // POST /user/:userId/avatar
 router.post('/:userId/avatar', checkLogin, function (req, res, next) {
-  
+  var user = req.session.user;
+  var avatar = req.files.avatar.path.split(path.sep).pop();// split(path.sep) 将路径转化为数组对象
+  var fname = avatar.split('.');
+
+  try {
+    if (!req.files.avatar.name) {
+      throw new Error('缺少头像');
+    }
+    if(['gif', 'jpeg', 'jpg', 'png'].indexOf(fname[fname.length - 1]) === -1) {
+      throw new Error('上传头像格式只能为gif、jpg或png');
+    }
+  } catch (e) {
+    // 注册失败，异步删除上传的头像
+    fs.unlink(req.files.avatar.path);
+    req.flash('error', e.message);
+    return res.redirect('back');
+  }
+
+  Promise.all([
+      UserModel.getUserById(user._id),
+      UserModel.updateUserById(user._id, { avatar: avatar })
+    ])
+    .then(function (result) {
+      var avatar_old = result[0].avatar;
+
+      var filepath = path.join(__dirname,'../public/upload/', avatar_old);
+      fs.unlink(filepath.toString());// 删除上传的文件
+
+      req.flash('success', '头像修改成功');
+      return res.redirect('back');
+    })
+    .catch(next);
 });
 
 module.exports = router;
