@@ -15,7 +15,7 @@ router.get('/', checkNotLogin, function(req, res, next) {
 // POST /signup 用户注册
 router.post('/', checkNotLogin, function(req, res, next) {
   var name = req.fields.name;
-  var identity = req.fields.gender;
+  var identity = req.fields.identity;
   var school = req.fields.school;
   var email = req.fields.email;
   var bio = req.fields.bio;
@@ -27,17 +27,17 @@ router.post('/', checkNotLogin, function(req, res, next) {
 
   // 校验参数
   try {
-    if (!(username.length >= 6 && username.length <= 16)) {
-      throw new Error('用户名请限制在 6-16 个字符内');
+    if (username.length <= 0) {
+      throw new Error('学号不能为空');
     }
-    if (!(name.length >= 1 && name.length <= 12)) {
-      throw new Error('姓名请限制在 1-12 个字符内');
+    if (!(name.length >= 1 && name.length <= 6)) {
+      throw new Error('姓名请限制在 1-6 个字符内');
     }
     if (['student', 'teacher'].indexOf(identity) === -1) {
-      throw new Error('职业只能为学生或教师');
+      throw new Error('身份只能为学生或教师');
     }
-    if (!(school.length >= 1 && school.length <= 20)) {
-      throw new Error('学校请限制在 1-20 个字符内');
+    if (!(school.length >= 1 && school.length <= 16)) {
+      throw new Error('学院请限制在 1-16 个字符内');
     }
     if (!(bio.length >= 1 && bio.length <= 50)) {
       throw new Error('个人简介请限制在 1-50 个字符内');

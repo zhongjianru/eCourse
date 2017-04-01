@@ -13,7 +13,7 @@ describe('signup', function() {
         name: 'aaa',
         password: '123456',
         avatar: '',
-        gender: 'x',
+        identity: 'x',
         bio: ''
       })
       .exec()
@@ -43,22 +43,22 @@ describe('signup', function() {
         .redirects()
         .end(function(err, res) {
           if (err) return done(err);
-          assert(res.text.match(/名字请限制在 1-10 个字符/));
+          assert(res.text.match(/名字请限制在 1-6 个字符/));
           done();
         });
     });
 
     // 性别错误的情况
-    it('wrong gender', function(done) {
+    it('wrong identity', function(done) {
       agent
         .post('/signup')
         .type('form')
         .attach('avatar', path.join(__dirname, 'avatar.png'))
-        .field({ name: 'nswbmw', gender: 'a' })
+        .field({ name: 'nswbmw', identity: 'a' })
         .redirects()
         .end(function(err, res) {
           if (err) return done(err);
-          assert(res.text.match(/性别只能是 m、f 或 x/));
+          assert(res.text.match(/身份只能是 teacher 或 student/));
           done();
         });
     });
@@ -69,7 +69,7 @@ describe('signup', function() {
         .post('/signup')
         .type('form')
         .attach('avatar', path.join(__dirname, 'avatar.png'))
-        .field({ name: 'aaa', gender: 'm', bio: 'noder', password: '123456', repassword: '123456' })
+        .field({ name: 'aaa', identity: 'student', bio: 'noder', password: '123456', repassword: '123456' })
         .redirects()
         .end(function(err, res) {
           if (err) return done(err);
@@ -84,7 +84,7 @@ describe('signup', function() {
         .post('/signup')
         .type('form')
         .attach('avatar', path.join(__dirname, 'avatar.png'))
-        .field({ name: 'nswbmw', gender: 'm', bio: 'noder', password: '123456', repassword: '123456' })
+        .field({ name: 'nswbmw', identity: 'student', bio: 'noder', password: '123456', repassword: '123456' })
         .redirects()
         .end(function(err, res) {
           if (err) return done(err);

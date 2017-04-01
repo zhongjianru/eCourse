@@ -116,11 +116,11 @@ router.post('/:userId/edit', checkLogin, function (req, res, next) {
 
   // 校验参数
   try {
-    if (!(name.length >= 1 && name.length <= 12)) {
-      throw new Error('姓名请限制在 1-12 个字符内');
+    if (!(name.length >= 1 && name.length <= 6)) {
+      throw new Error('姓名请限制在 1-6 个字符内');
     }
-    if (!(school.length >= 1 && school.length <= 20)) {
-      throw new Error('学校请限制在 1-20 个字符内');
+    if (!(school.length >= 1 && school.length <= 16)) {
+      throw new Error('学院请限制在 1-16 个字符内');
     }
     if (!(bio.length >= 1 && bio.length <= 50)) {
       throw new Error('个人简介请限制在 1-50 个字符内');
