@@ -531,7 +531,7 @@
         ```
 8. 页面通知
     本系统中使用`connect-flash`中间件来实现页面通知功能，在用户操作后返回给用户操作成功与否的通知。设置初始值`req.session.flash={}`，通过`req.flash(name, value)`设置这个对象下的字段和值，通过`req.flash(name)`获取这个对象下的值，同时删除这个字段。
-    ````
+    ```
     req.flash('success', '注册成功');
     ```
     
