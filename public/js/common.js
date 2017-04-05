@@ -17,7 +17,7 @@ $(document).ready(function () {
     $('.ui.small.modal').modal('hide');
   });
 
-  // 确认删除
+  // 确认删除课程
   $('button[id="remove"]').click(function () {
     $('.ui.small.modal.remove').modal('show');
   });
@@ -25,5 +25,10 @@ $(document).ready(function () {
   // 修改头像
   $('a[id="modifyavt"]').click(function () {
     $('.ui.small.modal.modifyavt').modal('show');
+  });
+
+  // 回复留言
+  $('a[id="reply"]').click(function () {
+    $('.ui.small.modal.reply').modal('show');
   });
 });

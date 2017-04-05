@@ -32,6 +32,7 @@ module.exports = {
     return Comment
       .find({ courseId: courseId })
       .populate({ path: 'author', model: 'User' })
+      .populate({ path: 'toComment', model: 'Comment' })
       .sort({ _id: 1 })
       .addCreatedAt()
       .contentToHtml()
@@ -40,7 +41,10 @@ module.exports = {
   
   // 通过留言 id 获取该留言
   getCommentById: function getCommentById(commentId) {
-    return Comment.findOne({ _id: commentId }).exec();
+    return Comment
+      .findOne({ _id: commentId })
+      .populate({ path: 'author', model: 'User' })
+      .exec();
   },
 
   // 通过课程 id 获取该课程下留言数

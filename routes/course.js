@@ -245,7 +245,8 @@ router.post('/:courseId/comment', checkLogin, function(req, res, next) {
       var comment = {
         author: author,
         courseId: courseId,
-        content: content
+        content: content,
+        isFirst: '1'
       };
 
       CommentModel.create(comment)
@@ -271,7 +272,7 @@ router.get('/:courseId/comment/:commentId/remove', checkLogin, function(req, res
         if (!comment) {
           throw new Error('该留言不存在');
         }
-        if (user && comment.author && user._id.toString() !== comment.author.toString()) {
+        if (user && comment.author && user._id.toString() !== comment.author._id.toString()) {
           throw new Error('权限不足');
         }
       } catch (e) {
@@ -284,6 +285,45 @@ router.get('/:courseId/comment/:commentId/remove', checkLogin, function(req, res
           CourseModel.decCmt(courseId);
           req.flash('success', '删除留言成功');
           // 删除成功后跳转到上一页
+          return res.redirect('back');
+        });
+    })
+    .catch(next);
+});
+
+// POST /course/:courseId/comment/:commentId/reply 回复一条留言
+router.post('/:courseId/comment/:commentId/reply', checkLogin, function(req, res, next) {
+  var courseId = req.params.courseId;
+  var commentId = req.params.commentId;
+  var author = req.session.user._id;
+  var content = req.fields.content;
+
+  CommentModel.getCommentById(commentId)
+    .then(function (toComment) {
+      try {
+        if (!toComment) {
+          throw new Error('该留言不存在');
+        }
+      } catch (e) {
+        req.flash('error', e.message);
+        return res.redirect(`/course/${courseId}`);
+      }
+
+      var comment = {
+        author: author,
+        courseId: courseId,
+        content: content,
+        toComment: commentId,
+        toAuthor: toComment.author._id,
+        toAuthorName: toComment.author.name,
+        isFirst: '0'
+      };
+
+      CommentModel.create(comment)
+        .then(function () {
+          CourseModel.incCmt(courseId);
+          req.flash('success', '回复成功');
+          // 留言成功后跳转到上一页
           return res.redirect('back');
         });
     })

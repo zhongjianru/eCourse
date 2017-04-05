@@ -132,12 +132,7 @@ button[id="remove"] {
   padding: 0;
 }
 
-.modal.remove {
-  width: 30% !important;
-  margin-left: -15% !important;
-}
-
-.modal.modifyavt {
+.modal {
   width: 30% !important;
   margin-left: -15% !important;
 }
