@@ -1,0 +1,23 @@
+<%- include('header') %>
+
+<div class="ui grid">
+  <div class="four wide column"></div>
+  <div class="eight wide column">
+    <% if(!result[0]) { %>
+    暂无搜索结果
+    <% } else { %>
+    共找到<%= result.length %>个相关结果：
+    <% if(type === 'course') { %>
+    <% result.forEach(function (course) { %>
+    <%- include('components/course-one', { course: course }) %>
+    <% }) %>
+    <% } else { %>
+    <% result.forEach(function (user) { %>
+    <%- include('components/usercard', { user: user }) %>
+    <% }) %>
+    <% } %>
+    <% } %>
+  </div>
+</div>
+
+<%- include('footer') %>
