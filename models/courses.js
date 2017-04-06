@@ -122,6 +122,11 @@ module.exports = {
       .exec();
   },
 
+  // 搜索课程名
+  searchCoursesByTitle: function searchCoursesByTitle(title) {
+    return Course.find({ title: '/' + title + '?/i' }).exec();
+  },
+
   // 通过课程 id 给 pv 加 1
   incPv: function incPv(courseId) {
     return Course
