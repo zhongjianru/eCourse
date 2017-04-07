@@ -24,7 +24,8 @@ module.exports = {
 
   // 搜索用户名
   searchUsersByName: function searchUsersByName(name) {
-    return User.find({ name: '/' + name + '?/i' }).exec();
+    var regex = new RegExp(name, 'i');
+    return User.find({ name: regex }).exec();
   },
   
   // 通过用户 id 更新用户信息

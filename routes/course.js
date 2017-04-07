@@ -177,7 +177,7 @@ router.post('/:courseId/edit', checkLogin, function(req, res, next) {
     return res.redirect('back');
   }
 
-  CourseModel.updateCourseById(courseId, author, { title: title, content: content, type: type })
+  CourseModel.updateCourseById(courseId, author, { title: title, content: content, type: type, status: '0' })
     .then(function () {
       req.flash('success', '编辑课程成功');
       // 编辑成功后跳转到上一页

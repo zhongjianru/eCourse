@@ -10,7 +10,7 @@ var CourseModel = require('../models/courses');
 
 router.post('/', function (req, res, next) {
   var type = req.fields.type;
-  var words = req.fields.query;
+  var words = req.fields.words;
   
   if(type.toString() === 'course') {
     CourseModel.searchCoursesByTitle(words)
@@ -18,6 +18,7 @@ router.post('/', function (req, res, next) {
         res.render('search', {
           subtitle: '搜索结果',
           result: courses,
+          words: words,
           type: type
         });
       })
@@ -29,7 +30,9 @@ router.post('/', function (req, res, next) {
         res.render('search', {
           subtitle: '搜索结果',
           result: users,
-          type:type
+          words: words,
+          type:type,
+          isUser: false
         });
       })
       .catch(next);

@@ -114,13 +114,24 @@ a:hover {
   margin-right: 0;
 }
 
-pre {
+.course-content pre {
   white-space: pre-wrap;
   word-wrap: break-word;
   margin-bottom: 0;
 }
 
-.minheight {
+.course-content pre.summary {
+  word-wrap: break-word;
+  margin-bottom: 1em;
+  height: 5.6em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+.course-content .minHeight {
   min-height: 128px;
 }
 

@@ -3,16 +3,15 @@
     <%- include('avatar', { user: course.author }) %>
 
     <div class="eight wide column">
-      <div class="ui segment">
+      <div class="ui segment minHeight">
         <h3><a href="/course/<%= course._id %>" target="_blank"><%= course.type %> | <%= course.title %></a></h3>
-        <pre><%- course.content %></pre>
+        <pre class="summary"><%- course.content %></pre>
         <div>
           <span class="tag"><%= course.created_at %></span>
           <span class="tag right">
             <span>浏览(<%= course.pv %>)</span>
-            <span>留言(<%= course.commentsCount %>)</span>
-            <span>参与人数(<%= course.attendersCount %>)</span>
-
+            <span>留言(<%= course.cmt %>)</span>
+            <span>参与人数(<%= course.atd %>)</span>
           </span>
         </div>
       </div>

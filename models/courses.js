@@ -124,7 +124,11 @@ module.exports = {
 
   // 搜索课程名
   searchCoursesByTitle: function searchCoursesByTitle(title) {
-    return Course.find({ title: '/' + title + '?/i' }).exec();
+    var regex = new RegExp(title, 'i');
+    return Course
+      .find({ title: regex, status: '1' })
+      .populate({ path: 'author', model: 'User' })
+      .exec();
   },
 
   // 通过课程 id 给 pv 加 1
