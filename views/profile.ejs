@@ -1,5 +1,35 @@
 <%- include('header') %>
-<%- include('components/usercard') %>
+
+<div class="ui grid">
+  <div class="two wide column"></div>
+  <div class="eight wide column">
+    <%- include('components/usercard') %>
+  </div>
+</div>
+
+<div class="ui grid">
+  <div class="two wide column"></div>
+  <div class="twelve wide column">
+    <div class="ui secondary pointing menu">
+      <% if (author.identity === 'teacher') { %>
+      <a class="item active">发布的课程 </a>
+      <% if (isUser === true) { %>
+      <a class="item">待审核课程 </a>
+      <a class="item">待处理消息 </a>
+      <% } %>
+
+      <% } else if (author.identity === 'student') { %>
+      <a class="item active">加入的课程 </a>
+      <% if (isUser === true) { %>
+      <a class="item">待处理消息 </a>
+      <% } %>
+      <% } %>
+    </div>
+    <div class="ui segment">
+      <p></p>
+    </div>
+  </div>
+</div>
 
 <% if (author.identity === 'teacher') { %>
 <div class="ui grid">
@@ -36,7 +66,7 @@
 <% }) %>
 <% } %>
 
-<% } else if(author.identity === 'student') { %>
+<% } else if (author.identity === 'student') { %>
 <div class="ui grid">
   <div class="three wide column"></div>
   <div class="nine wide column">
@@ -56,7 +86,7 @@
 <%- include('components/profile-stu', { course: course }) %>
 <% }) %>
 
-<% } else if(author.identity === 'admin' && isUser) { %>
+<% } else if (author.identity === 'admin' && isUser) { %>
 <h1>未审核课程</h1>
 <% courses.forEach(function (course) { %>
 <%- include('components/course-summary', { course: course }) %>

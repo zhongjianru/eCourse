@@ -49,8 +49,8 @@ router.post('/create', checkLogin, function(req, res, next) {
     if (!content.length) {
       throw new Error('请填写课程简介');
     }
-    if (!(content.length >= 1 && content.length <= 500)) {
-      throw new Error('课程简介字数限制为1-500');
+    if (!(content.length >= 100 && content.length <= 2000)) {
+      throw new Error('课程简介字数限制为100-2000');
     }
   } catch (e) {
     req.flash('error', e.message);
@@ -169,8 +169,8 @@ router.post('/:courseId/edit', checkLogin, function(req, res, next) {
     if (!content.length) {
       throw new Error('请填写课程简介');
     }
-    if (!(content.length >= 1 && content.length <= 500)) {
-      throw new Error('课程简介字数限制为1-500');
+    if (!(content.length >= 100 && content.length <= 2000)) {
+      throw new Error('课程简介字数限制为100-2000');
     }
   } catch (e) {
     req.flash('error', e.message);

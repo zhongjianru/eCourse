@@ -7,7 +7,7 @@
         <h3>
           <a href="/course/<%= course._id %>" target="_blank">
             <%= course.type %> | <%= course.title %>
-            <% if(course.status === '0') { %>
+            <% if (course.status === '0') { %>
             <span style="color: #999;">（未审核）</span>
             <% } %>
           </a>
@@ -28,7 +28,7 @@
                 <div class="item"><button type="button" id="remove"><a>删除</a></button></div>
               </div>
             </div>
-            <% } else if(user && user.identity === 'admin' && course.status === '0') { %>
+            <% } else if (user && user.identity === 'admin' && course.status === '0') { %>
             <div class="ui inline dropdown">
               <i class="setting icon"></i>
               <div class="menu">

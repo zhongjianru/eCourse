@@ -1,18 +1,22 @@
+<% if (success) { %>
 <div class="ui grid">
   <div class="four wide column"></div>
   <div class="eight wide column">
-    
-  <% if (success) { %>
     <div class="ui info message">
       <p><%= success %></p>
     </div>
-  <% } %>
+  </div>
+</div>
+<% } %>
 
-  <% if (error) { %>
+<% if (error) { %>
+<div class="ui grid">
+  <div class="four wide column"></div>
+  <div class="eight wide column">
     <div class="ui error message">
       <p><%= error %></p>
     </div>
-  <% } %>
-
   </div>
 </div>
+<% } %>
+

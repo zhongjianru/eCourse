@@ -5,7 +5,7 @@
       <div class="ui minimal comments">
         <h3 class="ui dividing header">留言</h3>
 
-        <% if(!comments[0]) { %>
+        <% if (!comments[0]) { %>
         <p>暂无</p>
         <% } else { %>
         <% comments.forEach(function (comment) { %>
@@ -31,7 +31,7 @@
             </div>
           </div>
 
-        <% if(comment.isFirst === '0') { %>
+        <% if (comment.isFirst === '0') { %>
         <div class="comment">
             <span class="avatar"></span>
           <div class="content" style="background: #ddd;">
