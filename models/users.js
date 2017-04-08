@@ -31,5 +31,10 @@ module.exports = {
   // 通过用户 id 更新用户信息
   updateUserById: function updateUserById(userId, data) {
     return User.update({ _id: userId }, { $set: data }).exec();
+  },
+
+  // 通过用户名删除用户
+  delUserByUsername: function delUserByUsername(username) {
+    return User.remove({ username: username }).exec();
   }
 };

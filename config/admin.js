@@ -11,20 +11,22 @@ module.exports = {
       name: 'admin',
       username: 'admin',
       password: sha1('888888'),
-      identity: 'admin'
+      identity: 'admin',
+      bio: 'eCourse系统管理员',
+      avatar: 'admin.png',
+      school: 'eCourse',
+      email: 'admin@ecourse.com'
     };
 
     UserModel.getUserByUsername('admin')
       .then(function (user) {
-        if(!user) {
-          UserModel.create(admin)
-            .then(function () {
-              console.log('admin has been created');
-            });
+        if(user) {
+          UserModel.delUserByUsername('admin');
         }
-        else {
-          console.log('admin already exists');
-        }
+        UserModel.create(admin)
+          .then(function () {
+            console.log('admin has been created');
+          });
       });
   }
 };
