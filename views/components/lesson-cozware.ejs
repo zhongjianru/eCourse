@@ -14,31 +14,37 @@
         <% cozwares.forEach(function (cw) { %>
         <div class="content">
           <a href="/course/file/<%= cw.path %>" download="<%= cw.name %>"><%= cw.name %></a>
+          &nbsp;
 
           <% if (user && cw.author && user._id.toString() === cw.author.toString()) { %>
-          <div class="right">
-            <a class="reply" href="/course/<%= course._id %>/lesson/<%= lesson._id %>/cozware/<%= cw._id %>/remove">删除</a>
-          </div>
+          <a class="reply" href="/course/<%= course._id %>/lesson/<%= lesson._id %>/cozware/<%= cw._id %>/remove">删除</a>
           <% } %>
-
         </div>
         <% }) %>
         <% } %>
+        <br>
 
+        <% if (user && course.author._id && user._id.toString() === course.author._id.toString()) { %>
+        <a class="ui button" href="javascript:void(0);" id="uploadczw">上传课件</a>
+        <% } %>
       </div>
     </div>
-
-    <% if (user && course.author._id && user._id.toString() === course.author._id.toString()) { %>
-    <div class="four wide column">
-      <form class="ui form segment" method="post" enctype="multipart/form-data" action="/course/<%= course._id %>/lesson/<%= lesson._id %>/cozware">
-        <div class="field required">
-          <label>课件上传</label>
-          <input type="file" name="cozware">
-        </div>
-        <input type="submit" class="ui button fluid" value="上传">
-      </form>
-    </div>
-    <% } %>
-
   </div>
+</div>
+
+<div class="ui small modal uploadczw">
+  <i class="close icon"></i>
+  <div class="header">
+    上传课件
+  </div>
+  <form class="ui form segment clear" method="post" enctype="multipart/form-data" action="/course/<%= course._id %>/lesson/<%= lesson._id %>/cozware">
+    <div class="field required center">
+      <input type="file" name="cozware">
+    </div>
+    <div class="actions right">
+      <div class="ui button" id="cancel">取消</div>
+      <input type="submit" class="ui button" value="确定">
+    </div>
+    <div class="clear"></div>
+  </form>
 </div>

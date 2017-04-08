@@ -4,7 +4,7 @@
     <div class="eight wide column">
       <div class="ui segment minHeight">
         <h3 class="ui dividing header">
-          提交作业
+          我的作业
         </h3>
 
         <% if (!lessonhwks[0]) { %>
@@ -13,31 +13,37 @@
         <% lessonhwks.forEach(function (hwk) { %>
         <div class="content">
           <a href="/course/file/<%= hwk.path %>" download="<%= hwk.name %>"><%= hwk.name %></a>
+          &nbsp;
 
           <% if (user && hwk.author._id && user._id.toString() === hwk.author._id.toString()) { %>
-          <div class="actions">
-            <a class="reply" href="/course/<%= course._id %>/lesson/<%= lesson._id %>/lessonhwk/<%= hwk._id %>/remove">删除</a>
-          </div>
+          <a class="reply" href="/course/<%= course._id %>/lesson/<%= lesson._id %>/lessonhwk/<%= hwk._id %>/remove">删除</a>
           <% } %>
-
         </div>
         <% }) %>
         <% } %>
+        <br>
 
+        <% if (user && user.identity === 'student') { %>
+        <a class="ui button" href="javascript:void(0);" id="uploadhwk">提交作业</a>
+        <% } %>
       </div>
     </div>
-
-    <% if (user && user.identity === 'student') { %>
-    <div class="four wide column">
-      <form class="ui form segment" method="post" enctype="multipart/form-data" action="/course/<%= course._id %>/lesson/<%= lesson._id %>/lessonhwk">
-        <div class="field required">
-          <label>作业上传</label>
-          <input type="file" name="lessonhwk">
-        </div>
-        <input type="submit" class="ui button fluid" value="上传">
-      </form>
-    </div>
-    <% } %>
-
   </div>
+</div>
+
+<div class="ui small modal uploadhwk">
+  <i class="close icon"></i>
+  <div class="header">
+    提交作业
+  </div>
+  <form class="ui form segment clear" method="post" enctype="multipart/form-data" action="/course/<%= course._id %>/lesson/<%= lesson._id %>/lessonhwk">
+    <div class="field required center">
+      <input type="file" name="lessonhwk">
+    </div>
+    <div class="actions right">
+      <div class="ui button" id="cancel">取消</div>
+      <input type="submit" class="ui button" value="确定">
+    </div>
+    <div class="clear"></div>
+  </form>
 </div>
