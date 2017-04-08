@@ -451,17 +451,14 @@ router.post('/:courseId/lesson', checkLogin, function (req, res, next) {
     if(order <= 0) {
       throw new Error('课时只能为正整数');
     }
-    if(order > 100) {
-      throw new Error('课时数限制为1-100');
+    if(order > 200) {
+      throw new Error('课时数超过限制');
     }
     if(!(title.length >= 1 && title.length <= 50)) {
       throw new Error('标题字数限制为1-50');
     }
-    if(!content.length) {
-      throw new Error('内容不能为空');
-    }
-    if(content.length > 10000) {
-      throw new Error('内容字数限制为1-10000');
+    if(!(content.length >= 100 && content.length <= 10000)) {
+      throw new Error('内容字数限制为100-10000');
     }
   } catch (e) {
     req.flash('error', e.message);
@@ -623,17 +620,14 @@ router.post('/:courseId/lesson/:lessonId/edit', checkLogin, function (req, res, 
     if(order <= 0) {
       throw new Error('课时只能为正整数');
     }
-    if(order > 100) {
+    if(order > 200) {
       throw new Error('课时数超过限制');
     }
     if(!(title.length >= 1 && title.length <= 50)) {
       throw new Error('标题字数限制为1-50');
     }
-    if(!content.length) {
-      throw new Error('内容不能为空');
-    }
-    if(content.length > 10000) {
-      throw new Error('内容字数限制为1-10000');
+    if(!(content.length >= 100 && content.length <= 10000)) {
+      throw new Error('内容字数限制为100-10000');
     }
   } catch (e) {
     req.flash('error', e.message);
