@@ -31,4 +31,14 @@ $(document).ready(function () {
   $('a[id="reply"]').click(function () {
     $('.ui.small.modal.reply').modal('show');
   });
+
+  // 教师上传课件
+  $('a[id="uploadczw"]').click(function () {
+    $('.ui.small.modal.uploadczw').modal('show');
+  });
+
+  // 学生提交作业
+  $('a[id="uploadhwk"]').click(function () {
+    $('.ui.small.modal.uploadhwk').modal('show');
+  });
 });
