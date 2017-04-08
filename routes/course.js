@@ -83,7 +83,7 @@ router.post('/create', checkLogin, function(req, res, next) {
 router.get('/:courseId', function(req, res, next) {
   var courseId = req.params.courseId;
   var userId = '';
-  if(req.session.user) {
+  if (req.session.user) {
     userId = req.session.user._id;
   }
 
@@ -246,7 +246,8 @@ router.post('/:courseId/comment', checkLogin, function(req, res, next) {
         author: author,
         courseId: courseId,
         content: content,
-        isFirst: '1'
+        isFirst: '1',
+        reply: 0
       };
 
       CommentModel.create(comment)
@@ -282,6 +283,9 @@ router.get('/:courseId/comment/:commentId/remove', checkLogin, function(req, res
 
       CommentModel.delCommentById(commentId, user._id)
         .then(function () {
+          if (comment.toComment) {
+            CommentModel.decReply(comment.toComment);
+          }
           CourseModel.decCmt(courseId);
           req.flash('success', '删除留言成功');
           // 删除成功后跳转到上一页
@@ -316,12 +320,14 @@ router.post('/:courseId/comment/:commentId/reply', checkLogin, function(req, res
         toComment: commentId,
         toAuthor: toComment.author._id,
         toAuthorName: toComment.author.name,
-        isFirst: '0'
+        isFirst: '0',
+        reply: 0
       };
 
       CommentModel.create(comment)
         .then(function () {
           CourseModel.incCmt(courseId);
+          CommentModel.incReply(commentId);
           req.flash('success', '回复成功');
           // 留言成功后跳转到上一页
           return res.redirect('back');
@@ -338,7 +344,7 @@ router.post('/:courseId/attend', checkLogin, function(req, res, next) {
   CourseModel.getCourseById(courseId)
     .then(function (course) {
       try {
-        if(!course) {
+        if (!course) {
           throw new Error('该课程不存在');
         }
         if (course.status === '0') {
@@ -445,19 +451,19 @@ router.post('/:courseId/lesson', checkLogin, function (req, res, next) {
   var content = req.fields.content;
 
   try {
-    if(!order.length) {
+    if (!order.length) {
       throw new Error('课时不能为空');
     }
-    if(order <= 0) {
+    if (order <= 0) {
       throw new Error('课时只能为正整数');
     }
-    if(order > 200) {
+    if (order > 200) {
       throw new Error('课时数超过限制');
     }
-    if(!(title.length >= 1 && title.length <= 50)) {
+    if (!(title.length >= 1 && title.length <= 50)) {
       throw new Error('标题字数限制为1-50');
     }
-    if(!(content.length >= 100 && content.length <= 10000)) {
+    if (!(content.length >= 100 && content.length <= 10000)) {
       throw new Error('内容字数限制为100-10000');
     }
   } catch (e) {
@@ -486,13 +492,10 @@ router.post('/:courseId/lesson', checkLogin, function (req, res, next) {
 router.get('/:courseId/lesson/:lessonId', function (req, res, next) {
   var courseId = req.params.courseId;
   var lessonId = req.params.lessonId;
-  var user = {};
+  var user = req.session.user;
   var hwks = [];
   var cmts = [];
-
-  if(req.session.user) {
-    user = req.session.user;
-  }
+  var isAuthor = false;
 
   Promise.all([
       LessonModel.getLessonById(lessonId),
@@ -508,13 +511,14 @@ router.get('/:courseId/lesson/:lessonId', function (req, res, next) {
       var course = result[1];
       var cozwares = result[2];
 
-      if(user.identity && user.identity === 'student') {
-        hwks = result[5];
-        cmts = result[6];
-      }
-      else if(user.identity && user.identity === 'teacher') {
+      if (user._id && user._id.toString() === lesson.author._id.toString()) {
         hwks = result[3];
         cmts = result[4];
+        isAuthor = true;
+      }
+      else {
+        hwks = result[5];
+        cmts = result[6];
       }
 
       res.render('lesson', {
@@ -524,6 +528,7 @@ router.get('/:courseId/lesson/:lessonId', function (req, res, next) {
         cozwares: cozwares,
         lessonhwks: hwks,
         lessoncmts: cmts,
+        isAuthor: isAuthor
       });
     })
     .catch(next);
@@ -614,19 +619,19 @@ router.post('/:courseId/lesson/:lessonId/edit', checkLogin, function (req, res, 
   var user = req.session.user;
 
   try {
-    if(!order.length) {
+    if (!order.length) {
       throw new Error('课时不能为空');
     }
-    if(order <= 0) {
+    if (order <= 0) {
       throw new Error('课时只能为正整数');
     }
-    if(order > 200) {
+    if (order > 200) {
       throw new Error('课时数超过限制');
     }
-    if(!(title.length >= 1 && title.length <= 50)) {
+    if (!(title.length >= 1 && title.length <= 50)) {
       throw new Error('标题字数限制为1-50');
     }
-    if(!(content.length >= 100 && content.length <= 10000)) {
+    if (!(content.length >= 100 && content.length <= 10000)) {
       throw new Error('内容字数限制为100-10000');
     }
   } catch (e) {
@@ -655,10 +660,10 @@ router.post('/:courseId/lesson/:lessonId/cozware', checkLogin, function (req, re
     if (!req.files.cozware.name) {
       throw new Error('缺少文件');
     }
-    if(['ppt', 'pptx', 'doc', 'docx','pdf', 'txt','rar'].indexOf(fname[fname.length - 1]) === -1) {
+    if (['ppt', 'pptx', 'doc', 'docx','pdf', 'txt','rar'].indexOf(fname[fname.length - 1]) === -1) {
       throw new Error('文件格式只能为ppt、doc、pdf、txt、rar或zip');
     }
-    if(req.files.cozware.size === 0 || req.files.cozware.size > 10 * 1024 * 1024) {
+    if (req.files.cozware.size === 0 || req.files.cozware.size > 10 * 1024 * 1024) {
       throw new Error('文件大小超过限制');
     }
   } catch (e) {
@@ -692,7 +697,7 @@ router.get('/:courseId/lesson/:lessonId/cozware/:cozwareId/remove', checkLogin, 
   CozwareModel.getCozwareById(cozwareId)
     .then(function (cw) {
       try {
-        if(user && cw.author && user._id.toString() !== cw.author.toString()) {
+        if (user && cw.author && user._id.toString() !== cw.author.toString()) {
           throw new Error('权限不足');
         }
       } catch (e) {
@@ -719,7 +724,7 @@ router.get('/file/:fileName', checkLogin, function (req, res, next) {
   var stats = fs.statSync(filePath);
 
   try {
-    if(!stats.isFile()) {
+    if (!stats.isFile()) {
       throw new Error('文件不存在');
     }
   } catch(e) {
@@ -748,10 +753,10 @@ router.post('/:courseId/lesson/:lessonId/lessonhwk', checkLogin, function (req, 
     if (!req.files.lessonhwk.name) {
       throw new Error('缺少文件');
     }
-    if(['ppt', 'pptx', 'doc', 'docx','pdf', 'txt','rar'].indexOf(fname[fname.length - 1]) === -1) {
+    if (['ppt', 'pptx', 'doc', 'docx','pdf', 'txt','rar'].indexOf(fname[fname.length - 1]) === -1) {
       throw new Error('文件格式只能为ppt、doc、pdf、txt、rar或zip');
     }
-    if(req.files.lessonhwk.size === 0 || req.files.lessonhwk.size > 10 * 1024 * 1024) {
+    if (req.files.lessonhwk.size === 0 || req.files.lessonhwk.size > 10 * 1024 * 1024) {
       throw new Error('文件大小超过限制');
     }
   } catch (e) {
@@ -785,10 +790,10 @@ router.get('/:courseId/lesson/:lessonId/lessonhwk/:lessonhwkId/remove', checkLog
   LessonhwkModel.getLessonhwkById(lessonhwkId)
     .then(function (hwk) {
       try {
-        if(!hwk) {
+        if (!hwk) {
           throw new Error('该作业不存在');
         }
-        if(user && hwk.author && user._id.toString() !== hwk.author.toString()) {
+        if (user && hwk.author && user._id.toString() !== hwk.author.toString()) {
           throw new Error('权限不足');
         }
       } catch(e) {
@@ -815,7 +820,7 @@ router.get('/file/:fileName', checkLogin, function (req, res, next) {
   var stats = fs.statSync(filePath);
 
   try {
-    if(!stats.isFile()) {
+    if (!stats.isFile()) {
       throw new Error('文件不存在');
     }
   } catch(e) {
@@ -847,10 +852,10 @@ router.post('/:courseId/lesson/:lessonId/lessoncmt', checkLogin, function(req, r
       var lesson = result[1];
 
       try {
-        if(!course) {
+        if (!course) {
           throw new Error('该课程不存在');
         }
-        if(!lesson) {
+        if (!lesson) {
           throw new Error('该课程内容不存在');
         }
         if (!content.length) {

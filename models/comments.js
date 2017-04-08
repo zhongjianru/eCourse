@@ -50,5 +50,19 @@ module.exports = {
   // 通过课程 id 获取该课程下留言数
   getCommentsCount: function getCommentsCount(courseId) {
     return Comment.count({ courseId: courseId }).exec();
+  },
+
+  // 通过回复留言 id 对回复数进行 +1
+  incReply: function incReply(commentId) {
+    return Comment
+      .update({ _id: commentId }, { $inc: { reply: 1 }})
+      .exec();
+  },
+
+  // 通过回复留言 id 对回复数进行 -1
+  decReply: function decReply(commentId) {
+    return Comment
+      .update({ _id: commentId }, { $inc: { reply: -1 }})
+      .exec();
   }
 };
