@@ -5,6 +5,7 @@
 }
 
 body {
+  background: #f9f9f9;
   width: 1100px;
   height: 100%;
   margin: 0 auto;
@@ -101,6 +102,9 @@ a:hover {
 
 .course-content h3 a {
   color: #1e70bf !important;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
 .course-content .tag {
@@ -133,6 +137,16 @@ a:hover {
 
 .course-content .minHeight {
   min-height: 128px;
+}
+
+/* ---------- lesson ---------- */
+.lesson .remove {
+  color: rgba(0, 0, 0, 0.4);
+  font-size: 12px;
+}
+
+.lesson .remove:hover {
+  color: #1e70bf;
 }
 
 /* ---------- modal ---------- */

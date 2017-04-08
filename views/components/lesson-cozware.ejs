@@ -1,4 +1,4 @@
-<div class="course-content">
+<div class="course-content lesson">
   <div class="ui grid">
     <div class="four wide column"></div>
     <div class="eight wide column">
@@ -17,7 +17,7 @@
           &nbsp;
 
           <% if (user && cw.author && user._id.toString() === cw.author.toString()) { %>
-          <a class="reply" href="/course/<%= course._id %>/lesson/<%= lesson._id %>/cozware/<%= cw._id %>/remove">删除</a>
+          <a class="remove" href="/course/<%= course._id %>/lesson/<%= lesson._id %>/cozware/<%= cw._id %>/remove">删除</a>
           <% } %>
         </div>
         <% }) %>
