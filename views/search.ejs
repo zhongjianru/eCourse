@@ -1,26 +1,22 @@
 <%- include('header') %>
-<%- include('components/searchbar-edit') %>
 
 <div class="ui grid">
   <div class="four wide column"></div>
   <div class="eight wide column">
-    <% if (!result[0]) { %>
+    <% if (!(courses[0] || users[0])) { %>
     暂无搜索结果
     <% } else { %>
-    共找到<%= result.length %>个相关结果：
+    共找到<%= courses.length %>个相关课程：
+    <% courses.forEach(function (course) { %>
+    <%- include('components/course-summary', { course: course }) %>
+    <% }) %>
+    <p></p>
+    共找到<%= users.length %>个相关用户：
+    <% users.forEach(function (user) { %>
+    <%- include('components/usercard', { author: user }) %>
+    <% }) %>
     <% } %>
   </div>
 </div>
-
-<% if (type === 'course') { %>
-<% result.forEach(function (course) { %>
-<%- include('components/course-summary', { course: course }) %>
-<% }) %>
-<% } else { %>
-<% result.forEach(function (user) { %>
-<%- include('components/usercard', { author: user }) %>
-<% }) %>
-<% } %>
-
 
 <%- include('footer') %>

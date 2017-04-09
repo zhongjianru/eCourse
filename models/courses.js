@@ -210,6 +210,15 @@ module.exports = {
       .exec();
   },
 
+  // 通过课程类型获取课程
+  getCoursesByType: function getCoursesByType(type) {
+    return Course
+      .find({ type: type, status: '1' })
+      .populate({ path: 'author', model: 'User' })
+      .sort({ cmt: -1 })
+      .exec();
+  },
+
   // 将未审核课程置为已通过审核
   updateStatusById: function updateStatusById(courseId) {
     return Course.update({ _id: courseId }, { $set: { status: '1' } }).exec();

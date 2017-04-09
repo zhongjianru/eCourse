@@ -4,6 +4,10 @@
   font-family: "微软雅黑", serif !important;
 }
 
+html {
+  position: relative;
+}
+
 body {
   background: #f9f9f9;
   width: 1100px;
@@ -50,8 +54,12 @@ a:hover {
 
 /* ---------- user ---------- */
 .userCard {
-  display: inline-block;
   width: 60%;
+  display: inline-block;
+}
+
+.ui.cards .user-menu {
+  height: 45px;
 }
 
 .avatar-big {
@@ -65,18 +73,112 @@ a:hover {
   margin-top: 0.6em;
 }
 
-/* ---------- nav ---------- */
+/* ---------- nav-bar ---------- */
+.nav-bar {
+  width: 100%;
+  height: 60px;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  background: white;
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  vertical-align: middle;
+  z-index: 99;
+}
 
-.nav {
-  margin-bottom: 20px;
+.nav-bar .logo {
   color: #999;
+  margin-right: 30px;
+  text-align: center;
+  display: inline-block;
+}
+
+.nav-bar .logo .title {
+  color: #1e70bf;
+  font-size: 22px;
+  font-weight: bold;
+  display: inline-block;
+  margin: 10px 0;
+}
+
+.nav-bar .logo .description {
+  font-size: 16px;
+  color: #999;
+  margin-top: -15px;
+}
+
+.nav-bar .nav-menu {
+  height: 55px !important;
+  color: #666;
+  font-size: 16px;
+  position: relative;
+  top: 18px;
+}
+
+.nav-bar .nav-search {
+  position: relative;
+  top: 10px;
+  display: inline-block;
+}
+
+.nav-bar .nav-search button {
+  background: transparent;
+  border: none;
+  position: absolute;
+  top: 10px;
+  right: 0;
+}
+
+.nav-bar .signin, .nav-bar .signup {
+  height: 73px;
+  width: 100%;
   text-align: center;
 }
 
-.nav h1 {
-  color: #1e70bf;
-  display: inline-block;
-  margin: 10px 0;
+.nav-bar .signin {
+  background: transparent !important;
+}
+
+.nav-bar .signup a {
+  color: white !important;
+}
+
+.nav-bar #signin, .nav-bar #signup {
+  position: relative;
+  top: 22px;
+}
+
+.nav-bar i.alarm {
+  position: relative;
+  top: 6px;
+}
+
+.nav-bar i.alarm {
+  position: relative;
+  top: 28px;
+}
+
+.nav-bar .button.messages, .nav-bar .avatar-small .button {
+  height: 60px;
+  background: transparent !important;
+  border: none !important;
+  padding-top: 10px !important;
+  padding-bottom: 0 !important;
+}
+
+.nav-bar .avatar-small img {
+  width: 50px;
+  border-radius: 50%;
+  position: relative;
+  top: -5px;
+}
+
+.placeholder {
+  height: 60px;
 }
 
 /* ---------- nav-setting ---------- */
@@ -90,12 +192,43 @@ a:hover {
 
 .nav-setting .ui.dropdown.button {
   padding: 10px 10px 0 10px;
-  background-color: #fff !important;
+  background-color: #fff;
 }
 
 .nav-setting .icon.bars {
   color: #000;
   font-size: 18px;
+}
+
+/* ---------- notification ---------- */
+.notification {
+  margin-top: -20px !important;
+}
+
+/* ---------- footer ---------- */
+.footer-ctn {
+  width: 100%;
+  height: 200px;
+  position: relative;
+  left: 0;
+  bottom: 0;
+  margin-top: 60px;
+  min-height: 50vh;
+}
+
+.footer-ctn .footer {
+  width: 100%;
+  height: 200px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  background: #333;
+}
+
+/* ---------- welcome ---------- */
+.type-segment {
+  width: 100%;
+  height: 150px;
 }
 
 /* ---------- course-content ---------- */
@@ -137,6 +270,15 @@ a:hover {
 
 .course-content .minHeight {
   min-height: 128px;
+}
+
+.course-content .minContentHeight {
+  min-height: 180px;
+}
+
+/* ---------- comment ---------- */
+.comment .actions {
+  margin-top: 0.5em !important;
 }
 
 /* ---------- lesson ---------- */

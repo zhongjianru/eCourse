@@ -1,8 +1,25 @@
 <%- include('header') %>
-<%- include('components/searchbar') %>
 
-<% courses.forEach(function (course) { %>
-  <%- include('components/course-summary', { course: course }) %>
-<% }) %>
+<div class="ui grid">
+  <div class="two wide column"></div>
+  <div class="twelve wide column ui dynamic">
+    <div class="ui secondary pointing menu">
+      <a class="item active" data-tab="courses_1">文学</a>
+      <a class="item" data-tab="courses_2">历史学</a>
+      <a class="item" data-tab="courses_3">法学</a>
+      <a class="item" data-tab="courses_4">经济学</a>
+      <a class="item" data-tab="courses_5">管理学</a>
+      <a class="item" data-tab="courses_6">教育学</a>
+      <a class="item" data-tab="courses_7">理学</a>
+      <a class="item" data-tab="courses_8">艺术学</a>
+      <a class="item" data-tab="courses_9">工学</a>
+    </div>
+    <div class="ui active tab segment" data-tab="courses_1">
+      <% courses_1.forEach(function (course) { %>
+      <%- include('components/course-summary', { course: course }) %>
+      <% }) %>
+    </div>
+  </div>
+</div>
 
 <%- include('footer') %>

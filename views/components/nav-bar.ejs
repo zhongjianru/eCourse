@@ -1,0 +1,76 @@
+<div class="ui segment nav-bar ">
+  <div class="ui grid">
+    <div class="two wide column"></div>
+    <div class="twelve wide column">
+      <div class="ui grid">
+        <div class="two wide column logo">
+          <a href="/welcome"><p class="title"><%= eCourse.title %></p></a>
+          <p class="description"><%= eCourse.description %></p>
+        </div>
+        <div class="two wide column ui dropdown nav-menu">
+          <div class="text"><a href="#">课程</a></div>
+          <i class="dropdown icon"></i>
+          <div class="menu">
+            <div class="item"><a href="/courses">全部课程</a></div>
+            <div class="item"><i class="dropdown icon"></i><a href="#">课程分类</a>
+              <div class="menu">
+                <div class="item"><i class="folder icon"></i><a href="courses?type=文学"> 文学 </a></div>
+                <div class="item"><i class="folder icon"></i><a href="courses?type=历史学"> 历史学 </a></div>
+                <div class="item"><i class="folder icon"></i><a href="courses?type=法学"> 法学 </a></div>
+                <div class="item"><i class="folder icon"></i><a href="courses?type=经济学"> 经济学 </a></div>
+                <div class="item"><i class="folder icon"></i><a href="courses?type=管理学"> 管理学 </a></div>
+                <div class="item"><i class="folder icon"></i><a href="courses?type=教育学"> 教育学 </a></div>
+                <div class="item"><i class="folder icon"></i><a href="courses?type=理学"> 理学 </a></div>
+                <div class="item"><i class="folder icon"></i><a href="courses?type=艺术学"> 艺术学 </a></div>
+                <div class="item"><i class="folder icon"></i><a href="courses?type=工学"> 工学 </a></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% if (user) { %>
+        <div class="two wide column nav-menu"><a href="/user/<%= user._id %>">我的课程</a></div>
+        <% } else { %>
+        <div class="two wide column nav-menu"><a href="signin">我的课程</a></div>
+        <% } %>
+        <div class="two wide column"></div>
+        <div class="four wide column ui search nav-search">
+          <div class="ui icon input">
+            <form method="post" action="/search">
+              <input class="prompt" placeholder="输入课程名或用户名" type="text" name="searchterm">
+              <button type="submit"><i class="search icon"></i></button>
+            </form>
+          </div>
+        </div>
+        <% if (!user) { %>
+        <div class="one wide column ui button signin">
+          <a class="item" href="/signin" id="signin">登录</a>
+        </div>
+        <div class="two wide column ui button signup">
+          <a class="item" href="/signup" id="signup">注册</a>
+        </div>
+        <% } else { %>
+        <div class="one wide column"></div>
+        <div class="one wide column ui button messages">
+          <a href="/user/<%= user._id %>" class="clear"><i class="icon alarm"></i></a>
+        </div>
+        <div class="one wide column avatar-small">
+          <div class="ui buttons">
+            <div class="ui floating dropdown button">
+              <img src="/upload/<%= user.avatar %>">
+              <div class="menu">
+                <% if (user.identity == 'teacher') { %>
+                <a class="item" href="/course/create">发布课程</a>
+                <% } %>
+                <a class="item" href="/user/<%= user._id %>">我的主页</a>
+                <a class="item" href="/signout">安全退出</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="placeholder"></div>

@@ -1,16 +1,13 @@
 <div class="course-content">
   <div class="ui grid">
-    <%- include('avatar', { user: course.author }) %>
-
-    <div class="eight wide column">
+    <div class="one wide column"></div>
+    <div class="eleven wide column">
       <div class="ui segment">
-
         <h3>
           <a href="/course/<%= course._id %>/lesson/<%= lesson._id%>" target="_blank">
             第<%= lesson.order %>课时：<%= lesson.title %>
           </a>
         </h3>
-
         <pre><%- lesson.content %></pre>
 
         <% if (user && lesson.author._id && user._id.toString() === lesson.author._id.toString()) { %>
@@ -22,9 +19,11 @@
           </div>
         </div>
         <% } %>
-
         <br>
       </div>
+    </div>
+    <div class="four wide column">
+      <%- include('usercard', { author: course.author, isUser: false }) %>
     </div>
   </div>
 </div>

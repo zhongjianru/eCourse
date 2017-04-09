@@ -41,4 +41,32 @@ $(document).ready(function () {
   $('a[id="uploadhwk"]').click(function () {
     $('.ui.small.modal.uploadhwk').modal('show');
   });
+
+  // 选项卡
+  $('.dynamic .menu .item')
+    .tab({
+      cache: false,
+      // faking API request
+      apiSettings: {
+        loadingDuration : 300,
+        mockResponse: function(settings) {
+          var response = {
+            first  : 'AJAX Tab One',
+            second : 'AJAX Tab Two',
+            third  : 'AJAX Tab Three'
+          };
+          return response[settings.urlData.tab];
+        }
+      },
+      context : 'parent',
+      auto    : true,
+      path    : '/'
+    });
+
+  // 遮罩
+  $('.event.example .image')
+    .dimmer({
+      on: 'hover'
+    })
+  ;
 });

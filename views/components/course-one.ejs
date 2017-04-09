@@ -1,9 +1,8 @@
 <div class="course-content">
   <div class="ui grid">
-    <%- include('avatar', { user: course.author }) %>
-
-    <div class="eight wide column">
-      <div class="ui segment">
+    <div class="one wide column"></div>
+    <div class="eleven wide column">
+      <div class="ui segment minContentHeight">
         <h3>
           <a href="/course/<%= course._id %>" target="_blank">
             <%= course.type %> | <%= course.title %>
@@ -40,6 +39,9 @@
           </span>
         </div>
       </div>
+    </div>
+    <div class="four wide column">
+      <%- include('usercard', { author: course.author, isUser: false }) %>
     </div>
   </div>
 </div>

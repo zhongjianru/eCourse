@@ -1,7 +1,7 @@
 <div class="ui cards">
   <div class="card">
     <div class="content">
-      <a href="javascript:void(0);" class="avatar-big clear" id="modifyavt" <% if (isUser) { %> title="修改头像" <% } %> >
+      <a class="avatar-big clear" href="javascript:void(0);" id="modifyavt" <% if (isUser) { %> title="修改头像" <% } %> >
         <img class="avatar-big" src="/upload/<%= author.avatar %>">
       </a>
       <div class="userCard right">
@@ -16,13 +16,13 @@
       </div>
     </div>
     <% if (isUser) { %>
-    <div class="extra content">
-      <a href="/user/<%= author._id %>" class=""><i class="home icon"></i>个人主页</a>
+    <div class="extra content user-menu">
+      <a href="/user/<%= author._id %>"><i class="home icon"></i>个人主页</a>
       <a href="/user/<%= author._id %>/edit" class="right floated"><i class="setting icon"></i>设置</a>
       <a href="/user/<%= author._id %>/modifypwd" class="right floated"><i class="setting icon"></i>修改密码</a>
     </div>
     <% } else { %>
-    <div class="extra content">
+    <div class="extra content user-menu">
       <a class=""><i class="send icon"></i>私信</a>
       <a class="right floated"><i class="plus icon"></i>加好友</a>
     </div>

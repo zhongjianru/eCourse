@@ -1,7 +1,8 @@
 module.exports = function (app) {
   app.get('/', function (req, res) {
-    res.redirect('/courses'); // 首页重定向到courses页面
+    res.redirect('/welcome'); // 首页重定向到courses页面
   });
+  app.use('/welcome', require('./welcome'));
   app.use('/signup', require('./signup'));
   app.use('/signin', require('./signin'));
   app.use('/signout', require('./signout'));

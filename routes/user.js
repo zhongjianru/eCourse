@@ -41,13 +41,13 @@ router.get('/:userId', function (req, res, next) {
             CourseModel.getRejectedCoursesByUserId(authorId)
           ])
           .then(function (result) {
-            var courses = result[0];
+            var pubcourses = result[0];
             var rejcourses = result[1];// 审核未通过的课程
 
             res.render('profile', {
               subtitle: author.name + ' - 个人主页',
               author: author,
-              courses: courses,
+              pubcourses: pubcourses,
               rejcourses: rejcourses,
               isUser: isUser
             });
@@ -55,22 +55,22 @@ router.get('/:userId', function (req, res, next) {
       }
       else if(author && author.identity === 'student') {
         AttenderModel.getCoursessByUserId(authorId)
-          .then(function (courses) {
+          .then(function (atdcourses) {
             res.render('profile', {
               subtitle: author.name + ' - 个人主页',
               author: author,
-              courses: courses,
+              atdcourses: atdcourses,
               isUser: isUser
             });
           });
       }
       else if(author && author.identity === 'admin' && isUser) {
         CourseModel.getRejectedCourses()
-          .then(function (courses) {
+          .then(function (rejcourses) {
             res.render('profile', {
               subtitle: author.name + ' - 个人主页',
               author: author,
-              courses: courses,
+              rejcourses: rejcourses,
               isUser: isUser
             });
           });

@@ -2,7 +2,7 @@
   <div class="ui grid">
     <%- include('avatar', { user: course.author }) %>
 
-    <div class="eight wide column">
+    <div class="twelve wide column">
       <div class="ui segment minHeight">
         <h3><a href="/course/<%= course._id %>" target="_blank"><%= course.type %> | <%= course.title %></a></h3>
         <pre class="summary"><%- course.content %></pre>
