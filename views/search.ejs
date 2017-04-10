@@ -1,22 +1,30 @@
 <%- include('header') %>
 
 <div class="ui grid">
+  <% if (!(courses[0] || users[0])) { %>
   <div class="four wide column"></div>
-  <div class="eight wide column">
-    <% if (!(courses[0] || users[0])) { %>
-    暂无搜索结果
-    <% } else { %>
-    共找到<%= courses.length %>个相关课程：
+  <div class="twelve wide column">暂无搜索结果</div>
+  <% } else { %>
+  <div class="four wide column"></div>
+  <div class="twelve wide column">共找到<%= courses.length %>个相关课程：</div>
+  <p></p>
+  <div class="one wide column"></div>
+  <div class="twelve wide column">
     <% courses.forEach(function (course) { %>
     <%- include('components/course-summary', { course: course }) %>
     <% }) %>
-    <p></p>
-    共找到<%= users.length %>个相关用户：
+  </div>
+  <p></p>
+  <div class="four wide column"></div>
+  <div class="twelve wide column">共找到<%= users.length %>个相关用户：</div>
+  <p></p>
+  <div class="three wide column"></div>
+  <div class="eight wide column">
     <% users.forEach(function (user) { %>
     <%- include('components/usercard', { author: user }) %>
     <% }) %>
-    <% } %>
   </div>
+  <% } %>
 </div>
 
 <%- include('footer') %>

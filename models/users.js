@@ -25,7 +25,7 @@ module.exports = {
   // 搜索用户名
   searchUsersByName: function searchUsersByName(name) {
     var regex = new RegExp(name, 'i');
-    return User.find({ name: regex }).exec();
+    return User.find({ name: regex, identity: { $ne: 'admin' } }).exec();
   },
   
   // 通过用户 id 更新用户信息
