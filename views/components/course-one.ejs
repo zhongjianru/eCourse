@@ -2,7 +2,7 @@
   <div class="ui grid">
     <div class="one wide column"></div>
     <div class="eleven wide column">
-      <div class="ui segment minContentHeight">
+      <div class="ui segment">
         <h3>
           <a href="/course/<%= course._id %>" target="_blank">
             <%= course.type %> | <%= course.title %>
@@ -11,7 +11,7 @@
             <% } %>
           </a>
         </h3>
-        <pre><%- course.content %></pre>
+        <pre class="minHeight"><%- course.content %></pre>
         <div>
           <span class="tag"><%= course.created_at %></span>
           <span class="tag right">
