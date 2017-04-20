@@ -27,7 +27,11 @@
       <%- include('components/course-summary', { course: course }) %>
       <% }) %>
     </div>
-    <div class="ui tab segment" data-tab="following">3</div>
+    <div class="ui tab segment" data-tab="following">
+      <% followings.forEach(function (following) { %>
+      <%- include('components/usercard', { author: following }) %>
+      <% }) %>
+    </div>
     <div class="ui tab segment" data-tab="courses_rev">
       <% rejcourses.forEach(function (course) { %>
       <%- include('components/course-summary', { course: course }) %>
@@ -54,7 +58,11 @@
       <%- include('components/course-summary', { course: course }) %>
       <% }) %>
     </div>
-    <div class="ui tab segment" data-tab="following">3</div>
+    <div class="ui tab segment" data-tab="following">
+      <% followings.forEach(function (following) { %>
+      <%- include('components/usercard', { author: following }) %>
+      <% }) %>
+    </div>
     <div class="ui tab segment" data-tab="messages">3</div>
     <div class="ui tab segment" data-tab="letters_send">3</div>
     <div class="ui tab segment" data-tab="letters_recv">3</div>

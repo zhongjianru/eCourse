@@ -24,7 +24,7 @@
     <% } else { %>
     <div class="extra content user-menu">
       <a class=""><i class="send icon"></i>私信</a>
-      <a class="right floated"><i class="plus icon"></i>加好友</a>
+      <a href="/user/<%= user._id %>/follow/<%= author._id %>" class="right floated"><i class="plus icon"></i>加关注</a>
     </div>
     <% } %>
   </div>

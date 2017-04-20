@@ -38,28 +38,38 @@ router.get('/:userId', function (req, res, next) {
       if(author && author.identity === 'teacher') {
         Promise.all([
             CourseModel.getCoursesByUserId(authorId),
-            CourseModel.getRejectedCoursesByUserId(authorId)
+            CourseModel.getRejectedCoursesByUserId(authorId),
+            UserModel.getFollowingsById(authorId)
           ])
           .then(function (result) {
             var pubcourses = result[0];
             var rejcourses = result[1];// 审核未通过的课程
+            var followings = result[2];// 所有关注人
 
             res.render('profile', {
               subtitle: author.name + ' - 个人主页',
               author: author,
               pubcourses: pubcourses,
               rejcourses: rejcourses,
+              followings: followings,
               isUser: isUser
             });
           });
       }
       else if(author && author.identity === 'student') {
-        AttenderModel.getCoursessByUserId(authorId)
-          .then(function (atdcourses) {
+        Promise.all([
+            AttenderModel.getCoursessByUserId(authorId),
+            UserModel.getFollowingsById(authorId)
+          ])
+          .then(function (result) {
+            var atdcourses = result[0];
+            var followings = result[1];// 所有关注人
+
             res.render('profile', {
               subtitle: author.name + ' - 个人主页',
               author: author,
               atdcourses: atdcourses,
+              followings: followings,
               isUser: isUser
             });
           });
@@ -235,6 +245,15 @@ router.post('/:userId/avatar', checkLogin, function (req, res, next) {
       return res.redirect('back');
     })
     .catch(next);
+});
+
+router.get('/:userId/follow/:followingId', checkLogin, function (req, res, next) {
+  var user = req.session.user;
+  var followingId = req.params.followingId;
+  
+  try {
+    
+  }
 });
 
 module.exports = router;

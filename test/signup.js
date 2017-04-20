@@ -1,4 +1,4 @@
-var path = require('path');
+  var path = require('path');
 var assert = require('assert');
 var request = require('supertest');
 var app = require('../index');
@@ -33,7 +33,7 @@ describe('signup', function() {
         .catch(done);
     });
 
-    // 名户名错误的情况
+    // 用户名错误的情况
     it('wrong name', function(done) {
       agent
         .post('/signup')
@@ -48,7 +48,7 @@ describe('signup', function() {
         });
     });
 
-    // 性别错误的情况
+    // 身份错误的情况
     it('wrong identity', function(done) {
       agent
         .post('/signup')
