@@ -27,7 +27,7 @@ module.exports = {
       .exec();
   },
   // 通过用户 id 获取用户加入的所有课程
-  getCoursessByUserId: function getCoursessByUserId(userId) {
+  getCoursesByUserId: function getCoursessByUserId(userId) {
     return Attender
       .find({ attender: userId })
       .populate({ path: 'courseId', model: 'Course' })

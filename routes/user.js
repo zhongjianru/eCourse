@@ -39,37 +39,37 @@ router.get('/:userId', function (req, res, next) {
         Promise.all([
             CourseModel.getCoursesByUserId(authorId),
             CourseModel.getRejectedCoursesByUserId(authorId),
-            UserModel.getFollowingsById(authorId)
+            UserModel.getFollowsById(authorId)
           ])
           .then(function (result) {
             var pubcourses = result[0];
             var rejcourses = result[1];// 审核未通过的课程
-            var followings = result[2];// 所有关注人
+            var follows = result[2];// 所有关注人
 
             res.render('profile', {
               subtitle: author.name + ' - 个人主页',
               author: author,
               pubcourses: pubcourses,
               rejcourses: rejcourses,
-              followings: followings,
+              follows: follows,
               isUser: isUser
             });
           });
       }
       else if(author && author.identity === 'student') {
         Promise.all([
-            AttenderModel.getCoursessByUserId(authorId),
-            UserModel.getFollowingsById(authorId)
+            AttenderModel.getCoursesByUserId(authorId),
+            UserModel.getFollowsById(authorId)
           ])
           .then(function (result) {
             var atdcourses = result[0];
-            var followings = result[1];// 所有关注人
+            var follows = result[1];// 所有关注人
 
             res.render('profile', {
               subtitle: author.name + ' - 个人主页',
               author: author,
               atdcourses: atdcourses,
-              followings: followings,
+              follows: follows,
               isUser: isUser
             });
           });
@@ -247,13 +247,64 @@ router.post('/:userId/avatar', checkLogin, function (req, res, next) {
     .catch(next);
 });
 
+// GET user/:userId/follow/:followingId
 router.get('/:userId/follow/:followingId', checkLogin, function (req, res, next) {
   var user = req.session.user;
   var followingId = req.params.followingId;
-  
-  try {
-    
-  }
+
+  UserModel.isFollow(user._id, followingId)
+    .then(function (isFollow) {
+      try {
+        if(user._id.toString() === followingId.toString()) {
+          throw new Error('不能关注自己');
+        }
+        if(isFollow) {
+          throw new Error('已关注此用户');
+        }
+      } catch (e) {
+        req.flash('error', e.message);
+        return res.redirect('back');
+      }
+
+      var follow = {
+        following: followingId,
+        userId: user._id
+      };
+      UserModel.addFollow(follow)
+        .then(function () {
+          req.flash('success', '关注成功');
+          return res.redirect('back');
+        });
+    })
+    .catch(next);
+});
+
+// GET user/:userId/follow/:followingId/remove
+router.get('/:userId/follow/:followingId/remove', checkLogin, function (req, res, next) {
+  var user = req.session.user;
+  var followingId = req.params.followingId;
+
+  UserModel.isFollow(user._id, followingId)
+    .then(function (isFollow) {
+      try {
+        if(user._id.toString() === followingId.toString()) {
+          throw new Error('不能关注自己');
+        }
+        if(!isFollow) {
+          throw new Error('未关注此用户');
+        }
+      } catch (e) {
+        req.flash('error', e.message);
+        return res.redirect('back');
+      }
+
+      UserModel.delFollow(user._id, followingId)
+        .then(function () {
+          req.flash('success', '取消关注成功');
+          return res.redirect('back');
+        });
+    })
+    .catch(next);
 });
 
 module.exports = router;

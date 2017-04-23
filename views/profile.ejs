@@ -14,7 +14,7 @@
   <div class="twelve wide column ui dynamic">
     <div class="ui secondary pointing menu">
       <a class="item active" data-tab="courses_pub">发布的课程</a>
-      <a class="item" data-tab="following">TA的关注</a>
+      <a class="item" data-tab="follow">TA的关注</a>
       <% if (isUser === true) { %>
       <a class="item" data-tab="courses_rev">待审核课程</a>
       <a class="item" data-tab="messages">待处理消息</a>
@@ -27,9 +27,9 @@
       <%- include('components/course-summary', { course: course }) %>
       <% }) %>
     </div>
-    <div class="ui tab segment" data-tab="following">
-      <% followings.forEach(function (following) { %>
-      <%- include('components/usercard', { author: following }) %>
+    <div class="ui tab segment" data-tab="follow">
+      <% follows.forEach(function (follow) { %>
+      <%- include('components/usercard', { author: follow.following, isUser: false, isFollow: true }) %>
       <% }) %>
     </div>
     <div class="ui tab segment" data-tab="courses_rev">
@@ -46,7 +46,7 @@
   <div class="twelve wide column ui dynamic">
     <div class="ui secondary pointing menu">
       <a class="item active" data-tab="courses_atd">加入的课程</a>
-      <a class="item" data-tab="following">TA的关注</a>
+      <a class="item" data-tab="follow">TA的关注</a>
       <% if (isUser === true) { %>
       <a class="item" data-tab="messages">待处理消息</a>
       <a class="item" data-tab="letters_send">发出的私信</a>
@@ -58,9 +58,9 @@
       <%- include('components/course-summary', { course: course }) %>
       <% }) %>
     </div>
-    <div class="ui tab segment" data-tab="following">
-      <% followings.forEach(function (following) { %>
-      <%- include('components/usercard', { author: following }) %>
+    <div class="ui tab segment" data-tab="follow">
+      <% follows.forEach(function (follow) { %>
+      <%- include('components/usercard', { author: follow.following, isUser: false, isFollow: true }) %>
       <% }) %>
     </div>
     <div class="ui tab segment" data-tab="messages">3</div>
