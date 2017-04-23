@@ -277,6 +277,10 @@ a:hover {
   min-height: 128px;
 }
 
+.course-content .separate {
+  color: #999;
+}
+
 /* ---------- comment ---------- */
 .comment .actions {
   margin-top: 0.5em !important;

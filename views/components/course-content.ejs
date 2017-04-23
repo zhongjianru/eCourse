@@ -2,6 +2,12 @@
   <div class="ui grid">
     <div class="one wide column"></div>
     <div class="eleven wide column">
+      <a href="/courses?type=文学">全部课程</a>
+      <span class="separate">/</span>
+      <a href="/courses?type=<%= course.type %>"><%= course.type %></a>
+      <span class="separate">/</span>
+      <a href="/course/<%= course._id %>"><%= course.title %></a>
+
       <div class="ui segment">
         <h3>
           <a href="/course/<%= course._id %>" target="_blank">
