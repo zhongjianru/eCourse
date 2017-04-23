@@ -836,6 +836,11 @@ router.get('/file/:fileName', checkLogin, function (req, res, next) {
   fs.createReadStream(filePath).pipe(res);
 });
 
+// POST course/:courseId/lesson/:lessonId/lessonhwk/:lessonhwkId/reply 创建一条作业批复
+router.post('/:courseId/lesson/:lessonId/lessonhwk/:lessonhwkId/reply', checkLogin, function (req, res, next) {
+
+});
+
 // POST /course/:courseId/lesson/:lessonId/lessoncmt 创建一条课程内容留言
 router.post('/:courseId/lesson/:lessonId/lessoncmt', checkLogin, function(req, res, next) {
   var author = req.session.user._id;
