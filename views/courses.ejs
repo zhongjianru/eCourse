@@ -4,57 +4,57 @@
   <div class="two wide column"></div>
   <div class="twelve wide column ui dynamic">
     <div class="ui secondary pointing menu">
-      <a class="item active" data-tab="courses_1">文学</a>
-      <a class="item" data-tab="courses_2">历史学</a>
-      <a class="item" data-tab="courses_3">法学</a>
-      <a class="item" data-tab="courses_4">经济学</a>
-      <a class="item" data-tab="courses_5">管理学</a>
-      <a class="item" data-tab="courses_6">教育学</a>
-      <a class="item" data-tab="courses_7">理学</a>
-      <a class="item" data-tab="courses_8">艺术学</a>
-      <a class="item" data-tab="courses_9">工学</a>
+      <a class="item <% if(type === '文学') { %>active<% } %>" data-tab="courses_1">文学</a>
+      <a class="item <% if(type === '历史学') { %>active<% } %>" data-tab="courses_2">历史学</a>
+      <a class="item <% if(type === '法学') { %>active<% } %>" data-tab="courses_3">法学</a>
+      <a class="item <% if(type === '经济学') { %>active<% } %>" data-tab="courses_4">经济学</a>
+      <a class="item <% if(type === '管理学') { %>active<% } %>" data-tab="courses_5">管理学</a>
+      <a class="item <% if(type === '教育学') { %>active<% } %>" data-tab="courses_6">教育学</a>
+      <a class="item <% if(type === '理学') { %>active<% } %>" data-tab="courses_7">理学</a>
+      <a class="item <% if(type === '艺术学') { %>active<% } %>" data-tab="courses_8">艺术学</a>
+      <a class="item <% if(type === '工学') { %>active<% } %>" data-tab="courses_9">工学</a>
     </div>
-    <div class="ui active tab segment" data-tab="courses_1">
+    <div class="ui tab segment <% if(type === '文学') { %>active<% } %>" data-tab="courses_1">
       <% courses_1.forEach(function (course) { %>
       <%- include('components/course-summary', { course: course }) %>
       <% }) %>
     </div>
-    <div class="ui tab segment" data-tab="courses_2">
+    <div class="ui tab segment <% if(type === '历史学') { %>active<% } %>" data-tab="courses_2">
       <% courses_2.forEach(function (course) { %>
       <%- include('components/course-summary', { course: course }) %>
       <% }) %>
     </div>
-    <div class="ui tab segment" data-tab="courses_3">
+    <div class="ui tab segment <% if(type === '法学') { %>active<% } %>" data-tab="courses_3">
       <% courses_3.forEach(function (course) { %>
       <%- include('components/course-summary', { course: course }) %>
       <% }) %>
     </div>
-    <div class="ui tab segment" data-tab="courses_4">
+    <div class="ui tab segment <% if(type === '经济学') { %>active<% } %>" data-tab="courses_4">
       <% courses_4.forEach(function (course) { %>
       <%- include('components/course-summary', { course: course }) %>
       <% }) %>
     </div>
-    <div class="ui tab segment" data-tab="courses_5">
+    <div class="ui tab segment <% if(type === '管理学') { %>active<% } %>" data-tab="courses_5">
       <% courses_5.forEach(function (course) { %>
       <%- include('components/course-summary', { course: course }) %>
       <% }) %>
     </div>
-    <div class="ui tab segment" data-tab="courses_6">
+    <div class="ui tab segment <% if(type === '教育学') { %>active<% } %>" data-tab="courses_6">
       <% courses_6.forEach(function (course) { %>
       <%- include('components/course-summary', { course: course }) %>
       <% }) %>
     </div>
-    <div class="ui tab segment" data-tab="courses_7">
+    <div class="ui tab segment <% if(type === '理学') { %>active<% } %>" data-tab="courses_7">
       <% courses_7.forEach(function (course) { %>
       <%- include('components/course-summary', { course: course }) %>
       <% }) %>
     </div>
-    <div class="ui tab segment" data-tab="courses_8">
+    <div class="ui tab segment <% if(type === '艺术学') { %>active<% } %>" data-tab="courses_8">
       <% courses_8.forEach(function (course) { %>
       <%- include('components/course-summary', { course: course }) %>
       <% }) %>
     </div>
-    <div class="ui tab segment" data-tab="courses_9">
+    <div class="ui tab segment <% if(type === '工学') { %>active<% } %>" data-tab="courses_9">
       <% courses_9.forEach(function (course) { %>
       <%- include('components/course-summary', { course: course }) %>
       <% }) %>

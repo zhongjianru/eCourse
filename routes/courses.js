@@ -7,9 +7,9 @@ var router = express.Router();
 
 var CourseModel = require('../models/courses');
 
-// GET /courses 获取指定类型的课程
+// GET /courses?type=type 获取指定类型的课程
 router.get('/', function(req, res, next) {
-  var type = req.params.type;
+  var type = req.query.type;
 
   Promise.all([
       CourseModel.getCoursesByType('文学'),
