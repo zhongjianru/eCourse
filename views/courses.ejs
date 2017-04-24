@@ -4,7 +4,7 @@
   <div class="two wide column"></div>
   <div class="twelve wide column ui dynamic">
     <div class="ui secondary pointing menu">
-      <a class="item <% if(type === '文学') { %>active<% } %>" data-tab="courses_1">文学</a>
+      <a class="item <% if(type === '文学' || !type) { %>active<% } %>" data-tab="courses_1">文学</a>
       <a class="item <% if(type === '历史学') { %>active<% } %>" data-tab="courses_2">历史学</a>
       <a class="item <% if(type === '法学') { %>active<% } %>" data-tab="courses_3">法学</a>
       <a class="item <% if(type === '经济学') { %>active<% } %>" data-tab="courses_4">经济学</a>
@@ -14,7 +14,7 @@
       <a class="item <% if(type === '艺术学') { %>active<% } %>" data-tab="courses_8">艺术学</a>
       <a class="item <% if(type === '工学') { %>active<% } %>" data-tab="courses_9">工学</a>
     </div>
-    <div class="ui tab segment <% if(type === '文学') { %>active<% } %>" data-tab="courses_1">
+    <div class="ui tab segment <% if(type === '文学' || !type) { %>active<% } %>" data-tab="courses_1">
       <% courses_1.forEach(function (course) { %>
       <%- include('components/course-summary', { course: course }) %>
       <% }) %>

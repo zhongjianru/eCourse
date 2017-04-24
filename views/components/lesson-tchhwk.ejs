@@ -1,31 +1,52 @@
 <div class="ui grid">
   <div class="one wide column"></div>
-    <div class="eleven wide column">
-      <div class="ui segment">
-        <div class="ui minimal comments">
-          <h3 class="ui dividing header">
-            学生作业
-          </h3>
+  <div class="eleven wide column">
+    <div class="ui segment">
+      <div class="ui minimal comments">
+        <h3 class="ui dividing header">
+          学生作业
+        </h3>
 
-          <% if (!lessonhwks[0]) { %>
-          <p>暂无</p>
-          <% } else { %>
-          <% lessonhwks.forEach(function (hwk) { %>
-            <div class="comment">
+        <% if (!lessonhwks[0]) { %>
+        <p>暂无</p>
+        <% } else { %>
+        <% lessonhwks.forEach(function (hwk) { %>
+        <div class="comment">
               <span class="avatar">
                 <img src="/upload/<%= hwk.author.avatar %>">
               </span>
-              <div class="content">
-                <a class="author" href="/user/<%= hwk.author._id %>" target="_blank"><%= hwk.author.name %></a>
-                <div class="content">
-                  <a href="/course/file/<%= hwk.path %>" download="<%= hwk.name %>"><%= hwk.name %></a>
-                </div>
-              </div>
-            </div>
-          <% }) %>
-          <% } %>
+          <div class="content">
+            <a class="author" href="/user/<%= hwk.author._id %>" target="_blank"><%= hwk.author.name %></a>
+            <div class="content">
+              <a href="/course/file/<%= hwk.path %>" download="<%= hwk.name %>"><%= hwk.name %></a>
+              <% if(hwk.reply > 0) { %>
+              <i class="icon check circle outline"></i>
+              <% } %>
+              &nbsp;
 
+              <% if (user && lesson.author._id && user._id.toString() === lesson.author._id.toString()) { %>
+              <a class="remove" href="javascript:void(0)" id="hwkreply">批复</a>
+              <% } %>
+            </div>
+          </div>
         </div>
+
+        <div class="ui small modal hwkreply">
+          <h3 class="ui dividing header">作业批复</h3>
+          <form class="ui reply form" method="post" action="/course/<%= course._id %>/lesson/<%= lesson._id %>/lessonhwk/<%= hwk._id %>/reply">
+            <div class="field">
+              <textarea name="content"></textarea>
+            </div>
+            <div class="actions right">
+              <div class="ui button" id="cancel">取消</div>
+              <input type="submit" class="ui button" value="批复" />
+            </div>
+            <div class="clear"></div>
+          </form>
+        </div>
+        <% }) %>
+        <% } %>
+
       </div>
     </div>
   </div>

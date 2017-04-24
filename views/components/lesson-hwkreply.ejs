@@ -1,0 +1,37 @@
+<div class="ui grid">
+  <div class="one wide column"></div>
+  <div class="eleven wide column">
+    <div class="ui segment">
+      <div class="ui minimal comments">
+        <h3 class="ui dividing header">
+          作业批复
+        </h3>
+
+        <% if (!hwkreplies[0]) { %>
+        <p>暂无</p>
+        <% } else { %>
+        <% hwkreplies.forEach(function (reply) { %>
+        <div class="comment">
+          <div class="content">
+            <a class="author" href="/user/<%= reply.lsnauthor._id %>" target="_blank"><%= reply.lsnauthor.name %></a>
+            <div class="metadata">
+              <span class="date">批复</span>
+              <a class="author" href="/user/<%= reply.hwkauthor._id %>" target="_blank"><%= reply.hwkauthor.name %></a>
+              <span class="date">的作业</span>
+            </div>
+            <div class="text"><%- reply.content %></div>
+
+            <div class="actions">
+              <% if (user && reply.lsnauthor._id && user._id.toString() === reply.lsnauthor._id.toString()) { %>
+              <a class="reply" href="/course/<%= course._id %>/comment/<%= comment._id %>/remove">删除</a>
+              <% } %>
+            </div>
+          </div>
+        </div>
+        <% }) %>
+        <% } %>
+
+      </div>
+    </div>
+  </div>
+</div>

@@ -11,6 +11,7 @@ var LessonModel = require('../models/lessons');
 var CozwareModel = require('../models/cozwares');
 var LessoncmtModel = require('../models/lessoncmts');
 var LessonhwkModel = require('../models/lessonhwks');
+var HwkreplyModel = require('../models/hwkreplies');
 var checkLogin = require('../middlewares/check').checkLogin;
 
 // GET /course/create 发布课程页
@@ -489,12 +490,13 @@ router.post('/:courseId/lesson', checkLogin, function (req, res, next) {
 });
 
 // GET /course/:courseId/lesson/:lessonId 课程内容页
-router.get('/:courseId/lesson/:lessonId', function (req, res, next) {
+router.get('/:courseId/lesson/:lessonId', checkLogin, function (req, res, next) {
   var courseId = req.params.courseId;
   var lessonId = req.params.lessonId;
   var user = req.session.user;
   var hwks = [];
   var cmts = [];
+  var hwkreplies = [];
   var isAuthor = false;
 
   Promise.all([
@@ -502,9 +504,11 @@ router.get('/:courseId/lesson/:lessonId', function (req, res, next) {
       CourseModel.getCourseById(courseId),
       CozwareModel.getCozwares(lessonId),
       LessonhwkModel.getLessonhwks(lessonId),// 教师显示所有学生的作业
-      LessoncmtModel.getLessoncmts(lessonId),// 教师显示所有学生的留言
+      //LessoncmtModel.getLessoncmts(lessonId),// 教师显示所有学生的留言
       LessonhwkModel.getLessonhwksByUserId(user._id),// 学生显示自己的作业
-      LessoncmtModel.getLessoncmtsByUserId(user._id) // 学生显示自己的留言
+      //LessoncmtModel.getLessoncmtsByUserId(user._id) // 学生显示自己的留言
+      HwkreplyModel.getHwkreplies(lessonId),// 教师显示所有的作业批复
+      HwkreplyModel.getHwkrepliesByUserId(user._id)
     ])
     .then(function (result) {
       var lesson = result[0];
@@ -512,13 +516,15 @@ router.get('/:courseId/lesson/:lessonId', function (req, res, next) {
       var cozwares = result[2];
 
       if (user._id && user._id.toString() === lesson.author._id.toString()) {
-        hwks = result[3];
-        cmts = result[4];
+        hwks = result[3]
+        hwkreplies = result[5];
+        //cmts = result[4];
         isAuthor = true;
       }
       else {
-        hwks = result[5];
-        cmts = result[6];
+        hwks = result[4]
+        hwkreplies = result[6];
+        //cmts = result[6];
       }
 
       res.render('lesson', {
@@ -527,7 +533,7 @@ router.get('/:courseId/lesson/:lessonId', function (req, res, next) {
         course: course,
         cozwares: cozwares,
         lessonhwks: hwks,
-        lessoncmts: cmts,
+        hwkreplies: hwkreplies,
         isAuthor: isAuthor
       });
     })
@@ -771,7 +777,8 @@ router.post('/:courseId/lesson/:lessonId/lessonhwk', checkLogin, function (req, 
     courseId: courseId,
     author: author,
     path: hwkpath,
-    name: req.files.lessonhwk.name
+    name: req.files.lessonhwk.name,
+    reply: 0
   };
 
   LessonhwkModel.create(lessonhwk)
@@ -838,7 +845,34 @@ router.get('/file/:fileName', checkLogin, function (req, res, next) {
 
 // POST course/:courseId/lesson/:lessonId/lessonhwk/:lessonhwkId/reply 创建一条作业批复
 router.post('/:courseId/lesson/:lessonId/lessonhwk/:lessonhwkId/reply', checkLogin, function (req, res, next) {
+  var courseId = req.params.courseId;
+  var lessonId = req.params.lessonId;
+  var lessonhwkId = req.params.lessonhwkId;
+  var user = req.session.user;
+  var content = req.fields.content;
 
+  LessonhwkModel.getLessonhwkById(lessonhwkId)
+    .then(function (hwkauthor) {
+      var hwkreply = {
+        lessonhwkId: lessonhwkId,
+        lessonId: lessonId,
+        courseId: courseId,
+        hwkauthor: hwkauthor,
+        lsnauthor: user._id,
+        content: content
+      };
+
+      Promise.all([
+          HwkreplyModel.create(hwkreply),
+          LessonhwkModel.incReply(lessonhwkId)
+        ])
+        .then(function () {
+          req.flash('success', '批复成功');
+          // 留言成功后跳转到上一页
+          return res.redirect('back');
+        });
+    })
+    .catch(next);
 });
 
 // POST /course/:courseId/lesson/:lessonId/lessoncmt 创建一条课程内容留言

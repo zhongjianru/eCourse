@@ -42,6 +42,11 @@ $(document).ready(function () {
     $('.ui.small.modal.uploadhwk').modal('show');
   });
 
+  // 教师批复作业
+  $('a[id="hwkreply"]').click(function () {
+    $('.ui.small.modal.hwkreply').modal('show');
+  });
+
   // 选项卡
   $('.dynamic .menu .item')
     .tab({

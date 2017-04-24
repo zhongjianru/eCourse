@@ -43,8 +43,15 @@ module.exports = {
       .exec();
   },
 
-  // 根据课件 id 获取课件
+  // 根据作业 id 获取作业
   getLessonhwkById: function getLessonhwkById(lessonhwkId) {
     return Lessonhwk.findOne({ _id: lessonhwkId }).exec();
+  },
+  
+  // 根据作业 id 将批复数+1
+  incReply: function incReply(lessonhwkId) {
+    return Lessonhwk
+      .update({ _id: lessonhwkId }, { $inc: { reply: 1 } })
+      .exec();
   }
 };

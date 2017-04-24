@@ -5,10 +5,10 @@
 
 <% if(user && isAuthor) { %>
 <%- include('components/lesson-tchhwk') %>
-<%- include('components/lesson-tchcmt') %>
+
 <% } else { %>
 <%- include('components/lesson-stuhwk') %>
-<%- include('components/lesson-stucmt') %>
 <% } %>
 
+<%- include('components/lesson-hwkreply') %>
 <%- include('footer') %>
