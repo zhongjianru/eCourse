@@ -755,36 +755,40 @@ router.post('/:courseId/lesson/:lessonId/lessonhwk', checkLogin, function (req, 
   var hwkpath = req.files.lessonhwk.path.split(path.sep).pop();
   var fname = hwkpath.split('.');
 
-  try {
-    if (!req.files.lessonhwk.name) {
-      throw new Error('缺少文件');
-    }
-    if (['ppt', 'pptx', 'doc', 'docx','pdf', 'txt','rar'].indexOf(fname[fname.length - 1]) === -1) {
-      throw new Error('文件格式只能为ppt、doc、pdf、txt、rar或zip');
-    }
-    if (req.files.lessonhwk.size === 0 || req.files.lessonhwk.size > 10 * 1024 * 1024) {
-      throw new Error('文件大小超过限制');
-    }
-  } catch (e) {
-    // 上传课件失败，异步删除上传的文件
-    fs.unlink(req.files.lessonhwk.path);
-    req.flash('error', e.message);
-    return res.redirect('back');
-  }
+  LessonModel.getLessonById(lessonId)
+    .then(function (lesson) {
+      try {
+        if (!req.files.lessonhwk.name) {
+          throw new Error('缺少文件');
+        }
+        if (['ppt', 'pptx', 'doc', 'docx','pdf', 'txt','rar'].indexOf(fname[fname.length - 1]) === -1) {
+          throw new Error('文件格式只能为ppt、doc、pdf、txt、rar或zip');
+        }
+        if (req.files.lessonhwk.size === 0 || req.files.lessonhwk.size > 10 * 1024 * 1024) {
+          throw new Error('文件大小超过限制');
+        }
+      } catch (e) {
+        // 上传课件失败，异步删除上传的文件
+        fs.unlink(req.files.lessonhwk.path);
+        req.flash('error', e.message);
+        return res.redirect('back');
+      }
 
-  var lessonhwk = {
-    lessonId: lessonId,
-    courseId: courseId,
-    author: author,
-    path: hwkpath,
-    name: req.files.lessonhwk.name,
-    reply: 0
-  };
+      var lessonhwk = {
+        lessonId: lessonId,
+        courseId: courseId,
+        hwkauthor: author,
+        lsnauthor: lesson.author._id,
+        path: hwkpath,
+        name: req.files.lessonhwk.name,
+        reply: 0
+      };
 
-  LessonhwkModel.create(lessonhwk)
-    .then(function () {
-      req.flash('success', '作业上传成功');
-      return res.redirect('back');
+      LessonhwkModel.create(lessonhwk)
+        .then(function () {
+          req.flash('success', '作业上传成功');
+          return res.redirect('back');
+        })
     })
     .catch(next);
 });
@@ -852,12 +856,12 @@ router.post('/:courseId/lesson/:lessonId/lessonhwk/:lessonhwkId/reply', checkLog
   var content = req.fields.content;
 
   LessonhwkModel.getLessonhwkById(lessonhwkId)
-    .then(function (hwkauthor) {
+    .then(function (lessonhwk) {
       var hwkreply = {
         lessonhwkId: lessonhwkId,
         lessonId: lessonId,
         courseId: courseId,
-        hwkauthor: hwkauthor,
+        hwkauthor: lessonhwk.hwkauthor,
         lsnauthor: user._id,
         content: content
       };
@@ -868,7 +872,33 @@ router.post('/:courseId/lesson/:lessonId/lessonhwk/:lessonhwkId/reply', checkLog
         ])
         .then(function () {
           req.flash('success', '批复成功');
-          // 留言成功后跳转到上一页
+          return res.redirect('back');
+        });
+    })
+    .catch(next);
+});
+
+// GET /course/:courseid/lesson/:lessonId/hwkreply/hwkreplyId/remove 删除一条作业批复
+router.get('/:courseid/lesson/:lessonId/hwkreply/:hwkreplyId/remove', checkLogin, function (req, res, next) {
+  var courseId = req.params.courseId;
+  var lessonId = req.params.lessonId;
+  var hwkreplyId = req.params.hwkreplyId;
+  var user = req.session.user;
+
+  HwkreplyModel.getHwkreplyById(hwkreplyId)
+    .then(function (hwkreply) {
+      try {
+        if(!hwkreply) {
+          throw new Error('该批复不存在');
+        }
+      } catch(e) {
+        req.flash('error', e.message);
+        return res.redirect('back');
+      }
+
+      HwkreplyModel.delHwkreplyById(hwkreplyId, user._id)
+        .then(function () {
+          req.flash('success', '删除批复成功');
           return res.redirect('back');
         });
     })

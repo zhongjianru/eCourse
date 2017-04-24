@@ -13,10 +13,10 @@
         <% lessonhwks.forEach(function (hwk) { %>
         <div class="comment">
               <span class="avatar">
-                <img src="/upload/<%= hwk.author.avatar %>">
+                <img src="/upload/<%= hwk.hwkauthor.avatar %>">
               </span>
           <div class="content">
-            <a class="author" href="/user/<%= hwk.author._id %>" target="_blank"><%= hwk.author.name %></a>
+            <a class="author" href="/user/<%= hwk.hwkauthor._id %>" target="_blank"><%= hwk.hwkauthor.name %></a>
             <div class="content">
               <a href="/course/file/<%= hwk.path %>" download="<%= hwk.name %>"><%= hwk.name %></a>
               <% if(hwk.reply > 0) { %>
