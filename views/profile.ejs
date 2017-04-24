@@ -37,7 +37,14 @@
       <%- include('components/course-summary', { course: course }) %>
       <% }) %>
     </div>
-    <div class="ui tab segment" data-tab="messages">3</div>
+    <div class="ui tab segment" data-tab="messages">
+      <% messages.forEach(function (lessonhwk) { %>
+      <a class="author" href="/user/<%= lessonhwk.hwkauthor._id %>" target="_blank"><%= lessonhwk.hwkauthor.name %></a>
+      <span class="metadata" style="color: #888;">在&nbsp;</span>
+      <a class="author" href="/course/<%= lessonhwk.lessonId.courseId %>/lesson/<%= lessonhwk.lessonId._id %>" target="_blank">第<%= lessonhwk.lessonId.order %>课时：<%= lessonhwk.lessonId.title %></a>
+      <span class="metadata" style="color: #888;">中提交了作业</span>
+      <% }) %>
+    </div>
     <div class="ui tab segment" data-tab="letters_send">3</div>
     <div class="ui tab segment" data-tab="letters_recv">3</div>
   </div>
@@ -63,7 +70,14 @@
       <%- include('components/usercard', { author: follow.following, isUser: false, isFollow: true }) %>
       <% }) %>
     </div>
-    <div class="ui tab segment" data-tab="messages">3</div>
+    <div class="ui tab segment" data-tab="messages">
+      <% messages.forEach(function (hwkreply) { %>
+      <a class="author" href="/user/<%= hwkreply.lsnauthor._id %>" target="_blank"><%= hwkreply.lsnauthor.name %></a>
+      <span class="metadata" style="color: #888;">在&nbsp;</span>
+      <a class="author" href="/course/<%= hwkreply.lessonId.courseId %>/lesson/<%= hwkreply.lessonId._id %>" target="_blank">第<%= hwkreply.lessonId.order %>课时：<%= hwkreply.lessonId.title %></a>
+      <span class="metadata" style="color: #888;">中批复了你的作业</span>
+      <% }) %>
+    </div>
     <div class="ui tab segment" data-tab="letters_send">3</div>
     <div class="ui tab segment" data-tab="letters_recv">3</div>
   </div>

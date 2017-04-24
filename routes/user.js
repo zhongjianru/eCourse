@@ -11,6 +11,8 @@ var sha1 = require('sha1');
 var UserModel = require('../models/users');
 var CourseModel = require('../models/courses');
 var AttenderModel = require('../models/attenders');
+var LessonhwkModel = require('../models/lessonhwks');
+var HwkreplyModel = require('../models/hwkreplies');
 var checkLogin = require('../middlewares/check').checkLogin;
 
 // GET /user/:userId
@@ -39,12 +41,14 @@ router.get('/:userId', function (req, res, next) {
         Promise.all([
             CourseModel.getCoursesByUserId(authorId),
             CourseModel.getRejectedCoursesByUserId(authorId),
-            UserModel.getFollowsById(authorId)
+            UserModel.getFollowsById(authorId),
+            LessonhwkModel.getLessonhwksByLsnauthorId(authorId)
           ])
           .then(function (result) {
             var pubcourses = result[0];
             var rejcourses = result[1];// 审核未通过的课程
             var follows = result[2];// 所有关注人
+            var messages = result[3];
 
             res.render('profile', {
               subtitle: author.name + ' - 个人主页',
@@ -52,24 +56,28 @@ router.get('/:userId', function (req, res, next) {
               pubcourses: pubcourses,
               rejcourses: rejcourses,
               follows: follows,
-              isUser: isUser
+              messages: messages,
+              isUser: isUser,
             });
           });
       }
       else if(author && author.identity === 'student') {
         Promise.all([
             AttenderModel.getCoursesByUserId(authorId),
-            UserModel.getFollowsById(authorId)
+            UserModel.getFollowsById(authorId),
+            HwkreplyModel.getHwkrepliesByUserId(authorId)
           ])
           .then(function (result) {
             var atdcourses = result[0];
             var follows = result[1];// 所有关注人
+            var messages = result[2];
 
             res.render('profile', {
               subtitle: author.name + ' - 个人主页',
               author: author,
               atdcourses: atdcourses,
               follows: follows,
+              messages: messages,
               isUser: isUser
             });
           });

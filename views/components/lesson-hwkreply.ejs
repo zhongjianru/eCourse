@@ -14,14 +14,9 @@
         <div class="comment">
           <div class="content">
             <a class="author" href="/user/<%= reply.lsnauthor._id %>" target="_blank"><%= reply.lsnauthor.name %></a>
-            <div class="metadata" style="color: #888;">
-              <span>批复</span>
-            </div>
-            &nbsp;
+            <span class="metadata" style="color: #888;">批复&nbsp;</span>
             <a class="author" href="/user/<%= reply.hwkauthor._id %>" target="_blank"><%= reply.hwkauthor.name %></a>
-            <div class="metadata" style="color: #888;">
-              <span>的作业</span>
-            </div>
+            <span class="metadata" style="color: #888;">的作业</span>
             <div class="text"><%- reply.content %></div>
 
             <div class="actions">

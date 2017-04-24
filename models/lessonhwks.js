@@ -30,15 +30,28 @@ module.exports = {
     return Lessonhwk
       .find({ lessonId: lessonId })
       .populate({ path: 'hwkauthor', model: 'User' })
+      .populate({ path: 'lsnauthor', model: 'User' })
       .sort({ hwkauthor: 1, _id: 1 })
       .exec();
   },
 
-  // 根据用户 id 获取课程内容下该用户的所有作业，按作业上交时间升序
-  getLessonhwksByUserId: function getLessonhwks(userId) {
+  // 根据用户 id 获取课程内容下该用户提交的所有作业，按作业上交时间升序
+  getLessonhwksByUserId: function getLessonhwksByUserId(hwkauthor) {
     return Lessonhwk
-      .find({ hwkauthor: userId })
+      .find({ hwkauthor: hwkauthor })
       .populate({ path: 'hwkauthor', model: 'User' })
+      .populate({ path: 'lsnauthor', model: 'User' })
+      .sort({ _id: 1 })
+      .exec();
+  },
+
+  // 根据用户 id 获取该用户收到的所有作业，按作业上交时间升序
+  getLessonhwksByLsnauthorId: function getLessonhwksByLsnauthorId(lsnauthor) {
+    return Lessonhwk
+      .find({ lsnauthor: lsnauthor })
+      .populate({ path: 'hwkauthor', model: 'User' })
+      .populate({ path: 'lsnauthor', model: 'User' })
+      .populate({ path: 'lessonId', model: 'Lesson' })
       .sort({ _id: 1 })
       .exec();
   },

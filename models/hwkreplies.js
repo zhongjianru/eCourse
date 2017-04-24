@@ -46,6 +46,7 @@ module.exports = {
       .find({ hwkauthor: userId })
       .populate({ path: 'hwkauthor', model: 'User' })
       .populate({ path: 'lsnauthor', model: 'User' })
+      .populate({ path: 'lessonId', model: 'Lesson' })
       .sort({ _id: 1 })
       .exec();
   }
