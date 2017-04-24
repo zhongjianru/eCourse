@@ -6,6 +6,7 @@ var LessonModel = require('../models/lessons');
 var CozwareModel = require('../models/cozwares');
 var LessoncmtModel = require('../models/lessoncmts');
 var LessonhwkModel = require('../models/lessonhwks');
+var HwkreplyModel = require('../models/hwkreplies');
 
 // 给 course 添加留言数 commentsCount
 Course.plugin('addCommentsCount', {
@@ -191,8 +192,9 @@ module.exports = {
             AttenderModel.delAttendersByCourseId(courseId);
             LessonModel.delLessonsByCourseId(courseId);
             CozwareModel.delCozwaresByCourseId(courseId);
-            LessoncmtModel.delLessoncmtsByCourseId(courseId);
+            //LessoncmtModel.delLessoncmtsByCourseId(courseId);
             LessonhwkModel.delLessonhwksByCourseId(courseId);
+            HwkreplyModel.delHwkrepliesByCourseId(courseId);
         }
       });
   },

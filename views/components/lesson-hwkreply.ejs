@@ -14,16 +14,19 @@
         <div class="comment">
           <div class="content">
             <a class="author" href="/user/<%= reply.lsnauthor._id %>" target="_blank"><%= reply.lsnauthor.name %></a>
-            <div class="metadata">
-              <span class="date">批复</span>
-              <a class="author" href="/user/<%= reply.hwkauthor._id %>" target="_blank"><%= reply.hwkauthor.name %></a>
-              <span class="date">的作业</span>
+            <div class="metadata" style="color: #888;">
+              <span>批复</span>
+            </div>
+            &nbsp;
+            <a class="author" href="/user/<%= reply.hwkauthor._id %>" target="_blank"><%= reply.hwkauthor.name %></a>
+            <div class="metadata" style="color: #888;">
+              <span>的作业</span>
             </div>
             <div class="text"><%- reply.content %></div>
 
             <div class="actions">
               <% if (user && reply.lsnauthor._id && user._id.toString() === reply.lsnauthor._id.toString()) { %>
-              <a class="reply" href="/course/<%= course._id %>/comment/<%= comment._id %>/remove">删除</a>
+              <a class="reply" href="/course/<%= course._id %>/lesson/<%= lesson._id %>/hwkreply/<%= reply._id %>/remove">删除</a>
               <% } %>
             </div>
           </div>

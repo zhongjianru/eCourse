@@ -7,6 +7,7 @@ var Lesson = require('../lib/mongo').Lesson;
 var CozwareModel = require('../models/cozwares');
 var LessoncmtModel = require('../models/lessoncmts');
 var LessonhwkModel = require('../models/lessonhwks');
+var HwkreplyModel = require('../models/hwkreplies');
 
 // 将 lesson 的 content 从 markdown 转换成 html
 Lesson.plugin('contentToHtml', {
@@ -72,8 +73,9 @@ module.exports = {
       .then(function (res) {
         if (res.result.ok && res.result.n > 0) {
           CozwareModel.delCozwaresByLessonId(lessonId);
-          LessoncmtModel.delLessoncmtsByLessonId(lessonId);
+          //LessoncmtModel.delLessoncmtsByLessonId(lessonId);
           LessonhwkModel.delLessonhwksByLessonId(lessonId);
+          HwkreplyModel.delHwkrepliesByLessonId(lessonId);
         }
       });
   },

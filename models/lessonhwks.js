@@ -11,8 +11,8 @@ module.exports = {
   },
 
   // 根据用户 id 和作业 id 删除一个作业
-  delLessonhwkById: function delLessonhwkById(lessonhwkId, author) {
-    return Lessonhwk.remove({ _id: lessonhwkId, author: author }).exec();
+  delLessonhwkById: function delLessonhwkById(lessonhwkId, hwkauthor) {
+    return Lessonhwk.remove({ _id: lessonhwkId, hwkauthor: hwkauthor }).exec();
   },
 
   // 根据课程 id 删除所有作业
@@ -29,16 +29,16 @@ module.exports = {
   getLessonhwks: function getLessonhwks(lessonId) {
     return Lessonhwk
       .find({ lessonId: lessonId })
-      .populate({ path: 'author', model: 'User' })
-      .sort({ author: 1, _id: 1 })
+      .populate({ path: 'hwkauthor', model: 'User' })
+      .sort({ hwkauthor: 1, _id: 1 })
       .exec();
   },
 
   // 根据用户 id 获取课程内容下该用户的所有作业，按作业上交时间升序
   getLessonhwksByUserId: function getLessonhwks(userId) {
     return Lessonhwk
-      .find({ author: userId })
-      .populate({ path: 'author', model: 'User' })
+      .find({ hwkauthor: userId })
+      .populate({ path: 'hwkauthor', model: 'User' })
       .sort({ _id: 1 })
       .exec();
   },
