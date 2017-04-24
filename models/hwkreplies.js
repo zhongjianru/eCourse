@@ -25,7 +25,7 @@ module.exports = {
     return Hwkreply.remove({ lessonId: lessonId }).exec();
   },
 
-  // 通过作业批复 id 取该作业批复
+  // 通过作业批复 id 获取该作业批复
   getHwkreplyById: function getHwkreplyById(hwkreplyId) {
     return Hwkreply.findOne({ _id: hwkreplyId }).exec();
   },

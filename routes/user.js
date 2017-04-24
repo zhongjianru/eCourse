@@ -13,6 +13,7 @@ var CourseModel = require('../models/courses');
 var AttenderModel = require('../models/attenders');
 var LessonhwkModel = require('../models/lessonhwks');
 var HwkreplyModel = require('../models/hwkreplies');
+var LetterModel = require('../models/letters');
 var checkLogin = require('../middlewares/check').checkLogin;
 
 // GET /user/:userId

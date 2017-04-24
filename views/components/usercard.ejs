@@ -23,7 +23,7 @@
     </div>
     <% } else { %>
     <div class="extra content user-menu">
-      <a class=""><i class="send icon"></i>私信</a>
+      <a class="" id="letter"><i class="send icon"></i>私信</a>
       <% if(isFollow) { %>
       <a href="/user/<%= user._id %>/follow/<%= author._id %>/remove" class="right floated"><i class="plus icon"></i>取消关注</a>
       <% } else { %>
@@ -47,6 +47,20 @@
     <div class="actions right">
       <div class="ui button" id="cancel">取消</div>
       <input type="submit" class="ui button" value="确定">
+    </div>
+    <div class="clear"></div>
+  </form>
+</div>
+
+<div class="ui small modal letter">
+  <h3 class="ui dividing header">发送私信</h3>
+  <form class="ui reply form" method="post" action="/user/letterto/<%= author._id %>">
+    <div class="field">
+      <textarea name="content"></textarea>
+    </div>
+    <div class="actions right">
+      <div class="ui button" id="cancel">取消</div>
+      <input type="submit" class="ui button" value="批复" />
     </div>
     <div class="clear"></div>
   </form>

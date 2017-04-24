@@ -27,6 +27,11 @@ $(document).ready(function () {
     $('.ui.small.modal.modifyavt').modal('show');
   });
 
+  // 发送私信
+  $('a[id="letter"]').click(function () {
+    $('.ui.small.modal.letter').modal('show');
+  });
+
   // 回复留言
   $('a[id="reply"]').click(function () {
     $('.ui.small.modal.reply').modal('show');
