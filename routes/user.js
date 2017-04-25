@@ -43,13 +43,17 @@ router.get('/:userId', function (req, res, next) {
             CourseModel.getCoursesByUserId(authorId),
             CourseModel.getRejectedCoursesByUserId(authorId),
             UserModel.getFollowsById(authorId),
-            LessonhwkModel.getLessonhwksByLsnauthorId(authorId)
+            LessonhwkModel.getLessonhwksByLsnauthorId(authorId),
+            LetterModel.getLettersByAuthor(authorId),
+            LetterModel.getLettersByUserId(authorId)
           ])
           .then(function (result) {
             var pubcourses = result[0];
             var rejcourses = result[1];// 审核未通过的课程
             var follows = result[2];// 所有关注人
             var messages = result[3];
+            var letters_send = result[4];
+            var letters_recv = result[5];
 
             res.render('profile', {
               subtitle: author.name + ' - 个人主页',
@@ -58,6 +62,8 @@ router.get('/:userId', function (req, res, next) {
               rejcourses: rejcourses,
               follows: follows,
               messages: messages,
+              letters_send: letters_send,
+              letters_recv: letters_recv,
               isUser: isUser,
             });
           });
@@ -66,12 +72,16 @@ router.get('/:userId', function (req, res, next) {
         Promise.all([
             AttenderModel.getCoursesByUserId(authorId),
             UserModel.getFollowsById(authorId),
-            HwkreplyModel.getHwkrepliesByUserId(authorId)
+            HwkreplyModel.getHwkrepliesByUserId(authorId),
+            LetterModel.getLettersByAuthor(authorId),
+            LetterModel.getLettersByUserId(authorId)
           ])
           .then(function (result) {
             var atdcourses = result[0];
             var follows = result[1];// 所有关注人
             var messages = result[2];
+            var letters_send = result[3];
+            var letters_recv = result[4];
 
             res.render('profile', {
               subtitle: author.name + ' - 个人主页',
@@ -79,6 +89,8 @@ router.get('/:userId', function (req, res, next) {
               atdcourses: atdcourses,
               follows: follows,
               messages: messages,
+              letters_send: letters_send,
+              letters_recv: letters_recv,
               isUser: isUser
             });
           });
@@ -256,8 +268,8 @@ router.post('/:userId/avatar', checkLogin, function (req, res, next) {
     .catch(next);
 });
 
-// GET user/:userId/follow/:followingId
-router.get('/:userId/follow/:followingId', checkLogin, function (req, res, next) {
+// GET user/follow/:followingId
+router.get('/follow/:followingId', checkLogin, function (req, res, next) {
   var user = req.session.user;
   var followingId = req.params.followingId;
 
@@ -288,8 +300,8 @@ router.get('/:userId/follow/:followingId', checkLogin, function (req, res, next)
     .catch(next);
 });
 
-// GET user/:userId/follow/:followingId/remove
-router.get('/:userId/follow/:followingId/remove', checkLogin, function (req, res, next) {
+// GET user/follow/:followingId/remove
+router.get('/follow/:followingId/remove', checkLogin, function (req, res, next) {
   var user = req.session.user;
   var followingId = req.params.followingId;
 
@@ -312,6 +324,34 @@ router.get('/:userId/follow/:followingId/remove', checkLogin, function (req, res
           req.flash('success', '取消关注成功');
           return res.redirect('back');
         });
+    })
+    .catch(next);
+});
+
+router.post('/letterto/:receiver', checkLogin, function (req, res, next) {
+  var receiver = req.params.receiver;
+  var content = req.fields.content;
+  var user = req.session.user;
+
+  try {
+    if(user._id.toString() === receiver.toString()) {
+      throw new Error('不能发送私信给自己');
+    }
+  } catch (e) {
+    req.flash('error', e.message);
+    return res.redirect('back');
+  }
+
+  var letter = {
+    author: user._id,
+    receiver: receiver,
+    content: content
+  };
+
+  LetterModel.create(letter)
+    .then(function () {
+      req.flash('success', '私信发送成功');
+      return res.redirect('back');
     })
     .catch(next);
 });

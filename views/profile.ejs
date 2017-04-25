@@ -45,8 +45,16 @@
       <span class="metadata" style="color: #888;">中提交了作业</span>
       <% }) %>
     </div>
-    <div class="ui tab segment" data-tab="letters_send">3</div>
-    <div class="ui tab segment" data-tab="letters_recv">3</div>
+    <div class="ui tab segment" data-tab="letters_send">
+      <% letters_send.forEach(function (letter) { %>
+      <%- include('components/letter-send') %>
+      <% }) %>
+    </div>
+    <div class="ui tab segment" data-tab="letters_recv">
+      <% letters_recv.forEach(function (letter) { %>
+      <%- include('components/letter-recv') %>
+      <% }) %>
+    </div>
   </div>
 
   <% } else if (author.identity === 'student') { %>
@@ -78,8 +86,16 @@
       <span class="metadata" style="color: #888;">中批复了你的作业</span>
       <% }) %>
     </div>
-    <div class="ui tab segment" data-tab="letters_send">3</div>
-    <div class="ui tab segment" data-tab="letters_recv">3</div>
+    <div class="ui tab segment" data-tab="letters_send">
+      <% letters_send.forEach(function (letter) { %>
+      <%- include('components/letter-send') %>
+      <% }) %>
+    </div>
+    <div class="ui tab segment" data-tab="letters_recv">
+      <% letters_recv.forEach(function (letter) { %>
+      <%- include('components/letter-recv', { letter: letter }) %>
+      <% }) %>
+    </div>
   </div>
 
   <% } else if (author.identity === 'admin') { %>

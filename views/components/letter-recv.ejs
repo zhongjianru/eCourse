@@ -1,0 +1,32 @@
+<div class="comment">
+  <span class="avatar">
+    <img src="/upload/<%= letter.author.avatar %>">
+  </span>
+  <div class="content">
+    <a class="author" href="/user/<%= letter.author._id %>" target="_blank"><%= letter.author.name %></a>
+    <div class="metadata">
+      <span class="date">给我发送私信</span>
+    </div>
+    <div class="text"><%- letter.content %></div>
+
+    <div class="actions">
+      <% if (user && letter.receiver._id && user._id.toString() === letter.receiver._id.toString()) { %>
+      <a class="reply" href="javascript:void(0)" id="reply">回复</a>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<div class="ui small modal letter">
+  <h3 class="ui dividing header">回复私信</h3>
+  <form class="ui reply form" method="post" action="/user/letterreply/<%= letter._id %>">
+    <div class="field">
+      <textarea name="content"></textarea>
+    </div>
+    <div class="actions right">
+      <div class="ui button" id="cancel">取消</div>
+      <input type="submit" class="ui button" value="回复" />
+    </div>
+    <div class="clear"></div>
+  </form>
+</div>
