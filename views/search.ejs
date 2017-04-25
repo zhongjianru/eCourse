@@ -21,7 +21,7 @@
   <div class="three wide column"></div>
   <div class="eight wide column">
     <% users.forEach(function (user) { %>
-    <%- include('components/usercard', { author: user }) %>
+    <%- include('components/usercard', { author: user, isFollow: false }) %>
     <% }) %>
   </div>
   <% } %>

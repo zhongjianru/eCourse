@@ -32,6 +32,11 @@ $(document).ready(function () {
     $('.ui.small.modal.letter').modal('show');
   });
 
+  // 回复私信
+  $('a[id="letterreply"]').click(function () {
+    $('.ui.small.modal.letterreply').modal('show');
+  });
+
   // 回复留言
   $('a[id="reply"]').click(function () {
     $('.ui.small.modal.reply').modal('show');

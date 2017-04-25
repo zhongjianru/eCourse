@@ -64,7 +64,7 @@ router.get('/:userId', function (req, res, next) {
               messages: messages,
               letters_send: letters_send,
               letters_recv: letters_recv,
-              isUser: isUser,
+              isUser: isUser
             });
           });
       }

@@ -1,6 +1,6 @@
 /* ---------- 全局样式 ---------- */
 
-* {
+h1,h2,h3,h4,h5,h6,p,span,pre,a {
   font-family: "微软雅黑", serif !important;
 }
 
@@ -279,6 +279,10 @@ a:hover {
 
 .course-content .separate {
   color: #999;
+}
+
+.metadata {
+  color: rgba(0,0,0,.6) !important;
 }
 
 /* ---------- comment ---------- */
