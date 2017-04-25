@@ -17,6 +17,7 @@
             <span class="metadata" style="color: #888;">批复&nbsp;</span>
             <a class="author" href="/user/<%= reply.hwkauthor._id %>" target="_blank"><%= reply.hwkauthor.name %></a>
             <span class="metadata" style="color: #888;">的作业</span>
+            <span class="metadata"><%= reply.created_at %></span>
             <div class="text"><%- reply.content %></div>
 
             <div class="actions">

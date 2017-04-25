@@ -27,6 +27,7 @@ module.exports = {
       .populate({ path: 'author', model: 'User' })
       .populate({ path: 'receiver', model: 'User' })
       .sort({ _id: 1 })
+      .addCreatedAt()
       .exec();
   },
 
@@ -37,6 +38,7 @@ module.exports = {
       .populate({ path: 'author', model: 'User' })
       .populate({ path: 'receiver', model: 'User' })
       .sort({ _id: 1 })
+      .addCreatedAt()
       .exec();
   }
 };

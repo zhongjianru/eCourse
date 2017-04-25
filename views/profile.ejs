@@ -43,16 +43,18 @@
       <span class="metadata" style="color: #888;">在&nbsp;</span>
       <a class="author" href="/course/<%= lessonhwk.lessonId.courseId %>/lesson/<%= lessonhwk.lessonId._id %>" target="_blank">第<%= lessonhwk.lessonId.order %>课时：<%= lessonhwk.lessonId.title %></a>
       <span class="metadata" style="color: #888;">中提交了作业</span>
+      <span class="metadata" style="color: rgba(0,0,0,.6);font-size: .875em;"><%= lessonhwk.created_at %></span>
+      <br><br>
       <% }) %>
     </div>
     <div class="ui tab segment" data-tab="letters_send">
       <% letters_send.forEach(function (letter) { %>
-      <%- include('components/letter-send') %>
+      <%- include('components/letter-send', { letter: letter }) %>
       <% }) %>
     </div>
     <div class="ui tab segment" data-tab="letters_recv">
       <% letters_recv.forEach(function (letter) { %>
-      <%- include('components/letter-recv') %>
+      <%- include('components/letter-recv', { letter: letter }) %>
       <% }) %>
     </div>
   </div>
@@ -84,11 +86,13 @@
       <span class="metadata" style="color: #888;">在&nbsp;</span>
       <a class="author" href="/course/<%= hwkreply.lessonId.courseId %>/lesson/<%= hwkreply.lessonId._id %>" target="_blank">第<%= hwkreply.lessonId.order %>课时：<%= hwkreply.lessonId.title %></a>
       <span class="metadata" style="color: #888;">中批复了你的作业</span>
+      <span class="metadata" style="color: rgba(0,0,0,.6);font-size: .875em;"><%= hwkreply.created_at %></span>
+      <br><br>
       <% }) %>
     </div>
     <div class="ui tab segment" data-tab="letters_send">
       <% letters_send.forEach(function (letter) { %>
-      <%- include('components/letter-send') %>
+      <%- include('components/letter-send', { letter: letter }) %>
       <% }) %>
     </div>
     <div class="ui tab segment" data-tab="letters_recv">

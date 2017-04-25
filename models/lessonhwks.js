@@ -32,6 +32,7 @@ module.exports = {
       .populate({ path: 'hwkauthor', model: 'User' })
       .populate({ path: 'lsnauthor', model: 'User' })
       .sort({ hwkauthor: 1, _id: 1 })
+      .addCreatedAt()
       .exec();
   },
 
@@ -42,6 +43,7 @@ module.exports = {
       .populate({ path: 'hwkauthor', model: 'User' })
       .populate({ path: 'lsnauthor', model: 'User' })
       .sort({ _id: 1 })
+      .addCreatedAt()
       .exec();
   },
 
@@ -53,12 +55,16 @@ module.exports = {
       .populate({ path: 'lsnauthor', model: 'User' })
       .populate({ path: 'lessonId', model: 'Lesson' })
       .sort({ _id: 1 })
+      .addCreatedAt()
       .exec();
   },
 
   // 根据作业 id 获取作业
   getLessonhwkById: function getLessonhwkById(lessonhwkId) {
-    return Lessonhwk.findOne({ _id: lessonhwkId }).exec();
+    return Lessonhwk
+      .findOne({ _id: lessonhwkId })
+      .addCreatedAt()
+      .exec();
   },
   
   // 根据作业 id 将批复数+1

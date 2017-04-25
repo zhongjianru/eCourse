@@ -1,23 +1,24 @@
-<div class="comment">
+<div class="ui minimal comments">
+  <div class="comment">
   <span class="avatar">
     <img src="/upload/<%= letter.author.avatar %>">
   </span>
-  <div class="content">
-    <a class="author" href="/user/<%= letter.author._id %>" target="_blank"><%= letter.author.name %></a>
-    <div class="metadata">
-      <span class="date">给我发送私信</span>
-    </div>
-    <div class="text"><%- letter.content %></div>
+    <div class="content">
+      <a class="author" href="/user/<%= letter.author._id %>" target="_blank"><%= letter.author.name %></a>
+      <span class="metadata">给我发送私信</span>
+      <span class="metadata"><%= letter.created_at %></span>
+      <div class="text"><%- letter.content %></div>
 
-    <div class="actions">
-      <% if (user && letter.receiver._id && user._id.toString() === letter.receiver._id.toString()) { %>
-      <a class="reply" href="javascript:void(0)" id="reply">回复</a>
-      <% } %>
+      <div class="actions">
+        <% if (user && letter.receiver._id && user._id.toString() === letter.receiver._id.toString()) { %>
+        <a class="reply" href="javascript:void(0)" id="letterreply">回复</a>
+        <% } %>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="ui small modal letter">
+<div class="ui small modal letterreply">
   <h3 class="ui dividing header">回复私信</h3>
   <form class="ui reply form" method="post" action="/user/letterreply/<%= letter._id %>">
     <div class="field">

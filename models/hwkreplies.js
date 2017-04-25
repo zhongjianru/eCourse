@@ -27,7 +27,10 @@ module.exports = {
 
   // 通过作业批复 id 获取该作业批复
   getHwkreplyById: function getHwkreplyById(hwkreplyId) {
-    return Hwkreply.findOne({ _id: hwkreplyId }).exec();
+    return Hwkreply
+      .findOne({ _id: hwkreplyId })
+      .addCreatedAt()
+      .exec();
   },
 
   // 通过课程内容 id 获取该课程内容下所有作业批复，按作业批复创建时间升序
@@ -36,6 +39,7 @@ module.exports = {
       .find({ lessonId: lessonId })
       .populate({ path: 'hwkauthor', model: 'User' })
       .populate({ path: 'lsnauthor', model: 'User' })
+      .addCreatedAt()
       .sort({ _id: 1 })
       .exec();
   },
@@ -47,6 +51,7 @@ module.exports = {
       .populate({ path: 'hwkauthor', model: 'User' })
       .populate({ path: 'lsnauthor', model: 'User' })
       .populate({ path: 'lessonId', model: 'Lesson' })
+      .addCreatedAt()
       .sort({ _id: 1 })
       .exec();
   }
